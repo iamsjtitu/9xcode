@@ -1,52 +1,87 @@
-import { useEffect } from "react";
-import "@/App.css";
+import { useState, useEffect } from "react";
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+import { Helmet } from "react-helmet";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import SnippetDetail from "./pages/SnippetDetail";
+import AdminPanel from "./pages/AdminPanel";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <div className="App">
+      <Helmet>
+        <title>9xCodes - Linux Server Commands, Ubuntu, CentOS Tutorials & Code Snippets</title>
+        <meta
+          name="description"
+          content="Discover ready-to-use Linux server commands, tutorials, and code snippets for Ubuntu, CentOS, Debian. Learn how to install cPanel, configure SSH, setup firewalls, and master server administration with copy-paste commands."
+        />
+        <meta
+          name="keywords"
+          content="linux commands, ubuntu tutorial, centos commands, server administration, cpanel installation, ssh security, firewall configuration, nginx setup, mysql installation, docker commands, linux tutorial, bash commands, server commands, system administration"
+        />
+        <meta name="author" content="9xCodes" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://9xcodes.com" />
+        
+        {/* Open Graph Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="9xCodes - Linux Server Commands & Tutorials" />
+        <meta
+          property="og:description"
+          content="Your ultimate resource for Linux server commands, code snippets, and step-by-step tutorials for Ubuntu, CentOS, and Debian."
+        />
+        <meta property="og:url" content="https://9xcodes.com" />
+        <meta property="og:site_name" content="9xCodes" />
+        
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="9xCodes - Linux Server Commands & Tutorials" />
+        <meta
+          name="twitter:description"
+          content="Ready-to-use Linux commands and tutorials for server administration"
+        />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="language" content="English" />
+      </Helmet>
+
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <div className="flex flex-col min-h-screen">
+          <Header onSearch={setSearchQuery} />
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<Home searchQuery={searchQuery} />} />
+              <Route path="/snippet/:slug" element={<SnippetDetail />} />
+              <Route path="/admin" element={<AdminPanel />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+        <Toaster />
       </BrowserRouter>
+
+      {/* JSON-LD Structured Data for SEO */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "9xCodes",
+          "url": "https://9xcodes.com",
+          "description": "Linux server commands, tutorials, and code snippets for Ubuntu, CentOS, and Debian",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://9xcodes.com?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        })}
+      </script>
     </div>
   );
 }
