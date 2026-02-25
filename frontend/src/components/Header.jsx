@@ -133,19 +133,37 @@ const Header = ({ onSearch }) => {
                 Home
               </Button>
             </Link>
-            <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
-              <Button variant="ghost" className="w-full text-left text-white hover:bg-slate-700">
-                Admin
-              </Button>
-            </Link>
-            <Link to="/admin/ads" onClick={() => setIsMenuOpen(false)}>
-              <Button variant="ghost" className="w-full text-left text-white hover:bg-slate-700">
-                Ads Manager
-              </Button>
-            </Link>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-              Submit Code
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full text-left text-white hover:bg-slate-700">
+                    Admin
+                  </Button>
+                </Link>
+                <Link to="/admin/ads" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full text-left text-white hover:bg-slate-700">
+                    Ads Manager
+                  </Button>
+                </Link>
+                <Button 
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  variant="ghost" 
+                  className="w-full text-left text-white hover:bg-red-600"
+                >
+                  <LogOut className="h-4 w-4 mr-2 inline" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  Admin Login
+                </Button>
+              </Link>
+            )}
           </nav>
         )}
       </div>
