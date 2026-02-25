@@ -7,10 +7,29 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import SnippetDetail from "./pages/SnippetDetail";
 import AdminPanel from "./pages/AdminPanel";
+import GoogleAdsManager from "./pages/GoogleAdsManager";
 import { Toaster } from "./components/ui/toaster";
+import axios from "axios";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [adsConfig, setAdsConfig] = useState(null);
+
+  useEffect(() => {
+    fetchAdsConfig();
+  }, []);
+
+  const fetchAdsConfig = async () => {
+    try {
+      const response = await axios.get(`${API}/ads/config`);
+      setAdsConfig(response.data);
+    } catch (error) {
+      console.error('Error fetching ads config:', error);
+    }
+  };
 
   return (
     <div className="App">
@@ -50,6 +69,11 @@ function App() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="language" content="English" />
+        
+        {/* Google AdSense Script */}
+        {adsConfig?.enabled && (
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        )}
       </Helmet>
 
       <BrowserRouter>
@@ -57,9 +81,10 @@ function App() {
           <Header onSearch={setSearchQuery} />
           <main className="flex-1">
             <Routes>
-              <Route path="/" element={<Home searchQuery={searchQuery} />} />
-              <Route path="/snippet/:slug" element={<SnippetDetail />} />
+              <Route path="/" element={<Home searchQuery={searchQuery} adsConfig={adsConfig} />} />
+              <Route path="/snippet/:slug" element={<SnippetDetail adsConfig={adsConfig} />} />
               <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/admin/ads" element={<GoogleAdsManager />} />
             </Routes>
           </main>
           <Footer />
