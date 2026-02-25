@@ -102,6 +102,11 @@ const Header = ({ onSearch }) => {
                 Admin
               </Button>
             </Link>
+            <Link to="/admin/ads" onClick={() => setIsMenuOpen(false)}>
+              <Button variant="ghost" className="w-full text-left text-white hover:bg-slate-700">
+                Ads Manager
+              </Button>
+            </Link>
             <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
               Submit Code
             </Button>
