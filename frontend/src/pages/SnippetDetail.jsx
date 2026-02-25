@@ -146,6 +146,14 @@ const SnippetDetail = ({ adsConfig }) => {
     );
   }
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: 'Link copied!',
+      description: 'Share this tutorial with your team',
+    });
+  };
+
   const getCategoryName = (slug) => {
     const category = categories.find((c) => c.slug === slug);
     return category ? category.name : slug;
@@ -159,37 +167,6 @@ const SnippetDetail = ({ adsConfig }) => {
   const getOSColor = (slug) => {
     const os = operatingSystems.find((o) => o.slug === slug);
     return os ? os.color : '#6B7280';
-  };
-
-  const handleLike = () => {
-    setLiked(!liked);
-    toast({
-      title: liked ? 'Removed from favorites' : 'Added to favorites',
-      description: liked ? 'Snippet removed from your favorites' : 'Snippet saved to your favorites',
-    });
-  };
-
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: 'Link copied!',
-      description: 'Share this tutorial with your team',
-    });
-  };
-
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    if (comment.trim()) {
-      setComments([
-        { id: comments.length + 1, user: 'You', text: comment, time: 'Just now' },
-        ...comments,
-      ]);
-      setComment('');
-      toast({
-        title: 'Comment posted!',
-        description: 'Your comment has been added successfully',
-      });
-    }
   };
 
   return (
