@@ -355,12 +355,25 @@ const AdminPanel = () => {
 
           {/* Submit Button */}
           <div className="flex justify-end space-x-4">
-            <Button type="button" variant="outline">
-              Preview
+            <Button type="button" variant="outline" onClick={() => navigate('/')}>
+              Cancel
             </Button>
-            <Button type="submit" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
-              <Save className="h-4 w-4 mr-2" />
-              Publish Snippet
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Publishing...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Publish Snippet
+                </>
+              )}
             </Button>
           </div>
         </form>
