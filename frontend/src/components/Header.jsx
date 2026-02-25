@@ -56,6 +56,11 @@ const Header = ({ onSearch }) => {
                 Admin
               </Button>
             </Link>
+            <Link to="/admin/ads">
+              <Button variant="ghost" className="text-white hover:bg-slate-700 hover:text-blue-400 transition-colors">
+                Ads Manager
+              </Button>
+            </Link>
             <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-blue-500/50 transition-all">
               Submit Code
             </Button>
