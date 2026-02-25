@@ -474,5 +474,5 @@ async def generate_articles():
     
     client.close()
 
-if __name__ == "____main__":
+if __name__ == "__main__":
     asyncio.run(generate_articles())
