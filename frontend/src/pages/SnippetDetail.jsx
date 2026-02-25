@@ -359,15 +359,21 @@ const SnippetDetail = ({ adsConfig }) => {
             </CardHeader>
             <CardContent>
               {/* Comment Form */}
-              <form onSubmit={handleCommentSubmit} className="mb-6">
+              <form onSubmit={handleCommentSubmit} className="mb-6 space-y-3">
+                <Input
+                  placeholder="Your name"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  required
+                />
                 <Textarea
                   placeholder="Share your thoughts or ask a question..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="mb-3"
                   rows={3}
+                  required
                 />
-                <Button type="submit" disabled={!comment.trim()}>
+                <Button type="submit" disabled={!comment.trim() || !userName.trim()}>
                   Post Comment
                 </Button>
               </form>
@@ -376,15 +382,21 @@ const SnippetDetail = ({ adsConfig }) => {
 
               {/* Comments List */}
               <div className="space-y-4">
-                {comments.map((c) => (
-                  <div key={c.id} className="bg-slate-50 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold text-slate-900">{c.user}</span>
-                      <span className="text-sm text-slate-500">{c.time}</span>
+                {comments.length === 0 ? (
+                  <p className="text-center text-slate-500 py-8">No comments yet. Be the first to comment!</p>
+                ) : (
+                  comments.map((c) => (
+                    <div key={c.id} className="bg-slate-50 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-slate-900">{c.user}</span>
+                        <span className="text-sm text-slate-500">
+                          {new Date(c.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-slate-700">{c.text}</p>
                     </div>
-                    <p className="text-slate-700">{c.text}</p>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
