@@ -72,19 +72,34 @@ const Header = ({ onSearch }) => {
                 Home
               </Button>
             </Link>
-            <Link to="/admin">
-              <Button variant="ghost" className="text-white hover:bg-slate-700 hover:text-blue-400 transition-colors">
-                Admin
-              </Button>
-            </Link>
-            <Link to="/admin/ads">
-              <Button variant="ghost" className="text-white hover:bg-slate-700 hover:text-blue-400 transition-colors">
-                Ads Manager
-              </Button>
-            </Link>
-            <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-blue-500/50 transition-all">
-              Submit Code
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Link to="/admin">
+                  <Button variant="ghost" className="text-white hover:bg-slate-700 hover:text-blue-400 transition-colors">
+                    Admin
+                  </Button>
+                </Link>
+                <Link to="/admin/ads">
+                  <Button variant="ghost" className="text-white hover:bg-slate-700 hover:text-blue-400 transition-colors">
+                    Ads Manager
+                  </Button>
+                </Link>
+                <Button 
+                  onClick={handleLogout}
+                  variant="ghost" 
+                  className="text-white hover:bg-red-600 hover:text-white transition-colors"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Link to="/login">
+                <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-blue-500/50 transition-all">
+                  Admin Login
+                </Button>
+              </Link>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
