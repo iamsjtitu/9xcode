@@ -4,54 +4,50 @@ import { Eye, Heart, MessageCircle, TrendingUp, Clock, Terminal } from 'lucide-r
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import FilterSidebar from '../components/FilterSidebar';
-import { codeSnippets, operatingSystems, difficultyLevels, categories } from '../data/mockData';
+import GoogleAd from '../components/GoogleAd';
+import { categories, operatingSystems, difficultyLevels } from '../data/mockData';
+import axios from 'axios';
 
-const Home = ({ searchQuery }) => {
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
+const Home = ({ searchQuery, adsConfig }) => {
   const [filters, setFilters] = useState({});
-  const [filteredSnippets, setFilteredSnippets] = useState(codeSnippets);
-  const [sortBy, setSortBy] = useState('recent'); // recent, popular, views
+  const [filteredSnippets, setFilteredSnippets] = useState([]);
+  const [sortBy, setSortBy] = useState('recent');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let filtered = codeSnippets;
-
-    // Apply search filter
-    if (searchQuery && searchQuery.trim() !== '') {
-      filtered = filtered.filter(
-        (snippet) =>
-          snippet.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          snippet.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          snippet.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
-
-    // Apply category filter
-    if (filters.category && filters.category.length > 0) {
-      filtered = filtered.filter((snippet) => filters.category.includes(snippet.category));
-    }
-
-    // Apply OS filter
-    if (filters.os && filters.os.length > 0) {
-      filtered = filtered.filter((snippet) =>
-        snippet.os.some((os) => filters.os.includes(os))
-      );
-    }
-
-    // Apply difficulty filter
-    if (filters.difficulty && filters.difficulty.length > 0) {
-      filtered = filtered.filter((snippet) => filters.difficulty.includes(snippet.difficulty));
-    }
-
-    // Sort
-    if (sortBy === 'popular') {
-      filtered = [...filtered].sort((a, b) => b.likes - a.likes);
-    } else if (sortBy === 'views') {
-      filtered = [...filtered].sort((a, b) => b.views - a.views);
-    } else {
-      filtered = [...filtered].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
-
-    setFilteredSnippets(filtered);
+    fetchSnippets();
   }, [filters, searchQuery, sortBy]);
+
+  const fetchSnippets = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      
+      if (filters.category && filters.category.length > 0) {
+        params.append('category', filters.category[0]);
+      }
+      if (filters.os && filters.os.length > 0) {
+        params.append('os', filters.os[0]);
+      }
+      if (filters.difficulty && filters.difficulty.length > 0) {
+        params.append('difficulty', filters.difficulty[0]);
+      }
+      if (searchQuery && searchQuery.trim() !== '') {
+        params.append('search', searchQuery);
+      }
+      params.append('sort', sortBy);
+      
+      const response = await axios.get(`${API}/snippets?${params.toString()}`);
+      setFilteredSnippets(response.data);
+    } catch (error) {
+      console.error('Error fetching snippets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getCategoryName = (slug) => {
     const category = categories.find((c) => c.slug === slug);
