@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import SnippetDetail from "./pages/SnippetDetail";
 import AdminPanel from "./pages/AdminPanel";
 import GoogleAdsManager from "./pages/GoogleAdsManager";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
 import axios from "axios";
 
@@ -83,8 +85,23 @@ function App() {
             <Routes>
               <Route path="/" element={<Home searchQuery={searchQuery} adsConfig={adsConfig} />} />
               <Route path="/snippet/:slug" element={<SnippetDetail adsConfig={adsConfig} />} />
-              <Route path="/admin" element={<AdminPanel />} />
-              <Route path="/admin/ads" element={<GoogleAdsManager />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/ads"
+                element={
+                  <ProtectedRoute>
+                    <GoogleAdsManager />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />
