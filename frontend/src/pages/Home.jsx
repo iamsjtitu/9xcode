@@ -137,7 +137,14 @@ const Home = ({ searchQuery, adsConfig }) => {
 
             {/* Snippets Grid */}
             <div className="space-y-6">
-              {filteredSnippets.length === 0 ? (
+              {loading ? (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-slate-600">Loading code snippets...</p>
+                  </CardContent>
+                </Card>
+              ) : filteredSnippets.length === 0 ? (
                 <Card className="text-center py-12">
                   <CardContent>
                     <Terminal className="h-12 w-12 text-slate-300 mx-auto mb-4" />
@@ -145,90 +152,98 @@ const Home = ({ searchQuery, adsConfig }) => {
                   </CardContent>
                 </Card>
               ) : (
-                filteredSnippets.map((snippet) => (
-                  <Card
-                    key={snippet.id}
-                    className="hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-blue-300 group"
-                  >
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <Badge className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100">
-                              {getCategoryName(snippet.category)}
-                            </Badge>
-                            <Badge
-                              style={{
-                                backgroundColor: `${getDifficultyColor(snippet.difficulty)}15`,
-                                color: getDifficultyColor(snippet.difficulty),
-                                borderColor: `${getDifficultyColor(snippet.difficulty)}30`,
-                              }}
-                              className="border capitalize"
-                            >
-                              {snippet.difficulty}
-                            </Badge>
-                            {snippet.os.slice(0, 2).map((os, idx) => (
+                filteredSnippets.map((snippet, index) => (
+                  <React.Fragment key={snippet.id}>
+                    <Card
+                      className="hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-blue-300 group"
+                    >
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <Badge className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100">
+                                {getCategoryName(snippet.category)}
+                              </Badge>
                               <Badge
-                                key={idx}
                                 style={{
-                                  backgroundColor: `${getOSColor(os)}15`,
-                                  color: getOSColor(os),
-                                  borderColor: `${getOSColor(os)}30`,
+                                  backgroundColor: `${getDifficultyColor(snippet.difficulty)}15`,
+                                  color: getDifficultyColor(snippet.difficulty),
+                                  borderColor: `${getDifficultyColor(snippet.difficulty)}30`,
                                 }}
                                 className="border capitalize"
                               >
-                                {os}
+                                {snippet.difficulty}
                               </Badge>
-                            ))}
+                              {snippet.os.slice(0, 2).map((os, idx) => (
+                                <Badge
+                                  key={idx}
+                                  style={{
+                                    backgroundColor: `${getOSColor(os)}15`,
+                                    color: getOSColor(os),
+                                    borderColor: `${getOSColor(os)}30`,
+                                  }}
+                                  className="border capitalize"
+                                >
+                                  {os}
+                                </Badge>
+                              ))}
+                            </div>
+                            <Link to={`/snippet/${snippet.slug}`}>
+                              <CardTitle className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2">
+                                {snippet.title}
+                              </CardTitle>
+                            </Link>
+                            <CardDescription className="text-slate-600">
+                              {snippet.description}
+                            </CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {snippet.tags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Stats */}
+                        <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                          <div className="flex items-center space-x-4 text-sm text-slate-500">
+                            <div className="flex items-center space-x-1 hover:text-blue-600 transition-colors">
+                              <Eye className="h-4 w-4" />
+                              <span>{snippet.views.toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center space-x-1 hover:text-red-500 transition-colors cursor-pointer">
+                              <Heart className="h-4 w-4" />
+                              <span>{snippet.likes}</span>
+                            </div>
+                            <div className="flex items-center space-x-1 hover:text-blue-600 transition-colors">
+                              <MessageCircle className="h-4 w-4" />
+                              <span>{snippet.comments || 0}</span>
+                            </div>
                           </div>
                           <Link to={`/snippet/${snippet.slug}`}>
-                            <CardTitle className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2">
-                              {snippet.title}
-                            </CardTitle>
+                            <button className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                              View Tutorial →
+                            </button>
                           </Link>
-                          <CardDescription className="text-slate-600">
-                            {snippet.description}
-                          </CardDescription>
                         </div>
+                      </CardContent>
+                    </Card>
+                    
+                    {/* Display Ad after every 3rd snippet */}
+                    {adsConfig?.enabled && adsConfig?.betweenSnippetsAdCode && (index + 1) % 3 === 0 && (
+                      <div className="my-6">
+                        <GoogleAd adCode={adsConfig.betweenSnippetsAdCode} className="flex justify-center" />
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {snippet.tags.map((tag, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Stats */}
-                      <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-                        <div className="flex items-center space-x-4 text-sm text-slate-500">
-                          <div className="flex items-center space-x-1 hover:text-blue-600 transition-colors">
-                            <Eye className="h-4 w-4" />
-                            <span>{snippet.views.toLocaleString()}</span>
-                          </div>
-                          <div className="flex items-center space-x-1 hover:text-red-500 transition-colors cursor-pointer">
-                            <Heart className="h-4 w-4" />
-                            <span>{snippet.likes}</span>
-                          </div>
-                          <div className="flex items-center space-x-1 hover:text-blue-600 transition-colors">
-                            <MessageCircle className="h-4 w-4" />
-                            <span>{snippet.comments}</span>
-                          </div>
-                        </div>
-                        <Link to={`/snippet/${snippet.slug}`}>
-                          <button className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
-                            View Tutorial →
-                          </button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    )}
+                  </React.Fragment>
                 ))
               )}
             </div>
