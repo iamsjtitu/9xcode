@@ -4,7 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 import os
 import logging
 from pathlib import Path
-from routes import snippets, comments, ads
+from routes import snippets, comments, ads, auth
 from database import close_db_connection
 
 ROOT_DIR = Path(__file__).parent
@@ -22,6 +22,7 @@ async def root():
     return {"message": "9xCodes API is running", "status": "healthy"}
 
 # Include routers
+api_router.include_router(auth.router)
 api_router.include_router(snippets.router)
 api_router.include_router(comments.router)
 api_router.include_router(ads.router)
