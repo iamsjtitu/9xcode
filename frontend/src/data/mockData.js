@@ -7,6 +7,8 @@ export const categories = [
   { id: 6, name: 'Web Server', slug: 'web-server', icon: 'Server' },
   { id: 7, name: 'Monitoring', slug: 'monitoring', icon: 'Activity' },
   { id: 8, name: 'Backup', slug: 'backup', icon: 'HardDrive' },
+  { id: 9, name: 'Computers', slug: 'computers', icon: 'Laptop' },
+  { id: 10, name: 'CCTV Cameras', slug: 'cctv-cameras', icon: 'Camera' },
 ];
 
 export const operatingSystems = [
@@ -16,6 +18,8 @@ export const operatingSystems = [
   { id: 4, name: 'RHEL', slug: 'rhel', color: '#EE0000' },
   { id: 5, name: 'Fedora', slug: 'fedora', color: '#294172' },
   { id: 6, name: 'Linux (Generic)', slug: 'linux', color: '#FCC624' },
+  { id: 7, name: 'Windows', slug: 'windows', color: '#0078D4' },
+  { id: 8, name: 'macOS', slug: 'mac', color: '#000000' },
 ];
 
 export const difficultyLevels = [
