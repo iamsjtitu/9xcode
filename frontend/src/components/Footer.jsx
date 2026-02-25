@@ -9,11 +9,19 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-2 rounded-lg">
-                <Terminal className="h-5 w-5 text-white" />
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-75"></div>
+                <div className="relative bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 p-2 rounded-lg">
+                  <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                </div>
               </div>
-              <span className="text-xl font-bold text-white">9xCodes</span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-white">9xCodes</span>
+                <span className="text-xs text-blue-400">Solve problems 9x faster</span>
+              </div>
             </div>
             <p className="text-sm text-slate-400">
               Your ultimate resource for server commands, code snippets, and Linux tutorials.
