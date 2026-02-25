@@ -72,7 +72,7 @@ const Home = ({ searchQuery, adsConfig }) => {
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/20 px-4 py-2 rounded-full mb-6">
               <Terminal className="h-4 w-4 text-blue-400" />
-              <span className="text-sm text-blue-400 font-medium">Your Server Command Hub</span>
+              <span className="text-sm text-blue-400 font-medium">Solve Your Coding Problems in 9x Speed!</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-blue-300 to-blue-400 bg-clip-text text-transparent">
               Master Linux Server Commands
