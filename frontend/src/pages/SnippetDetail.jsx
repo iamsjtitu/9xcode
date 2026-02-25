@@ -17,26 +17,118 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
 import { Textarea } from '../components/ui/textarea';
+import { Input } from '../components/ui/input';
 import CodeBlock from '../components/CodeBlock';
-import { codeSnippets, categories, difficultyLevels, operatingSystems } from '../data/mockData';
+import GoogleAd from '../components/GoogleAd';
+import { categories, difficultyLevels, operatingSystems } from '../data/mockData';
 import { toast } from '../hooks/use-toast';
+import axios from 'axios';
 
-const SnippetDetail = () => {
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
+const SnippetDetail = ({ adsConfig }) => {
   const { slug } = useParams();
   const [snippet, setSnippet] = useState(null);
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState('');
-  const [comments, setComments] = useState([
-    { id: 1, user: 'JohnDev', text: 'This tutorial saved me hours! Thanks!', time: '2 hours ago' },
-    { id: 2, user: 'SarahAdmin', text: 'Very detailed explanation. Works perfectly on Ubuntu 24.04.', time: '5 hours ago' },
-  ]);
+  const [userName, setUserName] = useState('');
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const foundSnippet = codeSnippets.find((s) => s.slug === slug);
-    if (foundSnippet) {
-      setSnippet(foundSnippet);
-    }
+    fetchSnippet();
   }, [slug]);
+
+  useEffect(() => {
+    if (snippet) {
+      fetchComments();
+    }
+  }, [snippet]);
+
+  const fetchSnippet = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API}/snippets/${slug}`);
+      setSnippet(response.data);
+    } catch (error) {
+      console.error('Error fetching snippet:', error);
+      setSnippet(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(`${API}/comments/${snippet.id}`);
+      setComments(response.data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const response = await axios.post(`${API}/snippets/${slug}/like`);
+      setSnippet((prev) => ({ ...prev, likes: response.data.likes }));
+      setLiked(!liked);
+      toast({
+        title: liked ? 'Removed from favorites' : 'Added to favorites',
+        description: liked ? 'Snippet removed from your favorites' : 'Snippet saved to your favorites',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update like',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    if (comment.trim() && userName.trim()) {
+      try {
+        const response = await axios.post(`${API}/comments`, {
+          snippetId: snippet.id,
+          user: userName,
+          text: comment,
+        });
+        setComments([response.data, ...comments]);
+        setComment('');
+        toast({
+          title: 'Comment posted!',
+          description: 'Your comment has been added successfully',
+        });
+      } catch (error) {
+        toast({
+          title: 'Error',
+          description: 'Failed to post comment',
+          variant: 'destructive',
+        });
+      }
+    } else {
+      toast({
+        title: 'Validation Error',
+        description: 'Please enter your name and comment',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Card className="max-w-md w-full mx-4">
+          <CardContent className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-slate-600">Loading tutorial...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!snippet) {
     return (
