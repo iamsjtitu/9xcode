@@ -85,7 +85,7 @@ const Home = ({ searchQuery, adsConfig }) => {
                 <div className="bg-blue-500/20 p-2 rounded-lg">
                   <Terminal className="h-5 w-5 text-blue-400" />
                 </div>
-                <span className="text-slate-300">{codeSnippets.length}+ Code Snippets</span>
+                <span className="text-slate-300">{filteredSnippets.length}+ Code Snippets</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="bg-blue-500/20 p-2 rounded-lg">
