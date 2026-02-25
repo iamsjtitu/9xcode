@@ -64,7 +64,7 @@ const AdminPanel = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validation
@@ -77,24 +77,49 @@ const AdminPanel = () => {
       return;
     }
 
-    // Here you would send data to backend
-    console.log('Form Data:', formData);
-    toast({
-      title: 'Success!',
-      description: 'Code snippet has been published successfully',
-    });
+    setLoading(true);
+    try {
+      // Convert tags string to array
+      const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+      
+      const payload = {
+        ...formData,
+        tags: tagsArray,
+      };
 
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      category: '',
-      os: [],
-      difficulty: '',
-      tags: '',
-      steps: [{ title: '', description: '', code: '', language: 'bash' }],
-      postInstallation: { title: '', content: '' },
-    });
+      await axios.post(`${API}/snippets`, payload);
+      
+      toast({
+        title: 'Success!',
+        description: 'Code snippet has been published successfully',
+      });
+
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        os: [],
+        difficulty: '',
+        tags: '',
+        steps: [{ title: '', description: '', code: '', language: 'bash' }],
+        postInstallation: { title: '', content: '' },
+      });
+
+      // Redirect to home after a short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (error) {
+      console.error('Error creating snippet:', error);
+      toast({
+        title: 'Error',
+        description: error.response?.data?.detail || 'Failed to create snippet',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
