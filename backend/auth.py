@@ -4,6 +4,8 @@ import jwt
 from datetime import datetime, timedelta
 import os
 from passlib.context import CryptContext
+from fastapi import HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -16,6 +18,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 # Default admin credentials (username: admin, password: admin123)
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD_HASH = pwd_context.hash("admin123")
+
+# Security
+security = HTTPBearer()
 
 class LoginRequest(BaseModel):
     username: str
@@ -51,3 +56,11 @@ def authenticate_user(username: str, password: str) -> bool:
     if username == ADMIN_USERNAME and verify_password(password, ADMIN_PASSWORD_HASH):
         return True
     return False
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Dependency to get current authenticated user"""
+    token = credentials.credentials
+    payload = verify_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return payload
