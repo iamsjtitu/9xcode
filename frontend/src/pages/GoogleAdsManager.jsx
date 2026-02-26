@@ -37,7 +37,7 @@ const GoogleAdsManager = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      await axios.put(`${API}/ads/config`, adsConfig);
+      await axios.post(`${API}/ads/config`, adsConfig);
       toast({
         title: 'Success!',
         description: 'Google Ads configuration has been saved successfully',
