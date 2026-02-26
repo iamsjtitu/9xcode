@@ -131,6 +131,63 @@ const AdminPanel = () => {
           <p className="text-slate-600">Create and publish new code snippets and tutorials</p>
         </div>
 
+        {/* Quick Access Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Link to="/admin/analytics">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 hover:border-blue-400">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <BarChart3 className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Analytics</p>
+                  <p className="text-xs text-slate-500">View site statistics</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link to="/admin/seo">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200 hover:border-green-400">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Globe className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">SEO & Tracking</p>
+                  <p className="text-xs text-slate-500">Google Analytics, SEO</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link to="/admin/ads">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-orange-200 hover:border-orange-400">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <DollarSign className="h-6 w-6 text-orange-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Google Ads</p>
+                  <p className="text-xs text-slate-500">Manage AdSense</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Card className="border-purple-200 bg-purple-50">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Settings className="h-6 w-6 text-purple-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-slate-800">Create Article</p>
+                <p className="text-xs text-slate-500">You are here</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         <form onSubmit={handleSubmit}>
           {/* Basic Information */}
           <Card className="mb-6 border-slate-200">
