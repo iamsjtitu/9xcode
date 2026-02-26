@@ -41,9 +41,9 @@ const Home = ({ searchQuery, adsConfig }) => {
         params.append('search', searchQuery);
       }
       
-      // Add subcategory search if selected
+      // Add subcategory tag filter if selected
       if (subcategory) {
-        params.append('search', subcategory);
+        params.append('tag', subcategory);
       }
       
       params.append('sort', sortBy);
