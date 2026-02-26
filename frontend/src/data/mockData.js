@@ -9,6 +9,7 @@ export const categories = [
   { id: 8, name: 'Backup', slug: 'backup', icon: 'HardDrive' },
   { id: 9, name: 'Computers', slug: 'computers', icon: 'Laptop' },
   { id: 10, name: 'CCTV Cameras', slug: 'cctv-cameras', icon: 'Camera' },
+  { id: 11, name: 'Learning', slug: 'learning', icon: 'BookOpen' },
 ];
 
 export const operatingSystems = [
