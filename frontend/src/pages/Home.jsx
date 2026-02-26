@@ -128,10 +128,11 @@ const Home = ({ searchQuery, adsConfig }) => {
 
           {/* Code Snippets */}
           <div className="flex-1">
-            {/* Learning Subcategories */}
-            {isLearningSelected && (
-              <LearningSubcategories
-                selectedSubcategory={learningSubcategory}
+            {/* Universal Subcategories */}
+            {selectedCategory && (
+              <UniversalSubcategories
+                category={selectedCategory}
+                selectedSubcategory={subcategory}
                 onSubcategoryChange={handleSubcategoryChange}
               />
             )}
