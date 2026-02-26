@@ -44,14 +44,16 @@
 - **Step-by-step tutorials**: Visual step indicators with numbered steps
 
 ### Content Library
-- **Total Articles**: 158
+- **Total Articles**: 190
 - **Categories breakdown**:
+  - Billing Systems: 24 articles (WHMCS installation, configuration, modules, hooks, security, Blesta, HostBill, FOSSBilling)
+  - Web Hosting: 8 articles (cPanel/WHM, Plesk, DirectAdmin, reseller hosting, SSL, email, DNS)
   - Networking: 26 articles (MikroTik, TP-Link, Cisco, OpenWrt, VPN, pfSense, VLAN, etc.)
   - Virtualization: 9 articles (SolusVM, Virtualizor, Proxmox, VMware ESXi, OpenVZ, WHMCS integration)
   - Learning: 25 articles (Tally, Busy, MS Office)
   - Computers: 18 articles (Windows Server 2008-2026)
   - CCTV Cameras: 6 articles
-  - Other categories: Various
+  - Other categories: Various (Installation, Security, Database, etc.)
 
 ## Technical Stack
 
