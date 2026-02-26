@@ -16,5 +16,9 @@ snippets_collection = db.code_snippets
 comments_collection = db.comments
 ads_config_collection = db.google_ads_config
 
+async def get_db():
+    """Get database instance"""
+    return db
+
 async def close_db_connection():
     client.close()
