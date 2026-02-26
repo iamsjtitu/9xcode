@@ -11,6 +11,8 @@ export const categories = [
   { id: 10, name: 'CCTV Cameras', slug: 'cctv-cameras', icon: 'Camera' },
   { id: 11, name: 'Learning', slug: 'learning', icon: 'BookOpen' },
   { id: 12, name: 'Virtualization', slug: 'virtualization', icon: 'Cloud' },
+  { id: 13, name: 'Web Hosting', slug: 'web-hosting', icon: 'Globe' },
+  { id: 14, name: 'Billing Systems', slug: 'billing', icon: 'CreditCard' },
 ];
 
 export const operatingSystems = [
