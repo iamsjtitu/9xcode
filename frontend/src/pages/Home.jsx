@@ -128,6 +128,14 @@ const Home = ({ searchQuery, adsConfig }) => {
 
           {/* Code Snippets */}
           <div className="flex-1">
+            {/* Learning Subcategories */}
+            {isLearningSelected && (
+              <LearningSubcategories
+                selectedSubcategory={learningSubcategory}
+                onSubcategoryChange={handleSubcategoryChange}
+              />
+            )}
+
             {/* Sort Bar */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
               <div className="flex items-center justify-between">
