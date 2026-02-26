@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import SnippetDetail from "./pages/SnippetDetail";
 import AdminPanel from "./pages/AdminPanel";
 import GoogleAdsManager from "./pages/GoogleAdsManager";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import SEOSettings from "./pages/SEOSettings";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
