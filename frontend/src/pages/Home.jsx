@@ -5,6 +5,7 @@ import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import FilterSidebar from '../components/FilterSidebar';
 import GoogleAd from '../components/GoogleAd';
+import LearningSubcategories from '../components/LearningSubcategories';
 import { categories, operatingSystems, difficultyLevels } from '../data/mockData';
 import axios from 'axios';
 
@@ -16,10 +17,11 @@ const Home = ({ searchQuery, adsConfig }) => {
   const [filteredSnippets, setFilteredSnippets] = useState([]);
   const [sortBy, setSortBy] = useState('recent');
   const [loading, setLoading] = useState(true);
+  const [learningSubcategory, setLearningSubcategory] = useState(null);
 
   useEffect(() => {
     fetchSnippets();
-  }, [filters, searchQuery, sortBy]);
+  }, [filters, searchQuery, sortBy, learningSubcategory]);
 
   const fetchSnippets = async () => {
     setLoading(true);
