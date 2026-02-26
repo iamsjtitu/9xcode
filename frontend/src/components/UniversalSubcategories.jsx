@@ -29,7 +29,14 @@ import {
   Download,
   Code,
   Container,
-  Layers
+  Layers,
+  CreditCard,
+  Receipt,
+  ShoppingCart,
+  Users,
+  Mail,
+  Package,
+  Zap
 } from 'lucide-react';
 
 const UniversalSubcategories = ({ category, selectedSubcategory, onSubcategoryChange }) => {
