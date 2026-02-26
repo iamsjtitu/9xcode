@@ -219,4 +219,4 @@ test_plan:
 
 agent_communication:
     - agent: "testing"
-      message: "Completed comprehensive backend API testing. All 8 endpoints tested successfully with 100% pass rate. Backend is fully functional with proper CRUD operations, view counting, like functionality, ads configuration, and comment system. Used production URL https://topic-forum.preview.emergentagent.com/api for testing. All APIs return proper JSON responses with correct status codes and data structures."
+      message: "Completed comprehensive backend API testing. All 8 endpoints tested successfully with 100% pass rate. Backend is fully functional with proper CRUD operations, view counting, like functionality, ads configuration, and comment system. Used production URL https://code-snippets-14.preview.emergentagent.com/api for testing. All APIs return proper JSON responses with correct status codes and data structures."
