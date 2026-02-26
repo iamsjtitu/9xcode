@@ -30,7 +30,7 @@ const SEOSettings = () => {
 
   const fetchSettings = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('admin_token');
       const response = await axios.get(`${API}/ads/config`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -55,7 +55,7 @@ const SEOSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('admin_token');
       await axios.post(`${API}/ads/config`, settings, {
         headers: { Authorization: `Bearer ${token}` }
       });
