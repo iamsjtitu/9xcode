@@ -41,9 +41,9 @@ const Home = ({ searchQuery, adsConfig }) => {
         params.append('search', searchQuery);
       }
       
-      // Add learning subcategory search if selected
-      if (learningSubcategory && filters.category && filters.category.includes('learning')) {
-        params.append('search', learningSubcategory);
+      // Add subcategory search if selected
+      if (subcategory) {
+        params.append('search', subcategory);
       }
       
       params.append('sort', sortBy);
@@ -58,10 +58,10 @@ const Home = ({ searchQuery, adsConfig }) => {
   };
 
   const handleSubcategoryChange = (tag) => {
-    setLearningSubcategory(tag);
+    setSubcategory(tag);
   };
 
-  const isLearningSelected = filters.category && filters.category.includes('learning');
+  const selectedCategory = filters.category && filters.category.length > 0 ? filters.category[0] : null;
 
   const getCategoryName = (slug) => {
     const category = categories.find((c) => c.slug === slug);
