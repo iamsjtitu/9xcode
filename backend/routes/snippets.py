@@ -42,6 +42,7 @@ async def get_snippets(
     os: Optional[str] = Query(None),
     difficulty: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
+    tag: Optional[str] = Query(None),
     sort: Optional[str] = Query("recent"),
     limit: Optional[int] = Query(100)
 ):
@@ -54,6 +55,9 @@ async def get_snippets(
         query['os'] = {'$in': [os]}
     if difficulty:
         query['difficulty'] = difficulty
+    if tag:
+        # Exact tag match for subcategory filtering
+        query['tags'] = {'$in': [tag]}
     if search:
         query['$or'] = [
             {'title': {'$regex': search, '$options': 'i'}},
