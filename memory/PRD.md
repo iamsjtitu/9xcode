@@ -16,13 +16,15 @@
   - Installation, Configuration, Security, Networking, Database, Web Server, Monitoring, Backup, Computers, CCTV Cameras, Learning, Virtualization
 
 #### 2. Navigation & Filtering
-- **Category filtering**: Filter articles by category
+- **Category filtering**: Filter articles by category (14 categories)
 - **Universal subcategories**: All main categories have subcategories for granular filtering
   - Learning: Tally, Busy, MS Excel, MS Word, PowerPoint, Photoshop
   - Computers: Windows Server, Windows, macOS
   - CCTV Cameras: CP Plus, TP-Link VIGI, Setup & Config
   - Networking: Routers, VPN, LAN Setup, WiFi
   - Virtualization: SolusVM, Virtualizor, Proxmox, VMware
+  - Web Hosting: cPanel/WHM, Plesk, DirectAdmin, Reseller, Domains, SSL, Email
+  - Billing Systems: WHMCS, Blesta, HostBill, FOSSBilling, Automation, Modules
   - Security, Database, Installation: Various subcategories
 - **Search functionality**: Search articles by keywords
 - **Sorting**: Sort by Most Recent, Most Popular, Most Viewed
