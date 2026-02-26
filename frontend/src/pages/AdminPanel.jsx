@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircle, Save, X, AlertCircle } from 'lucide-react';
+import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -10,7 +10,7 @@ import { Badge } from '../components/ui/badge';
 import { toast } from '../hooks/use-toast';
 import { categories, operatingSystems, difficultyLevels } from '../data/mockData';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
