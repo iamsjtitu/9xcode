@@ -97,6 +97,25 @@ const UniversalSubcategories = ({ category, selectedSubcategory, onSubcategoryCh
       { id: 'proxmox', name: 'Proxmox', icon: Layers, tag: 'proxmox' },
       { id: 'vmware', name: 'VMware', icon: Cloud, tag: 'vmware' },
     ],
+    'web-hosting': [
+      { id: 'all', name: 'All', icon: Globe, tag: null },
+      { id: 'cpanel', name: 'cPanel/WHM', icon: Server, tag: 'cpanel' },
+      { id: 'plesk', name: 'Plesk', icon: Server, tag: 'plesk' },
+      { id: 'directadmin', name: 'DirectAdmin', icon: Settings, tag: 'directadmin' },
+      { id: 'reseller', name: 'Reseller', icon: Users, tag: 'reseller' },
+      { id: 'domains', name: 'Domains', icon: Globe, tag: 'domains' },
+      { id: 'ssl', name: 'SSL', icon: Lock, tag: 'ssl' },
+      { id: 'email', name: 'Email', icon: Mail, tag: 'email' },
+    ],
+    billing: [
+      { id: 'all', name: 'All', icon: CreditCard, tag: null },
+      { id: 'whmcs', name: 'WHMCS', icon: Receipt, tag: 'whmcs' },
+      { id: 'blesta', name: 'Blesta', icon: CreditCard, tag: 'blesta' },
+      { id: 'hostbill', name: 'HostBill', icon: Receipt, tag: 'hostbill' },
+      { id: 'fossbilling', name: 'FOSSBilling', icon: ShoppingCart, tag: 'fossbilling' },
+      { id: 'automation', name: 'Automation', icon: Zap, tag: 'automation' },
+      { id: 'modules', name: 'Modules', icon: Package, tag: 'modules' },
+    ],
   };
 
   const subcategories = subcategoryConfig[category] || null;
