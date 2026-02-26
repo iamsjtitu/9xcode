@@ -40,6 +40,12 @@ const Home = ({ searchQuery, adsConfig }) => {
       if (searchQuery && searchQuery.trim() !== '') {
         params.append('search', searchQuery);
       }
+      
+      // Add learning subcategory search if selected
+      if (learningSubcategory && filters.category && filters.category.includes('learning')) {
+        params.append('search', learningSubcategory);
+      }
+      
       params.append('sort', sortBy);
       
       const response = await axios.get(`${API}/snippets?${params.toString()}`);
@@ -50,6 +56,12 @@ const Home = ({ searchQuery, adsConfig }) => {
       setLoading(false);
     }
   };
+
+  const handleSubcategoryChange = (tag) => {
+    setLearningSubcategory(tag);
+  };
+
+  const isLearningSelected = filters.category && filters.category.includes('learning');
 
   const getCategoryName = (slug) => {
     const category = categories.find((c) => c.slug === slug);
