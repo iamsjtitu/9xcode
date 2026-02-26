@@ -104,6 +104,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/admin/analytics"
+                element={
+                  <ProtectedRoute>
+                    <AnalyticsDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/seo"
+                element={
+                  <ProtectedRoute>
+                    <SEOSettings />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />
