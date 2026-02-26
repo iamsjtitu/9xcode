@@ -20,6 +20,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Input } from '../components/ui/input';
 import CodeBlock from '../components/CodeBlock';
 import GoogleAd from '../components/GoogleAd';
+import SocialShare from '../components/SocialShare';
 import { categories, difficultyLevels, operatingSystems } from '../data/mockData';
 import { toast } from '../hooks/use-toast';
 import axios from 'axios';
