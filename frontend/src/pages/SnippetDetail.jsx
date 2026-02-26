@@ -242,23 +242,29 @@ const SnippetDetail = ({ adsConfig }) => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3 pt-4">
-                <Button
-                  variant={liked ? 'default' : 'outline'}
-                  onClick={handleLike}
-                  className={liked ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
-                >
-                  <Heart className={`h-4 w-4 mr-2 ${liked ? 'fill-current' : ''}`} />
-                  {liked ? 'Liked' : 'Like'} ({snippet.likes + (liked ? 1 : 0)})
-                </Button>
-                <Button variant="outline" onClick={handleShare}>
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-                <Button variant="outline">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Comments ({comments.length})
-                </Button>
+              <div className="flex flex-col gap-4 pt-4">
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    variant={liked ? 'default' : 'outline'}
+                    onClick={handleLike}
+                    className={liked ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
+                  >
+                    <Heart className={`h-4 w-4 mr-2 ${liked ? 'fill-current' : ''}`} />
+                    {liked ? 'Liked' : 'Like'} ({snippet.likes + (liked ? 1 : 0)})
+                  </Button>
+                  <Button variant="outline" onClick={handleShare}>
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Copy Link
+                  </Button>
+                  <Button variant="outline">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Comments ({comments.length})
+                  </Button>
+                </div>
+                
+                {/* Social Share Buttons */}
+                <Separator />
+                <SocialShare title={snippet.title} url={window.location.href} />
               </div>
             </CardHeader>
           </Card>
