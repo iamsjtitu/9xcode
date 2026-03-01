@@ -103,10 +103,12 @@ const Home = ({ searchQuery, adsConfig }) => {
 
   const handleSubcategoryChange = (tag) => {
     setSubcategory(tag);
+    setPage(1);
   };
 
   const handleTagClick = (tag) => {
     setSearchParams({ tag });
+    setPage(1);
   };
 
   const clearTagFilter = () => {
