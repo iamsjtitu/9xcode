@@ -132,7 +132,7 @@ const AdminPanel = () => {
         </div>
 
         {/* Quick Access Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
           <Link to="/admin/analytics">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 hover:border-blue-400">
               <CardContent className="p-4 flex items-center gap-3">
@@ -170,6 +170,20 @@ const AdminPanel = () => {
                 <div>
                   <p className="font-semibold text-slate-800">Google Ads</p>
                   <p className="text-xs text-slate-500">Manage AdSense</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/change-password">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-red-200 hover:border-red-400">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Lock className="h-6 w-6 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Password</p>
+                  <p className="text-xs text-slate-500">Change password</p>
                 </div>
               </CardContent>
             </Card>
