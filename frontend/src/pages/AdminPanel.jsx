@@ -18,6 +18,8 @@ const API = `${BACKEND_URL}/api`;
 const AdminPanel = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
