@@ -131,6 +131,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/admin/subscribers"
+                element={
+                  <ProtectedRoute>
+                    <SubscribersManager />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/articles"
+                element={
+                  <ProtectedRoute>
+                    <ManageArticles />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />
