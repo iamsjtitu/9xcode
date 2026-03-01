@@ -43,7 +43,7 @@ async def get_popular_snippets(limit: int = Query(6)):
     snippets = await cursor.to_list(length=limit)
     return [CodeSnippet(**s) for s in snippets]
 
-@router.get("", response_model=List[CodeSnippet])
+@router.get("", response_model=None)
 async def get_snippets(
     category: Optional[str] = Query(None),
     os: Optional[str] = Query(None),
@@ -51,9 +51,10 @@ async def get_snippets(
     search: Optional[str] = Query(None),
     tag: Optional[str] = Query(None),
     sort: Optional[str] = Query("recent"),
-    limit: Optional[int] = Query(100)
+    page: Optional[int] = Query(1, ge=1),
+    limit: Optional[int] = Query(12, ge=1, le=100)
 ):
-    """Get all code snippets with optional filters"""
+    """Get all code snippets with optional filters and pagination"""
     query = {}
     
     if category:
@@ -63,7 +64,6 @@ async def get_snippets(
     if difficulty:
         query['difficulty'] = difficulty
     if tag:
-        # Exact tag match for subcategory filtering
         query['tags'] = {'$in': [tag]}
     if search:
         query['$or'] = [
@@ -78,13 +78,20 @@ async def get_snippets(
         sort_by = [('likes', -1)]
     elif sort == "views":
         sort_by = [('views', -1)]
-    else:  # recent
+    else:
         sort_by = [('createdAt', -1)]
     
-    cursor = snippets_collection.find(query).sort(sort_by).limit(limit)
+    total = await snippets_collection.count_documents(query)
+    skip = (page - 1) * limit
+    cursor = snippets_collection.find(query).sort(sort_by).skip(skip).limit(limit)
     snippets = await cursor.to_list(length=limit)
     
-    return [CodeSnippet(**snippet) for snippet in snippets]
+    return {
+        "snippets": [CodeSnippet(**s).dict() for s in snippets],
+        "total": total,
+        "page": page,
+        "pages": (total + limit - 1) // limit,
+    }
 
 @router.get("/search-suggestions")
 async def search_suggestions(q: str = Query(..., min_length=2)):
