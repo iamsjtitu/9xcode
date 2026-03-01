@@ -11,6 +11,8 @@ import GoogleAdsManager from "./pages/GoogleAdsManager";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import SEOSettings from "./pages/SEOSettings";
 import ChangePassword from "./pages/ChangePassword";
+import SubscribersManager from "./pages/SubscribersManager";
+import ManageArticles from "./pages/ManageArticles";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
