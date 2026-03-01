@@ -77,6 +77,9 @@ Disallow: /api/
 # Sitemap
 Sitemap: {SITE_URL}/api/seo/sitemap.xml
 
+# RSS Feed
+# {SITE_URL}/api/seo/rss.xml
+
 # Crawl-delay
 Crawl-delay: 1
 """
