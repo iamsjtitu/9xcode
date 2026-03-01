@@ -36,6 +36,13 @@ async def create_snippet(snippet: CodeSnippetCreate):
         return snippet_obj
     raise HTTPException(status_code=500, detail="Failed to create snippet")
 
+@router.get("/popular", response_model=List[CodeSnippet])
+async def get_popular_snippets(limit: int = Query(6)):
+    """Get most popular snippets by views"""
+    cursor = snippets_collection.find().sort([('views', -1)]).limit(limit)
+    snippets = await cursor.to_list(length=limit)
+    return [CodeSnippet(**s) for s in snippets]
+
 @router.get("", response_model=List[CodeSnippet])
 async def get_snippets(
     category: Optional[str] = Query(None),
