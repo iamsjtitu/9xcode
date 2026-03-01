@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
-import { Button } from './ui/button';
 
 const CodeBlock = ({ code, language = 'bash', title }) => {
   const [copied, setCopied] = useState(false);
@@ -12,32 +11,35 @@ const CodeBlock = ({ code, language = 'bash', title }) => {
   };
 
   return (
-    <div className="relative group">
+    <div className="relative group" data-testid="code-block">
       {title && (
         <div className="bg-slate-700 px-4 py-2 rounded-t-lg text-sm text-slate-300 font-medium">
           {title}
         </div>
       )}
       <div className="relative bg-slate-900 rounded-lg overflow-hidden">
-        <Button
-          size="sm"
-          variant="ghost"
+        <button
           onClick={handleCopy}
-          className="absolute top-2 right-2 text-slate-400 hover:text-white hover:bg-slate-700 transition-all opacity-0 group-hover:opacity-100"
+          data-testid="copy-code-btn"
+          className={`absolute top-2 right-2 flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-300 ${
+            copied
+              ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+              : 'bg-slate-700/80 text-slate-300 hover:bg-slate-600 hover:text-white border border-slate-600'
+          }`}
         >
           {copied ? (
             <>
-              <Check className="h-4 w-4 mr-1" />
+              <Check className="h-3.5 w-3.5" />
               Copied!
             </>
           ) : (
             <>
-              <Copy className="h-4 w-4 mr-1" />
+              <Copy className="h-3.5 w-3.5" />
               Copy
             </>
           )}
-        </Button>
-        <pre className="p-4 overflow-x-auto">
+        </button>
+        <pre className="p-4 pr-24 overflow-x-auto">
           <code className="text-sm text-slate-300 font-mono">{code}</code>
         </pre>
       </div>
