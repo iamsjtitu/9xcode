@@ -13,7 +13,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 ### Core Features
 - Full-stack app (React + FastAPI + MongoDB) - Live at 9xcodes.com
 - Admin panel with stats dashboard, password change
-- 237+ articles across 14 categories
+- 245+ articles across 14 categories
 - Social sharing, SEO (sitemap, robots.txt, JSON-LD)
 - Automatic daily MongoDB backups
 
@@ -25,7 +25,8 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - Tag-based Search (clickable tags)
 - Table of Contents (desktop sidebar + mobile)
 - Reading time estimate
-- **Search Autocomplete** - Real-time suggestions with keyword highlighting, category labels, keyboard navigation (↑↓ Enter Escape)
+- Search Autocomplete (debounced, highlighted, keyboard nav)
+- **Homepage Pagination** (12 per page, numbered pages, smooth scroll)
 
 ### Admin Features
 - Newsletter Subscribers management (/admin/subscribers)
@@ -33,19 +34,23 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - Article Seeder (/admin/seeder) - 14 categories x 8 OS templates
 - Newsletter subscription form in footer
 
+### Codebase Cleanup
+- Consolidated 18 individual seed_*.py files into seed_all.py + admin UI seeder
+- Only seed_all.py and seed_data.py remain
+
 ## Key API Endpoints
-- `GET /api/snippets/search-suggestions?q=` - Autocomplete suggestions (max 8)
-- `GET /api/snippets/popular` - Top viewed articles
+- `GET /api/snippets?page=1&limit=12` - Paginated articles (returns {snippets, total, page, pages})
+- `GET /api/snippets/search-suggestions?q=` - Autocomplete
+- `GET /api/snippets/popular` - Top viewed
 - `GET /api/snippets/{slug}/related` - Related articles
-- `POST /api/seeder/preview` / `POST /api/seeder/seed` - Article seeder
+- `POST /api/seeder/seed` - Seed articles by category+OS
 - `POST /api/newsletter/subscribe` - Newsletter
-- `POST /api/articles/bulk-delete` / `POST /api/articles/bulk-category` - Bulk ops
+- `POST /api/articles/bulk-delete` / `bulk-category` - Bulk ops
+- `GET /api/articles/export?format=csv|json` - Export
 
 ## Credentials
 - Admin: admin / admin123
 
 ## Pending / Backlog
-- P3: Cleanup old individual seed_*.py files
-- P3: Homepage articles pagination
 - P3: Dark/Light mode toggle
 - P3: Per-article analytics view
