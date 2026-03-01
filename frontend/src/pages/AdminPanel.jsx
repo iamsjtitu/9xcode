@@ -36,14 +36,8 @@ const AdminPanel = () => {
     const fetchStats = async (retryCount = 0) => {
       const maxRetries = 3;
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No token found');
-          setStatsLoading(false);
-          return;
-        }
-        const response = await axios.get(`${API}/analytics/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` },
+        // Use public stats endpoint - no auth required
+        const response = await axios.get(`${API}/analytics/stats`, {
           timeout: 10000
         });
         if (response.data) {
@@ -58,18 +52,11 @@ const AdminPanel = () => {
           return;
         }
       } finally {
-        if (retryCount >= 2 || retryCount === 0) {
-          setStatsLoading(false);
-        }
+        setStatsLoading(false);
       }
     };
     
-    // Small delay to ensure token is available
-    const timer = setTimeout(() => {
-      fetchStats();
-    }, 100);
-    
-    return () => clearTimeout(timer);
+    fetchStats();
   }, []);
 
   const handleInputChange = (field, value) => {
