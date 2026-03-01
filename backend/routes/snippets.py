@@ -86,6 +86,17 @@ async def get_snippets(
     
     return [CodeSnippet(**snippet) for snippet in snippets]
 
+@router.get("/search-suggestions")
+async def search_suggestions(q: str = Query(..., min_length=2)):
+    """Fast search suggestions for autocomplete"""
+    query = {'$or': [
+        {'title': {'$regex': q, '$options': 'i'}},
+        {'tags': {'$in': [re.compile(q, re.IGNORECASE)]}},
+    ]}
+    cursor = snippets_collection.find(query, {'_id': 0, 'title': 1, 'slug': 1, 'category': 1}).limit(8)
+    results = await cursor.to_list(length=8)
+    return results
+
 @router.get("/{slug}/related", response_model=List[CodeSnippet])
 async def get_related_snippets(slug: str, limit: int = Query(5)):
     """Get related snippets based on same category and matching tags"""
