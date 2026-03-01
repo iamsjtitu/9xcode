@@ -293,7 +293,7 @@ const Home = ({ searchQuery, adsConfig }) => {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-slate-600">
-                  Showing <span className="font-semibold text-slate-900">{displaySnippets.length}</span> results
+                  Showing <span className="font-semibold text-slate-900">{displaySnippets.length}</span> of <span className="font-semibold text-slate-900">{totalCount}</span> results
                 </p>
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-slate-600">Sort by:</span>
