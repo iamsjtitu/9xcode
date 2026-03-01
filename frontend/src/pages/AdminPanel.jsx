@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
