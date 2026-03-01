@@ -6,6 +6,55 @@ from typing import Optional
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
+@router.get("/stats")
+async def get_public_stats():
+    """Get basic stats for admin panel - no auth required (only accessible from admin panel)"""
+    db = await get_db()
+    
+    # Total articles
+    total_articles = await db.code_snippets.count_documents({})
+    
+    # Total views
+    pipeline = [
+        {"$group": {"_id": None, "total_views": {"$sum": "$views"}}}
+    ]
+    views_result = await db.code_snippets.aggregate(pipeline).to_list(1)
+    total_views = views_result[0]["total_views"] if views_result else 0
+    
+    # Total likes
+    likes_pipeline = [
+        {"$group": {"_id": None, "total_likes": {"$sum": "$likes"}}}
+    ]
+    likes_result = await db.code_snippets.aggregate(likes_pipeline).to_list(1)
+    total_likes = likes_result[0]["total_likes"] if likes_result else 0
+    
+    # Total comments
+    total_comments = await db.comments.count_documents({})
+    
+    # Articles by category
+    category_pipeline = [
+        {"$group": {"_id": "$category", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    categories = await db.code_snippets.aggregate(category_pipeline).to_list(20)
+    
+    # Recent articles (last 7 days)
+    week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    recent_count = await db.code_snippets.count_documents({
+        "createdAt": {"$gte": week_ago}
+    })
+    
+    return {
+        "overview": {
+            "total_articles": total_articles,
+            "total_views": total_views,
+            "total_likes": total_likes,
+            "total_comments": total_comments,
+            "articles_this_week": recent_count
+        },
+        "categories": [{"name": c["_id"], "count": c["count"]} for c in categories]
+    }
+
 @router.get("/dashboard")
 async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     """Get analytics dashboard data for admin"""
