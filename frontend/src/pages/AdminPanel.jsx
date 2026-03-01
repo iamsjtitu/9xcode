@@ -185,6 +185,20 @@ const AdminPanel = () => {
               <span className="ml-3 text-slate-600">Loading statistics...</span>
             </CardContent>
           </Card>
+        ) : !stats ? (
+          <Card className="col-span-full mb-0 border-orange-200 bg-orange-50">
+            <CardContent className="p-6 flex items-center justify-between">
+              <span className="text-orange-700">Stats could not be loaded.</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => window.location.reload()}
+                className="border-orange-300 text-orange-700 hover:bg-orange-100"
+              >
+                Retry
+              </Button>
+            </CardContent>
+          </Card>
         ) : stats && (
           <>
             {/* Overview Stats */}
