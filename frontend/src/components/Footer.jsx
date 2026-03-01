@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Github, Twitter, Mail, Send } from 'lucide-react';
+import { Github, Twitter, Mail, Send, Rss } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -134,6 +134,9 @@ const Footer = () => {
             {subStatus === 'exists' && <p className="text-xs text-amber-400 mt-2">Already subscribed!</p>}
             {subStatus === 'error' && <p className="text-xs text-red-400 mt-2">Something went wrong. Try again.</p>}
             <div className="flex space-x-4 mt-4">
+              <a href="https://9xcodes.com/api/seo/rss.xml" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-orange-400 transition-colors" title="RSS Feed" data-testid="rss-feed-link">
+                <Rss className="h-5 w-5" />
+              </a>
               <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">
                 <Github className="h-5 w-5" />
               </a>
