@@ -66,16 +66,22 @@
 - **Step-by-step tutorials**: Visual step indicators with numbered steps
 
 ### Content Library
-- **Total Articles**: 190
+- **Total Articles**: 220+
 - **Categories breakdown**:
-  - Billing Systems: 24 articles (WHMCS installation, configuration, modules, hooks, security, Blesta, HostBill, FOSSBilling)
-  - Web Hosting: 8 articles (cPanel/WHM, Plesk, DirectAdmin, reseller hosting, SSL, email, DNS)
+  - Learning: 30 articles (Tally, Busy, MS Office, Excel, Word, Photoshop)
   - Networking: 26 articles (MikroTik, TP-Link, Cisco, OpenWrt, VPN, pfSense, VLAN, etc.)
-  - Virtualization: 9 articles (SolusVM, Virtualizor, Proxmox, VMware ESXi, OpenVZ, WHMCS integration)
-  - Learning: 25 articles (Tally, Busy, MS Office)
-  - Computers: 18 articles (Windows Server 2008-2026)
-  - CCTV Cameras: 6 articles
-  - Other categories: Various (Installation, Security, Database, etc.)
+  - Billing Systems: 24 articles (WHMCS, Blesta, HostBill, FOSSBilling)
+  - Installation: 22 articles (Docker, Kubernetes, Jenkins, GitLab, Ansible, Terraform, Prometheus, Grafana, Redis, Elasticsearch)
+  - Computers: 21 articles (Windows Server, Active Directory, DHCP, File Server)
+  - Security: 16 articles (Fail2Ban, 2FA, UFW, Let's Encrypt, Nginx hardening, CSF)
+  - Database: 13 articles (MySQL tuning, PostgreSQL backup, MongoDB replica set)
+  - Web Server: 13 articles (Nginx load balancer, Apache virtual hosts, reverse proxy)
+  - Configuration: 10 articles
+  - Monitoring: 10 articles
+  - Backup: 10 articles
+  - Virtualization: 9 articles (SolusVM, Virtualizor, Proxmox, VMware ESXi, OpenVZ)
+  - CCTV Cameras: 8 articles (Hikvision, Dahua, CP Plus)
+  - Web Hosting: 8 articles (cPanel/WHM, Plesk, DirectAdmin)
 
 ## Technical Stack
 
