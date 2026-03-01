@@ -42,6 +42,9 @@ const Home = ({ searchQuery, adsConfig }) => {
   const [subcategory, setSubcategory] = useState(null);
   const [bookmarks, setBookmarks] = useState(getBookmarks());
   const [showBookmarks, setShowBookmarks] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const activeTag = searchParams.get('tag');
 
@@ -51,7 +54,7 @@ const Home = ({ searchQuery, adsConfig }) => {
 
   useEffect(() => {
     fetchSnippets();
-  }, [filters, searchQuery, sortBy, subcategory, activeTag]);
+  }, [filters, searchQuery, sortBy, subcategory, activeTag, page]);
 
   const fetchPopularSnippets = async () => {
     try {
