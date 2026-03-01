@@ -15,6 +15,7 @@ db = client[os.environ['DB_NAME']]
 snippets_collection = db.code_snippets
 comments_collection = db.comments
 ads_config_collection = db.google_ads_config
+subscribers_collection = db.subscribers
 
 async def get_db():
     """Get database instance"""
