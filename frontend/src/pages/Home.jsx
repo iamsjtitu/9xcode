@@ -88,8 +88,12 @@ const Home = ({ searchQuery, adsConfig }) => {
         params.append('tag', activeTag);
       }
       params.append('sort', sortBy);
+      params.append('page', page);
+      params.append('limit', 12);
       const response = await axios.get(`${API}/snippets?${params.toString()}`);
-      setFilteredSnippets(response.data);
+      setFilteredSnippets(response.data.snippets);
+      setTotalPages(response.data.pages);
+      setTotalCount(response.data.total);
     } catch (error) {
       console.error('Error fetching snippets:', error);
     } finally {
