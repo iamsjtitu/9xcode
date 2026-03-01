@@ -3,6 +3,7 @@ from fastapi.responses import PlainTextResponse
 from database import get_db
 from datetime import datetime, timezone
 import os
+import html
 
 router = APIRouter(prefix="/seo", tags=["seo"])
 
