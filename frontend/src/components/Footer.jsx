@@ -1,8 +1,33 @@
-import React from 'react';
-import { Terminal, Github, Twitter, Mail } from 'lucide-react';
+import React, { useState } from 'react';
+import { Github, Twitter, Mail, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [subStatus, setSubStatus] = useState(null); // 'success' | 'error' | 'exists' | null
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubmitting(true);
+    setSubStatus(null);
+    try {
+      await axios.post(`${API}/newsletter/subscribe`, { email: email.trim() });
+      setSubStatus('success');
+      setEmail('');
+    } catch (err) {
+      if (err.response?.status === 409) setSubStatus('exists');
+      else setSubStatus('error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 border-t border-slate-800">
       <div className="container mx-auto px-4 py-12">
