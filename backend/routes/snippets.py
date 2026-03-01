@@ -86,6 +86,24 @@ async def get_snippets(
     
     return [CodeSnippet(**snippet) for snippet in snippets]
 
+@router.get("/{slug}/related", response_model=List[CodeSnippet])
+async def get_related_snippets(slug: str, limit: int = Query(5)):
+    """Get related snippets based on same category and matching tags"""
+    snippet = await snippets_collection.find_one({'slug': slug})
+    if not snippet:
+        raise HTTPException(status_code=404, detail="Snippet not found")
+    
+    query = {
+        'slug': {'$ne': slug},
+        '$or': [
+            {'category': snippet['category']},
+            {'tags': {'$in': snippet.get('tags', [])}}
+        ]
+    }
+    cursor = snippets_collection.find(query).sort([('views', -1)]).limit(limit)
+    results = await cursor.to_list(length=limit)
+    return [CodeSnippet(**s) for s in results]
+
 @router.get("/{slug}", response_model=CodeSnippet)
 async def get_snippet(slug: str):
     """Get a single code snippet by slug"""
