@@ -107,10 +107,33 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Social */}
+          {/* Newsletter + Social */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Connect</h3>
-            <div className="flex space-x-4">
+            <h3 className="font-semibold text-white mb-4">Newsletter</h3>
+            <p className="text-sm text-slate-400 mb-3">Get weekly updates on new tutorials.</p>
+            <form onSubmit={handleSubscribe} className="flex gap-2" data-testid="footer-newsletter-form">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setSubStatus(null); }}
+                required
+                className="flex-1 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 min-w-0"
+                data-testid="footer-email-input"
+              />
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex-shrink-0"
+                data-testid="footer-subscribe-btn"
+              >
+                <Send className="h-4 w-4" />
+              </button>
+            </form>
+            {subStatus === 'success' && <p className="text-xs text-green-400 mt-2">Subscribed successfully!</p>}
+            {subStatus === 'exists' && <p className="text-xs text-amber-400 mt-2">Already subscribed!</p>}
+            {subStatus === 'error' && <p className="text-xs text-red-400 mt-2">Something went wrong. Try again.</p>}
+            <div className="flex space-x-4 mt-4">
               <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">
                 <Github className="h-5 w-5" />
               </a>
