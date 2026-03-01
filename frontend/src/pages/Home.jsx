@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Eye, Heart, MessageCircle, TrendingUp, Clock, Terminal, Flame, Bookmark, BookmarkCheck, Tag } from 'lucide-react';
+import { Eye, Heart, MessageCircle, TrendingUp, Clock, Terminal, Flame, Bookmark, BookmarkCheck, Tag, Send } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import FilterSidebar from '../components/FilterSidebar';
