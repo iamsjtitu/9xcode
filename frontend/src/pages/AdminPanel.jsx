@@ -31,22 +31,45 @@ const AdminPanel = () => {
     postInstallation: { title: '', content: '' },
   });
 
-  // Fetch dashboard stats on mount
+  // Fetch dashboard stats on mount with retry logic
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchStats = async (retryCount = 0) => {
+      const maxRetries = 3;
       try {
         const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found');
+          setStatsLoading(false);
+          return;
+        }
         const response = await axios.get(`${API}/analytics/dashboard`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 10000
         });
-        setStats(response.data);
+        if (response.data) {
+          setStats(response.data);
+        }
       } catch (error) {
         console.error('Error fetching stats:', error);
+        // Retry on failure
+        if (retryCount < maxRetries) {
+          console.log(`Retrying... (${retryCount + 1}/${maxRetries})`);
+          setTimeout(() => fetchStats(retryCount + 1), 1000);
+          return;
+        }
       } finally {
-        setStatsLoading(false);
+        if (retryCount >= 2 || retryCount === 0) {
+          setStatsLoading(false);
+        }
       }
     };
-    fetchStats();
+    
+    // Small delay to ensure token is available
+    const timer = setTimeout(() => {
+      fetchStats();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const handleInputChange = (field, value) => {
