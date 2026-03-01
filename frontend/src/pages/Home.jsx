@@ -41,6 +41,8 @@ const Home = ({ searchQuery, adsConfig }) => {
   const [subcategory, setSubcategory] = useState(null);
   const [bookmarks, setBookmarks] = useState(getBookmarks());
   const [showBookmarks, setShowBookmarks] = useState(false);
+  const [nlEmail, setNlEmail] = useState('');
+  const [nlStatus, setNlStatus] = useState(null);
 
   const activeTag = searchParams.get('tag');
 
