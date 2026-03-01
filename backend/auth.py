@@ -15,9 +15,9 @@ SECRET_KEY = os.getenv("JWT_SECRET", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 
-# Default admin credentials (username: admin, password: admin123)
+# Default admin credentials
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD_HASH = pwd_context.hash("admin123")
+DEFAULT_PASSWORD_HASH = pwd_context.hash("admin123")
 
 # Security
 security = HTTPBearer()
@@ -26,9 +26,16 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
@@ -52,11 +59,6 @@ def verify_token(token: str) -> Optional[dict]:
     except jwt.InvalidTokenError:
         return None
 
-def authenticate_user(username: str, password: str) -> bool:
-    if username == ADMIN_USERNAME and verify_password(password, ADMIN_PASSWORD_HASH):
-        return True
-    return False
-
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Dependency to get current authenticated user"""
     token = credentials.credentials
@@ -64,3 +66,18 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     return payload
+
+async def get_admin_password_hash(db):
+    """Get admin password hash from database or return default"""
+    admin_doc = await db.admin_settings.find_one({"type": "credentials"})
+    if admin_doc and admin_doc.get("password_hash"):
+        return admin_doc["password_hash"]
+    return DEFAULT_PASSWORD_HASH
+
+async def update_admin_password(db, new_password_hash: str):
+    """Update admin password in database"""
+    await db.admin_settings.update_one(
+        {"type": "credentials"},
+        {"$set": {"password_hash": new_password_hash, "updated_at": datetime.utcnow()}},
+        upsert=True
+    )
