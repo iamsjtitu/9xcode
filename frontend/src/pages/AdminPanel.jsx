@@ -341,6 +341,20 @@ const AdminPanel = () => {
               </CardContent>
             </Card>
           </Link>
+
+          <Link to="/admin/seeder">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200 hover:border-green-400" data-testid="admin-seeder-link">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Sprout className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Seeder</p>
+                  <p className="text-xs text-slate-500">Seed articles</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
           
           <Card className="border-purple-200 bg-purple-50">
             <CardContent className="p-4 flex items-center gap-3">
