@@ -11,7 +11,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - **Content Population**: Pre-populated with 237+ articles
 - **Social Sharing**: Social media share buttons on article pages
 - **SEO & Tracking**: Sitemaps, robots.txt, Analytics/Adsense admin interface
-- **Site Optimization**: Security and speed optimization
+- **Site Optimization**: Security headers and speed optimization
 - **Branding**: 9xCodes logo with tagline "solve your coding problems in 9x speed!"
 - **Admin Analytics**: Analytics dashboard for admin
 
@@ -22,33 +22,74 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - **Deployment**: Nginx, PM2, Certbot (SSL), Ubuntu VPS
 
 ## What's Been Implemented (Complete)
+### Core Features
 - Full-stack application (React + FastAPI + MongoDB)
 - Admin panel with stats dashboard
-- 237+ articles across all categories
-- Social sharing buttons
-- SEO features (sitemap, robots.txt)
-- VPS deployment with SSL
+- 237+ articles across 14 categories
+- Social sharing buttons (Facebook, Twitter, WhatsApp, Telegram, Instagram)
+- SEO features (sitemap, robots.txt, JSON-LD structured data)
+- VPS deployment with SSL (9xcodes.com)
 - Automatic daily MongoDB backups
 - Public analytics stats endpoint
 - "Made with Emergent" branding removed
-- Most Popular Articles section on homepage
-- Related Articles on article detail pages
+
+### Session 2 Features (March 2026)
+- Most Popular Articles section on homepage (top 6 by views)
+- Related Articles on article detail pages (by category/tags)
 - Bookmarks / Save for Later (localStorage based)
-- Copy Code Button always visible with animation
-- Tag-based Search (clickable tags on articles)
+- Copy Code Button always visible with green animation
+- Tag-based Search (clickable tags filter articles)
 - Table of Contents (desktop sidebar + mobile card)
 - Reading time estimate on articles
 - Consolidated seed_all.py seeder utility
 
+### Session 3 Features (March 2026)
+- **Newsletter Subscription** - Email collection in footer + homepage CTA
+- **Subscribers Admin** - /admin/subscribers page with search, delete, CSV export
+- **Bulk Article Management** - /admin/articles with:
+  - Select multiple articles
+  - Bulk delete
+  - Bulk category change
+  - Export as CSV or JSON
+  - Search and category filter
+  - Pagination (20 per page)
+
 ## Key API Endpoints
+### Auth
 - `POST /api/auth/login` - Admin login
 - `POST /api/auth/change-password` - Change admin password
+
+### Snippets
 - `GET /api/snippets` - List snippets with filters
 - `GET /api/snippets/popular` - Top viewed articles
 - `GET /api/snippets/{slug}` - Single article
 - `GET /api/snippets/{slug}/related` - Related articles
+- `POST /api/snippets` - Create article
+- `DELETE /api/snippets/{slug}` - Delete article
+
+### Newsletter
+- `POST /api/newsletter/subscribe` - Subscribe email
+- `GET /api/newsletter/subscribers` - List (paginated, searchable)
+- `GET /api/newsletter/subscribers/export` - Export CSV
+- `GET /api/newsletter/subscribers/count` - Count
+- `DELETE /api/newsletter/subscribers/{email}` - Remove
+
+### Articles Management
+- `GET /api/articles/list` - Paginated list with search/filter
+- `POST /api/articles/bulk-delete` - Bulk delete by slugs
+- `POST /api/articles/bulk-category` - Bulk change category
+- `GET /api/articles/export?format=csv|json` - Export
+
+### Other
 - `GET /api/analytics/stats` - Public stats
 - `GET /api/analytics/dashboard` - Admin dashboard
+
+## DB Collections
+- `code_snippets` - Articles/tutorials
+- `comments` - Article comments
+- `google_ads_config` - AdSense configuration
+- `subscribers` - Newsletter subscribers
+- `users` - Admin users
 
 ## Credentials
 - Admin URL: https://9xcodes.com/login
@@ -56,6 +97,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - Password: admin123
 
 ## Pending / Backlog
-- P2: Debug old seed_master.py (low priority since seed_all.py works)
-- P2: Cleanup old individual seed_*.py files from repo
-- P3: Pagination for articles list (currently limited to 100)
+- P3: Cleanup old individual seed_*.py files from repo
+- P3: Add pagination for main articles list on homepage
+- P3: Dark/Light mode toggle
+- P3: Article search autocomplete suggestions
