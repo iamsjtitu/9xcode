@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Dict, Any, List
 
 # Base URL from frontend environment
-BASE_URL = "https://code-snippets-14.preview.emergentagent.com/api"
+BASE_URL = "https://codesnippet-hub.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):
