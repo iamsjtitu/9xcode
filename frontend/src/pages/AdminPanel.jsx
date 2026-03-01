@@ -153,6 +153,87 @@ const AdminPanel = () => {
 
         {/* Quick Access Cards */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+
+        {/* Stats Overview Section */}
+        {statsLoading ? (
+          <Card className="col-span-full mb-0">
+            <CardContent className="p-6 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span className="ml-3 text-slate-600">Loading statistics...</span>
+            </CardContent>
+          </Card>
+        ) : stats && (
+          <>
+            {/* Overview Stats */}
+            <Card className="col-span-full mb-0 border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
+                  Website Overview
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  <div className="bg-white rounded-lg p-4 shadow-sm border">
+                    <div className="flex items-center gap-2 mb-1">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="text-xs text-slate-500 uppercase">Total Articles</span>
+                    </div>
+                    <p className="text-2xl font-bold text-slate-900">{stats.overview.total_articles}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm border">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Eye className="h-4 w-4 text-green-600" />
+                      <span className="text-xs text-slate-500 uppercase">Total Views</span>
+                    </div>
+                    <p className="text-2xl font-bold text-slate-900">{stats.overview.total_views.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm border">
+                    <div className="flex items-center gap-2 mb-1">
+                      <ThumbsUp className="h-4 w-4 text-red-600" />
+                      <span className="text-xs text-slate-500 uppercase">Total Likes</span>
+                    </div>
+                    <p className="text-2xl font-bold text-slate-900">{stats.overview.total_likes.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm border">
+                    <div className="flex items-center gap-2 mb-1">
+                      <FolderOpen className="h-4 w-4 text-purple-600" />
+                      <span className="text-xs text-slate-500 uppercase">Categories</span>
+                    </div>
+                    <p className="text-2xl font-bold text-slate-900">{stats.categories.length}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm border">
+                    <div className="flex items-center gap-2 mb-1">
+                      <FileText className="h-4 w-4 text-orange-600" />
+                      <span className="text-xs text-slate-500 uppercase">This Week</span>
+                    </div>
+                    <p className="text-2xl font-bold text-slate-900">{stats.overview.articles_this_week}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Category-wise Stats */}
+            <Card className="col-span-full mb-0 border-slate-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <FolderOpen className="h-5 w-5 text-purple-600" />
+                  Articles by Category
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                  {stats.categories.map((cat, index) => (
+                    <div key={index} className="bg-slate-50 rounded-lg p-3 border hover:shadow-md transition-shadow">
+                      <p className="text-xs text-slate-500 truncate capitalize">{cat.name?.replace(/-/g, ' ') || 'Unknown'}</p>
+                      <p className="text-xl font-bold text-slate-900">{cat.count}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        )}
           <Link to="/admin/analytics">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 hover:border-blue-400">
               <CardContent className="p-4 flex items-center gap-3">
