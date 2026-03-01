@@ -313,6 +313,34 @@ const AdminPanel = () => {
               </CardContent>
             </Card>
           </Link>
+
+          <Link to="/admin/subscribers">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-teal-200 hover:border-teal-400" data-testid="admin-subscribers-link">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-teal-100 rounded-lg">
+                  <Users className="h-6 w-6 text-teal-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Subscribers</p>
+                  <p className="text-xs text-slate-500">Newsletter list</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/articles">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-indigo-200 hover:border-indigo-400" data-testid="admin-articles-link">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-indigo-100 rounded-lg">
+                  <Layers className="h-6 w-6 text-indigo-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Articles</p>
+                  <p className="text-xs text-slate-500">Bulk manage</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
           
           <Card className="border-purple-200 bg-purple-50">
             <CardContent className="p-4 flex items-center gap-3">
