@@ -226,6 +226,51 @@ const Home = ({ searchQuery, adsConfig }) => {
         </section>
       )}
 
+      {/* Newsletter CTA */}
+      {!activeTag && !showBookmarks && (
+        <section className="container mx-auto px-4 pb-4" data-testid="newsletter-cta-section">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-10 text-center text-white">
+            <h2 className="text-base md:text-lg font-bold mb-2">Stay Updated with New Tutorials</h2>
+            <p className="text-blue-100 text-sm mb-5 max-w-md mx-auto">Get weekly email updates on latest code snippets, server commands, and best practices.</p>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!nlEmail.trim()) return;
+                setNlStatus(null);
+                try {
+                  await axios.post(`${API}/newsletter/subscribe`, { email: nlEmail.trim() });
+                  setNlStatus('success'); setNlEmail('');
+                } catch (err) {
+                  setNlStatus(err.response?.status === 409 ? 'exists' : 'error');
+                }
+              }}
+              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+              data-testid="homepage-newsletter-form"
+            >
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={nlEmail}
+                onChange={(e) => { setNlEmail(e.target.value); setNlStatus(null); }}
+                required
+                className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:border-white text-sm"
+                data-testid="homepage-email-input"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm"
+                data-testid="homepage-subscribe-btn"
+              >
+                <Send className="h-4 w-4" /> Subscribe
+              </button>
+            </form>
+            {nlStatus === 'success' && <p className="text-sm text-green-300 mt-3">Subscribed successfully!</p>}
+            {nlStatus === 'exists' && <p className="text-sm text-amber-300 mt-3">You're already subscribed!</p>}
+            {nlStatus === 'error' && <p className="text-sm text-red-300 mt-3">Something went wrong. Try again.</p>}
+          </div>
+        </section>
+      )}
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
