@@ -513,6 +513,12 @@ const Home = ({ searchQuery, adsConfig }) => {
           </div>
         </div>
       </div>
+      {/* Footer Ad */}
+      {adsConfig?.enabled && adsConfig?.footerAdCode && (
+        <div className="container mx-auto px-4 pb-4">
+          <GoogleAd adCode={adsConfig.footerAdCode} className="flex justify-center" />
+        </div>
+      )}
     </div>
   );
 };
