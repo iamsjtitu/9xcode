@@ -8,7 +8,7 @@ from slowapi.errors import RateLimitExceeded
 import os
 import logging
 from pathlib import Path
-from routes import snippets, comments, ads, auth, analytics, seo, newsletter, articles, seeder
+from routes import snippets, comments, ads, auth, analytics, seo, newsletter, articles, seeder, contributions, contact
 from database import close_db_connection
 
 ROOT_DIR = Path(__file__).parent
@@ -40,6 +40,8 @@ api_router.include_router(seo.router)
 api_router.include_router(newsletter.router)
 api_router.include_router(articles.router)
 api_router.include_router(seeder.router)
+api_router.include_router(contributions.router)
+api_router.include_router(contact.router)
 
 # Include the router in the main app
 app.include_router(api_router)
