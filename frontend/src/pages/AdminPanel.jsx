@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, Sprout, PenLine } from 'lucide-react';
+import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, Sprout, PenLine, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -365,6 +365,20 @@ const AdminPanel = () => {
                 <div>
                   <p className="font-semibold text-slate-800">Contributions</p>
                   <p className="text-xs text-slate-500">Review articles</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/messages">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-pink-200 hover:border-pink-400" data-testid="admin-messages-link">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <MessageSquare className="h-6 w-6 text-pink-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Messages</p>
+                  <p className="text-xs text-slate-500">Contact inbox</p>
                 </div>
               </CardContent>
             </Card>
