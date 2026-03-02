@@ -10,47 +10,55 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - **Deployment**: Nginx, PM2, Certbot (SSL), Ubuntu VPS
 
 ## What's Been Implemented (Complete)
+
 ### Core Features
-- Full-stack app (React + FastAPI + MongoDB) - Live at 9xcodes.com
+- Full-stack app live at 9xcodes.com
 - Admin panel with stats dashboard, password change
 - 245+ articles across 14 categories
-- Social sharing, SEO (sitemap, robots.txt, JSON-LD)
+- Social sharing, SEO (sitemap, robots.txt, JSON-LD, RSS feed)
 - Automatic daily MongoDB backups
 
 ### Reader Features
-- Most Popular Articles on homepage
-- Related Articles on article pages
-- Bookmarks / Save for Later (localStorage)
-- Copy Code Button (always visible)
-- Tag-based Search (clickable tags)
-- Table of Contents (desktop sidebar + mobile)
-- Reading time estimate
-- Search Autocomplete (debounced, highlighted, keyboard nav)
-- **Homepage Pagination** (12 per page, numbered pages, smooth scroll)
+- Most Popular Articles, Related Articles, Bookmarks, Copy Code Button
+- Tag-based Search, Table of Contents, Reading time, Search Autocomplete
+- Homepage Pagination (12 per page)
+
+### Pages
+- About Us (/about) - Mission, offerings, community, values
+- Contact Us (/contact) - Contact form with name, email, subject, message
+- Contribute (/contribute) - Article submission form for community contributors
 
 ### Admin Features
-- Newsletter Subscribers management (/admin/subscribers)
+- Newsletter Subscribers (/admin/subscribers)
 - Bulk Article Management (/admin/articles)
-- Article Seeder (/admin/seeder) - 14 categories x 8 OS templates
-- Newsletter subscription form in footer
+- Article Seeder (/admin/seeder)
+- **Contributions Manager** (/admin/contributions) - Review, approve/reject user-submitted articles
+- RSS Feed at /api/seo/rss.xml
 
-### Codebase Cleanup
-- Consolidated 18 individual seed_*.py files into seed_all.py + admin UI seeder
-- Only seed_all.py and seed_data.py remain
+### Contributor System
+- Users submit articles via /contribute (public)
+- Submitted articles stored as "pending" in DB
+- Admin reviews in /admin/contributions
+- Approve: publishes article to website
+- Reject: marks as rejected
+
+### Cleanup Done
+- Removed "Made with Emergent" branding
+- Removed "Default Credentials" from login page
+- Removed "Admin Panel" from footer Quick Links
+- Deleted 18 old seed_*.py files
 
 ## Key API Endpoints
-- `GET /api/snippets?page=1&limit=12` - Paginated articles (returns {snippets, total, page, pages})
-- `GET /api/snippets/search-suggestions?q=` - Autocomplete
-- `GET /api/snippets/popular` - Top viewed
-- `GET /api/snippets/{slug}/related` - Related articles
-- `POST /api/seeder/seed` - Seed articles by category+OS
-- `POST /api/newsletter/subscribe` - Newsletter
-- `POST /api/articles/bulk-delete` / `bulk-category` - Bulk ops
-- `GET /api/articles/export?format=csv|json` - Export
+- Snippets: GET /api/snippets, /popular, /search-suggestions, /{slug}, /{slug}/related
+- Newsletter: POST /api/newsletter/subscribe, GET /subscribers, /export
+- Articles: GET /api/articles/list, POST /bulk-delete, /bulk-category, GET /export
+- Seeder: GET /api/seeder/categories, POST /preview, /seed
+- Contributions: POST /api/contributions/submit, GET /contributions, POST /{id}/approve, /{id}/reject
+- Contact: POST /api/contact
+- SEO: GET /api/seo/sitemap.xml, /robots.txt, /rss.xml
+
+## DB Collections
+- code_snippets, comments, google_ads_config, subscribers, users, contributions, contact_messages
 
 ## Credentials
 - Admin: admin / admin123
-
-## Pending / Backlog
-- P3: Dark/Light mode toggle
-- P3: Per-article analytics view
