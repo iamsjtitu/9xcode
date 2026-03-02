@@ -234,12 +234,25 @@ const Home = ({ searchQuery, adsConfig }) => {
         </section>
       )}
 
+      {/* Header Ad */}
+      {adsConfig?.enabled && adsConfig?.headerAdCode && (
+        <div className="container mx-auto px-4 pt-4">
+          <GoogleAd adCode={adsConfig.headerAdCode} className="flex justify-center" />
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <div className="lg:w-64 flex-shrink-0">
             <FilterSidebar filters={filters} setFilters={setFilters} />
+            {/* Sidebar Ad */}
+            {adsConfig?.enabled && adsConfig?.sidebarAdCode && (
+              <div className="mt-4">
+                <GoogleAd adCode={adsConfig.sidebarAdCode} />
+              </div>
+            )}
             {/* Bookmarks Toggle */}
             <button
               onClick={() => setShowBookmarks(!showBookmarks)}
