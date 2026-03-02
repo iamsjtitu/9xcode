@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, MapPin, Send, MessageSquare } from 'lucide-react';
+import { Mail, Send, MessageSquare } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -65,17 +65,6 @@ const ContactUs = () => {
                 <div>
                   <p className="text-sm font-semibold text-slate-800">Response Time</p>
                   <p className="text-sm text-slate-500">Within 24-48 hours</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-3 bg-purple-100 rounded-lg">
-                  <MapPin className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-800">Location</p>
-                  <p className="text-sm text-slate-500">India</p>
                 </div>
               </CardContent>
             </Card>
