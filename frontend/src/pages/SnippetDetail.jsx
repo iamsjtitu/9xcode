@@ -455,6 +455,13 @@ const SnippetDetail = ({ adsConfig }) => {
               </Card>
             )}
 
+            {/* Ad between content and related */}
+            {adsConfig?.enabled && adsConfig?.betweenSnippetsAdCode && (
+              <div className="mb-8">
+                <GoogleAd adCode={adsConfig.betweenSnippetsAdCode} className="flex justify-center" />
+              </div>
+            )}
+
             {/* Related Articles */}
             {relatedSnippets.length > 0 && (
               <Card className="mb-8 border-slate-200" data-testid="related-articles-section">
