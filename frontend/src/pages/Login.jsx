@@ -117,12 +117,6 @@ const Login = () => {
               )}
             </Button>
           </form>
-
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-900 font-semibold mb-1">Default Credentials:</p>
-            <p className="text-sm text-blue-800">Username: <code className="bg-blue-100 px-2 py-0.5 rounded">admin</code></p>
-            <p className="text-sm text-blue-800">Password: <code className="bg-blue-100 px-2 py-0.5 rounded">admin123</code></p>
-          </div>
         </CardContent>
       </Card>
     </div>
