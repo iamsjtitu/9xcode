@@ -14,6 +14,10 @@ import ChangePassword from "./pages/ChangePassword";
 import SubscribersManager from "./pages/SubscribersManager";
 import ManageArticles from "./pages/ManageArticles";
 import ArticleSeeder from "./pages/ArticleSeeder";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import Contribute from "./pages/Contribute";
+import ContributionsManager from "./pages/ContributionsManager";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
@@ -91,6 +95,9 @@ function App() {
             <Routes>
               <Route path="/" element={<Home searchQuery={searchQuery} adsConfig={adsConfig} />} />
               <Route path="/snippet/:slug" element={<SnippetDetail adsConfig={adsConfig} />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/contact" element={<ContactUs />} />
+              <Route path="/contribute" element={<Contribute />} />
               <Route path="/login" element={<Login />} />
               <Route
                 path="/admin"
@@ -153,6 +160,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ArticleSeeder />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/contributions"
+                element={
+                  <ProtectedRoute>
+                    <ContributionsManager />
                   </ProtectedRoute>
                 }
               />
