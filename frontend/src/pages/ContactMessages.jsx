@@ -39,12 +39,14 @@ const ContactMessages = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this message?')) return;
+    setMessages(prev => prev.filter(m => m.id !== id));
+    setTotal(prev => prev - 1);
     try {
       await axios.delete(`${API}/contact/messages/${id}`);
       toast({ title: 'Deleted', description: 'Message removed' });
-      fetchMessages();
     } catch (err) {
       toast({ title: 'Error', description: 'Failed to delete', variant: 'destructive' });
+      fetchMessages();
     }
   };
 
