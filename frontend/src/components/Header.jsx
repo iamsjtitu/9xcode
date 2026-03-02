@@ -192,6 +192,11 @@ const Header = ({ onSearch }) => {
                 Home
               </Button>
             </Link>
+            <Link to="/contribute">
+              <Button variant="ghost" className="text-white hover:bg-slate-700 hover:text-blue-400 transition-colors">
+                Contribute
+              </Button>
+            </Link>
             {isAuthenticated ? (
               <>
                 <Link to="/admin">
