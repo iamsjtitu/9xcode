@@ -18,6 +18,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Contribute from "./pages/Contribute";
 import ContributionsManager from "./pages/ContributionsManager";
+import ContactMessages from "./pages/ContactMessages";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
@@ -168,6 +169,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ContributionsManager />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/messages"
+                element={
+                  <ProtectedRoute>
+                    <ContactMessages />
                   </ProtectedRoute>
                 }
               />
