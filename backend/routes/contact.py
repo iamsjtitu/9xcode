@@ -43,13 +43,29 @@ async def list_messages(
         ]
     total = await contact_collection.count_documents(query)
     skip = (page - 1) * limit
-    cursor = contact_collection.find(query, {'_id': 0}).sort('createdAt', -1).skip(skip).limit(limit)
-    msgs = await cursor.to_list(length=limit)
+    cursor = contact_collection.find(query).sort('createdAt', -1).skip(skip).limit(limit)
+    raw_msgs = await cursor.to_list(length=limit)
+    msgs = []
+    for m in raw_msgs:
+        msgs.append({
+            'id': m.get('id', str(m['_id'])),
+            'name': m.get('name', ''),
+            'email': m.get('email', ''),
+            'subject': m.get('subject', ''),
+            'message': m.get('message', ''),
+            'createdAt': m.get('createdAt', ''),
+        })
     return {"messages": msgs, "total": total, "page": page, "pages": max(1, (total + limit - 1) // limit)}
 
 @router.delete("/messages/{message_id}")
 async def delete_message(message_id: str):
     result = await contact_collection.delete_one({'id': message_id})
+    if result.deleted_count == 0:
+        from bson import ObjectId
+        try:
+            result = await contact_collection.delete_one({'_id': ObjectId(message_id)})
+        except:
+            pass
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Message not found")
     return {"message": "Message deleted"}
