@@ -19,6 +19,7 @@ import ContactUs from "./pages/ContactUs";
 import Contribute from "./pages/Contribute";
 import ContributionsManager from "./pages/ContributionsManager";
 import ContactMessages from "./pages/ContactMessages";
+import ArticleScraper from "./pages/ArticleScraper";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
@@ -177,6 +178,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ContactMessages />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/scraper"
+                element={
+                  <ProtectedRoute>
+                    <ArticleScraper />
                   </ProtectedRoute>
                 }
               />
