@@ -55,7 +55,7 @@ const ArticleScraper = () => {
   };
 
   const handleSave = async () => {
-    const articleToSave = editMode ? editData : preview?.full_article;
+    const articleToSave = editData || preview?.full_article;
     if (!articleToSave) return;
     setSaving(true);
     try {
