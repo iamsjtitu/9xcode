@@ -20,9 +20,11 @@ import Contribute from "./pages/Contribute";
 import ContributionsManager from "./pages/ContributionsManager";
 import ContactMessages from "./pages/ContactMessages";
 import ArticleScraper from "./pages/ArticleScraper";
+import PerArticleAnalytics from "./pages/PerArticleAnalytics";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "./components/ui/toaster";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -46,6 +48,7 @@ function App() {
   };
 
   return (
+    <ThemeProvider>
     <div className="App">
       <Helmet>
         <title>9xCodes - Linux Server Commands, Ubuntu, CentOS Tutorials & Code Snippets</title>
@@ -189,6 +192,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/admin/per-article-analytics"
+                element={
+                  <ProtectedRoute>
+                    <PerArticleAnalytics />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </main>
           <Footer />
@@ -212,6 +223,7 @@ function App() {
         })}
       </script>
     </div>
+    </ThemeProvider>
   );
 }
 

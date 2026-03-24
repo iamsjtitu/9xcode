@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, Sprout, PenLine, MessageSquare, Download } from 'lucide-react';
+import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, Sprout, PenLine, MessageSquare, Download, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -393,6 +393,20 @@ const AdminPanel = () => {
                 <div>
                   <p className="font-semibold text-slate-800">Scraper</p>
                   <p className="text-xs text-slate-500">Import articles</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/per-article-analytics">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-emerald-200 hover:border-emerald-400" data-testid="admin-per-article-analytics-link">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-emerald-100 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Article Stats</p>
+                  <p className="text-xs text-slate-500">Per-article analytics</p>
                 </div>
               </CardContent>
             </Card>

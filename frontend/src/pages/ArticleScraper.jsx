@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, Search, Download, Save, ExternalLink, ArrowLeft, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, Loader2, Copy, Trash2, Edit3 } from 'lucide-react';
+import { Globe, Search, Download, Save, ExternalLink, ArrowLeft, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, Loader2, Copy, Trash2, Edit3, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -32,6 +32,7 @@ const ArticleScraper = () => {
   const [discovering, setDiscovering] = useState(false);
   const [expandedStep, setExpandedStep] = useState(null);
   const [scrapeHistory, setScrapeHistory] = useState([]);
+  const [rewriting, setRewriting] = useState(false);
 
   const handleScrape = async () => {
     if (!url.trim()) {
@@ -102,6 +103,33 @@ const ArticleScraper = () => {
 
   const handleEditField = (field, value) => {
     setEditData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAIRewrite = async () => {
+    const source = editData || preview?.full_article;
+    if (!source) return;
+    setRewriting(true);
+    try {
+      const resp = await axios.post(`${API}/ai-rewrite/rewrite`, {
+        title: source.title,
+        description: source.description,
+        steps: source.steps,
+      });
+      const rewritten = resp.data.rewritten;
+      setEditData(prev => ({
+        ...prev,
+        title: rewritten.title || prev.title,
+        description: rewritten.description || prev.description,
+        steps: rewritten.steps || prev.steps,
+      }));
+      setEditMode(true);
+      toast({ title: 'AI Rewrite Done!', description: 'Content has been rewritten in 9xCodes style. Review and save.' });
+    } catch (err) {
+      const detail = err.response?.data?.detail || 'AI rewrite failed';
+      toast({ title: 'Rewrite Failed', description: detail, variant: 'destructive' });
+    } finally {
+      setRewriting(false);
+    }
   };
 
   return (
@@ -268,6 +296,20 @@ const ArticleScraper = () => {
                         <CardTitle className="text-lg">Scraped Article Preview</CardTitle>
                       </div>
                       <div className="flex gap-2">
+                        <Button
+                          data-testid="ai-rewrite-btn"
+                          size="sm"
+                          variant="outline"
+                          disabled={rewriting}
+                          onClick={handleAIRewrite}
+                          className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                        >
+                          {rewriting ? (
+                            <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Rewriting...</>
+                          ) : (
+                            <><Sparkles className="h-3 w-3 mr-1" /> AI Rewrite</>
+                          )}
+                        </Button>
                         <Button
                           data-testid="toggle-edit-btn"
                           size="sm"

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, LogOut, FileText } from 'lucide-react';
+import { Search, Menu, X, LogOut, FileText, Moon, Sun } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { categories } from '../data/mockData';
+import { useTheme } from '../contexts/ThemeContext';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -20,6 +21,7 @@ const Header = ({ onSearch }) => {
   const mobileSearchRef = useRef(null);
   const debounceRef = useRef(null);
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -186,7 +188,17 @@ const Header = ({ onSearch }) => {
           </form>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4">
+          <nav className="hidden md:flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="text-white hover:bg-slate-700 p-2"
+              data-testid="theme-toggle-btn"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDark ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-slate-300" />}
+            </Button>
             <Link to="/">
               <Button variant="ghost" className="text-white hover:bg-slate-700 hover:text-blue-400 transition-colors">
                 Home
@@ -257,6 +269,15 @@ const Header = ({ onSearch }) => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 space-y-2">
+            <Button
+              variant="ghost"
+              onClick={toggleTheme}
+              className="w-full text-left text-white hover:bg-slate-700 flex items-center gap-2"
+              data-testid="theme-toggle-mobile"
+            >
+              {isDark ? <Sun className="h-4 w-4 text-yellow-400" /> : <Moon className="h-4 w-4" />}
+              {isDark ? 'Light Mode' : 'Dark Mode'}
+            </Button>
             <Link to="/" onClick={() => setIsMenuOpen(false)}>
               <Button variant="ghost" className="w-full text-left text-white hover:bg-slate-700">
                 Home
