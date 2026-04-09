@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, Sprout, PenLine, MessageSquare, Download, TrendingUp } from 'lucide-react';
+import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, Sprout, PenLine, MessageSquare, Download, TrendingUp, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -20,6 +20,10 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [updateRunning, setUpdateRunning] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState(null);
+  const [updateLogs, setUpdateLogs] = useState([]);
+  const [showUpdateLogs, setShowUpdateLogs] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -58,6 +62,39 @@ const AdminPanel = () => {
     
     fetchStats();
   }, []);
+
+  // Update website functions
+  const triggerUpdate = async () => {
+    setUpdateRunning(true);
+    setShowUpdateLogs(true);
+    setUpdateLogs(['Starting update...']);
+    try {
+      await axios.post(`${API}/updater/update`);
+      // Poll for status
+      const pollInterval = setInterval(async () => {
+        try {
+          const resp = await axios.get(`${API}/updater/status`);
+          setUpdateLogs(resp.data.logs || []);
+          setUpdateStatus(resp.data);
+          if (!resp.data.is_running) {
+            clearInterval(pollInterval);
+            setUpdateRunning(false);
+            toast({
+              title: resp.data.last_status === 'success' ? 'Update Complete!' : 'Update Status',
+              description: resp.data.last_status === 'success' ? 'Website has been updated and restarted.' : resp.data.last_status === 'skipped' ? 'Not on VPS - update skipped.' : 'Update had some issues. Check logs.',
+              variant: resp.data.last_status === 'failed' ? 'destructive' : 'default',
+            });
+          }
+        } catch {
+          clearInterval(pollInterval);
+          setUpdateRunning(false);
+        }
+      }, 2000);
+    } catch (err) {
+      setUpdateRunning(false);
+      toast({ title: 'Update Failed', description: err.response?.data?.detail || 'Could not start update', variant: 'destructive' });
+    }
+  };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -160,6 +197,69 @@ const AdminPanel = () => {
           <h1 className="text-4xl font-bold text-slate-900 mb-2">Admin Panel</h1>
           <p className="text-slate-600">Create and publish new code snippets and tutorials</p>
         </div>
+
+        {/* Update Website Banner */}
+        <Card className="mb-6 border-blue-300 bg-gradient-to-r from-blue-50 to-cyan-50" data-testid="update-website-card">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <RefreshCw className={`h-6 w-6 text-blue-600 ${updateRunning ? 'animate-spin' : ''}`} />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Update Website</p>
+                  <p className="text-xs text-slate-500">Pull latest code from GitHub, build, and restart</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {updateStatus?.last_run && !updateRunning && (
+                  <span className="text-xs text-slate-400">
+                    Last: {new Date(updateStatus.last_run).toLocaleString()} 
+                    {updateStatus.last_status === 'success' && ' - OK'}
+                    {updateStatus.last_status === 'failed' && ' - Failed'}
+                  </span>
+                )}
+                <Button
+                  data-testid="update-website-btn"
+                  onClick={triggerUpdate}
+                  disabled={updateRunning}
+                  className="bg-blue-600 hover:bg-blue-700"
+                  size="sm"
+                >
+                  {updateRunning ? (
+                    <><RefreshCw className="h-4 w-4 mr-2 animate-spin" /> Updating...</>
+                  ) : (
+                    <><RefreshCw className="h-4 w-4 mr-2" /> Update Now</>
+                  )}
+                </Button>
+                {updateLogs.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowUpdateLogs(!showUpdateLogs)}
+                    data-testid="toggle-update-logs-btn"
+                  >
+                    {showUpdateLogs ? 'Hide Logs' : 'Show Logs'}
+                  </Button>
+                )}
+              </div>
+            </div>
+            {showUpdateLogs && updateLogs.length > 0 && (
+              <div className="mt-3 bg-slate-900 rounded-lg p-3 max-h-48 overflow-y-auto" data-testid="update-logs">
+                {updateLogs.map((log, i) => (
+                  <p key={i} className={`text-xs font-mono ${log.startsWith('[ERROR]') ? 'text-red-400' : 'text-green-400'}`}>
+                    {log}
+                  </p>
+                ))}
+                {updateRunning && (
+                  <p className="text-xs text-yellow-400 animate-pulse mt-1">
+                    {updateStatus?.current_step || 'Processing...'}
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Quick Access Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">

@@ -21,7 +21,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - Most Popular Articles, Related Articles, Bookmarks, Copy Code Button
 - Tag-based Search, Table of Contents, Reading time, Search Autocomplete
 - Homepage Pagination (12 per page)
-- **Dark/Light Mode Toggle** (persists in localStorage)
+- Dark/Light Mode Toggle (persists in localStorage)
 
 ### Pages
 - About Us (/about), Contact Us (/contact), Contribute (/contribute)
@@ -32,34 +32,18 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - Article Seeder (/admin/seeder)
 - Contributions Manager (/admin/contributions)
 - Contact Messages (/admin/messages)
-- **Article Scraper** (/admin/scraper) - Scrape & import external articles with AI rewrite
-- **Per-Article Analytics** (/admin/per-article-analytics) - Detailed article performance metrics
+- Article Scraper (/admin/scraper) with AI rewrite
+- Per-Article Analytics (/admin/per-article-analytics)
+- **One-Click Website Update** (git pull -> build -> restart from Admin Panel)
 - Google AdSense integration
 
-### Dark/Light Mode (NEW - Completed)
-- ThemeContext with localStorage persistence
-- Toggle button in header (desktop & mobile)
-- CSS variable-based theming with dark class overrides
-- Affects entire site: backgrounds, text, cards, borders
-
-### Per-Article Analytics (NEW - Completed)
-- Overview: total articles, views, likes, averages, zero-view count
-- Category performance chart with horizontal bars
-- Sortable article table (by views/likes) with search filter
-- Click-to-view article detail panel (engagement rate, code lines, steps count)
-- Backend endpoints: /api/article-analytics/overview, /top-articles, /category-stats, /article/{slug}
-
-### AI Content Rewriting (NEW - Completed)
-- Uses OpenAI GPT-4o-mini via emergentintegrations (EMERGENT_LLM_KEY)
-- "AI Rewrite" button in Scraper preview to convert content to 9xCodes style
-- Backend endpoint: POST /api/ai-rewrite/rewrite
-- Auto-switches to edit mode after rewrite for review
-
-### Article Scraper (Completed)
-- Scrape any article URL, extract title, code blocks, metadata
-- Auto-detect category, difficulty, OS, tags
-- Preview, edit, and save workflow
-- Discover URLs from Linuxize, DigitalOcean, TecMint
+### One-Click VPS Update (NEW - Completed)
+- "Update Website" banner in Admin Panel
+- Runs: git pull -> pip install -> yarn build -> pm2 restart all
+- Background execution with real-time log streaming
+- Status tracking (running/success/failed/skipped)
+- Auto-detects VPS vs preview environment
+- Project path: /var/www/9xcodes
 
 ## Key API Endpoints
 - Snippets: GET /api/snippets, /popular, /search-suggestions, /{slug}, /{slug}/related
@@ -72,6 +56,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 - Scraper: POST /api/scraper/from-url, /save, /discover
 - Article Analytics: GET /api/article-analytics/overview, /top-articles, /category-stats, /article/{slug}
 - AI Rewrite: POST /api/ai-rewrite/rewrite
+- **Updater**: POST /api/updater/update, GET /api/updater/status
 
 ## DB Collections
 - code_snippets, comments, google_ads_config, subscribers, users, contributions, contact_messages
