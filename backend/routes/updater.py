@@ -72,9 +72,11 @@ async def do_update():
     """Run the full update pipeline"""
     reset_status()
 
+    VENV_PIP = f"{PROJECT_PATH}/backend/venv/bin/pip"
+
     steps = [
         ("git pull origin main", PROJECT_PATH, "Git Pull"),
-        ("pip install -r requirements.txt", f"{PROJECT_PATH}/backend", "Backend Dependencies"),
+        (f"{VENV_PIP} install -r requirements.txt", f"{PROJECT_PATH}/backend", "Backend Dependencies"),
         ("yarn install --frozen-lockfile 2>/dev/null || yarn install", f"{PROJECT_PATH}/frontend", "Frontend Dependencies"),
         ("yarn build", f"{PROJECT_PATH}/frontend", "Frontend Build"),
         ("pm2 restart all", PROJECT_PATH, "PM2 Restart"),
