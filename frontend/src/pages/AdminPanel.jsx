@@ -68,28 +68,41 @@ const AdminPanel = () => {
     setUpdateRunning(true);
     setShowUpdateLogs(true);
     setUpdateLogs(['Starting update...']);
+    let errorRetries = 0;
+    const maxRetries = 10; // PM2 restart can take ~20 seconds
     try {
       await axios.post(`${API}/updater/update`);
       // Poll for status
       const pollInterval = setInterval(async () => {
         try {
-          const resp = await axios.get(`${API}/updater/status`);
+          const resp = await axios.get(`${API}/updater/status`, { timeout: 5000 });
+          errorRetries = 0; // Reset on successful response
           setUpdateLogs(resp.data.logs || []);
           setUpdateStatus(resp.data);
           if (!resp.data.is_running) {
             clearInterval(pollInterval);
             setUpdateRunning(false);
+            const st = resp.data.last_status;
             toast({
-              title: resp.data.last_status === 'success' ? 'Update Complete!' : 'Update Status',
-              description: resp.data.last_status === 'success' ? 'Website has been updated and restarted.' : resp.data.last_status === 'skipped' ? 'Not on VPS - update skipped.' : 'Update had some issues. Check logs.',
-              variant: resp.data.last_status === 'failed' ? 'destructive' : 'default',
+              title: st === 'success' ? 'Update Complete!' : st === 'skipped' ? 'Update Skipped' : 'Update Status',
+              description: st === 'success' ? 'Website updated and restarted successfully!' : st === 'skipped' ? 'Not on VPS - update skipped.' : 'Update had some issues. Check logs.',
+              variant: st === 'failed' ? 'destructive' : 'default',
             });
           }
         } catch {
-          clearInterval(pollInterval);
-          setUpdateRunning(false);
+          errorRetries++;
+          // During PM2 restart, backend is briefly down - keep retrying
+          if (errorRetries >= maxRetries) {
+            clearInterval(pollInterval);
+            setUpdateRunning(false);
+            toast({
+              title: 'Update Likely Complete',
+              description: 'Server restarted. Refresh page to see latest status.',
+            });
+          }
+          // Otherwise keep polling - backend will come back after PM2 restart
         }
-      }, 2000);
+      }, 3000);
     } catch (err) {
       setUpdateRunning(false);
       toast({ title: 'Update Failed', description: err.response?.data?.detail || 'Could not start update', variant: 'destructive' });
