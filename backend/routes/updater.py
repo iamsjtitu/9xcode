@@ -77,8 +77,7 @@ async def do_update():
     steps = [
         ("git pull origin main", PROJECT_PATH, "Git Pull"),
         (f"{VENV_PIP} install -r requirements.txt", f"{PROJECT_PATH}/backend", "Backend Dependencies"),
-        ("yarn install --frozen-lockfile 2>/dev/null || yarn install", f"{PROJECT_PATH}/frontend", "Frontend Dependencies"),
-        ("yarn build", f"{PROJECT_PATH}/frontend", "Frontend Build"),
+        ("NODE_OPTIONS=--max_old_space_size=512 yarn build", f"{PROJECT_PATH}/frontend", "Frontend Build"),
         ("pm2 restart all", PROJECT_PATH, "PM2 Restart"),
     ]
 
