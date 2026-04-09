@@ -72,7 +72,7 @@ async def run_update_script():
 
         commands = [
             ("git stash && git pull origin main", PROJECT_PATH, "Git Pull"),
-            (f"{PROJECT_PATH}/backend/venv/bin/pip install -r requirements.txt", f"{PROJECT_PATH}/backend", "Backend Deps"),
+            (f"{PROJECT_PATH}/backend/venv/bin/pip install -r requirements.txt --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/", f"{PROJECT_PATH}/backend", "Backend Deps"),
             ("NODE_OPTIONS=--max_old_space_size=1024 yarn build", f"{PROJECT_PATH}/frontend", "Frontend Build"),
             ("pm2 restart all", PROJECT_PATH, "PM2 Restart"),
         ]
@@ -123,6 +123,7 @@ async def run_update_script():
             "bash", script_path,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            start_new_session=True,
         )
         await asyncio.wait_for(process.communicate(), timeout=600)
 
