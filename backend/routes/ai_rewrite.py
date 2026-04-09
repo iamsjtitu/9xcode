@@ -1,10 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
-from emergentintegrations.llm.chat import LlmChat, UserMessage
 from dotenv import load_dotenv
 import os
 import json
+
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    HAS_LLM = True
+except ImportError:
+    HAS_LLM = False
 
 load_dotenv()
 
@@ -44,8 +48,10 @@ class RewriteRequest(BaseModel):
 @router.post("/rewrite")
 async def rewrite_article(req: RewriteRequest):
     """Rewrite article content using AI in 9xCodes style"""
+    if not HAS_LLM:
+        raise HTTPException(status_code=501, detail="AI library not installed. Run: pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/")
     if not EMERGENT_KEY:
-        raise HTTPException(status_code=500, detail="AI service not configured. Add EMERGENT_LLM_KEY to .env")
+        raise HTTPException(status_code=500, detail="AI service not configured. Add EMERGENT_LLM_KEY to backend/.env")
 
     article_text = f"Title: {req.title}\nDescription: {req.description}\n\nSteps:\n"
     for i, step in enumerate(req.steps):
