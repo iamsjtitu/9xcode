@@ -1,185 +1,1493 @@
 <analysis>**original_problem_statement:**
-The user wants to build a website named , a platform for posting code snippets and server commands.
+The user wants to build a comprehensive website named  for posting code snippets and server commands. 
+PRODUCT REQUIREMENTS:
+- Admin-Only Content with Secure Authentication.
+- Categories for Computers, CCTV, Networking, Learning, Virtualization, Web Hosting, etc.
+- Web Scraper tool to automatically fetch, format, and save articles from other open-source websites into the database.
+- Social Sharing, SEO Optimization (Sitemaps, robots.txt), and Google AdSense Monetization.
+- Dark/Light Mode, Analytics Dashboard, Per-Article Analytics.
+- AI features to rewrite, SEO-optimize, and summarize scraped content.
+- Bulk AI Optimize feature to process existing articles.
+- Legal compliance pages (Privacy Policy, Terms of Service, Disclaimer) for AdSense approval.
+- An Auto-Updater mechanism to pull latest GitHub changes directly to the VPS and restart PM2.
 
-**PRODUCT REQUIREMENTS:**
--   **Admin-Only Content**: Only an administrator can post new articles.
--   **Admin Authentication**: A secure username/password login system for the admin panel.
--   **Password Management**: An option for the admin to change their password.
--   **Content Categories**: The site must have categories for Computers, CCTV, Networking, Learning, Virtualization, Web Hosting, and Billing Systems.
--   **Content Population**: Pre-populate the site with a large number of articles.
--   **Social Sharing**: Add social media share buttons to article pages.
--   **SEO & Tracking**: Implement sitemaps, robots.txt, and an admin interface for Analytics/Adsense.
--   **Site Optimization**: Check for security bugs and optimize for speed.
--   **Branding**: Update the logo and add the tagline: solve your coding problems in 9x speed!
--   **Admin Analytics**: Provide an analytics dashboard for the admin.
--   **New Features Added**: Most Popular Articles, Related Articles, User Bookmarks, Table of Contents, Search Autocomplete, Homepage Pagination, RSS Feed, Newsletter Subscription, About Us, Contact Us, and User Contribution system with admin approval.
--   **Admin Tooling**: Admin panel seeder, bulk article management, and a viewer for contact form messages.
--   **Monetization**: Integrate Google AdSense.
--   **Content Automation**: Build a tool to scrape articles from other open-source websites.
-
-**User's preferred language**: A mix of English and Hindi. The user primarily communicates in Hindi using the Roman script (e.g., Aapka kaam ho gaya hai.). The next agent MUST respond in this mixed language format and understand Hindi requests.
+**User's preferred language**: A mix of Hindi and English written in the Roman script (Hinglish). Example: yahi pai aake sirf latak jata hai or abhi bhi yahi gand hai. INSTRUCT the next agent to respond in this exact mixed language format (Hinglish).
 
 **what currently exists?**
-A comprehensive full-stack application (React frontend, FastAPI backend, MongoDB) that is live on the user's private VPS. The application includes a rich set of features: a complete admin authentication system, an admin panel with a statistics dashboard, bulk article management, a subscriber list, a content seeder, and a manager for user-submitted contributions and contact messages. The frontend features Most Popular and Related article sections, search autocomplete, homepage pagination, an RSS feed, user article bookmarks, and a user contribution workflow. The database contains over 240 articles, and performance has been optimized by adding necessary MongoDB indexes. Google AdSense has been integrated with an  file and ad slots placed throughout the site.
+A live full-stack application (React, FastAPI, MongoDB) deployed on the user's VPS. The app has a functional Admin Panel, Authentication, Dark Mode, bulk article management, and Per-Article Analytics. The backend includes a highly capable web scraper using  to bypass Cloudflare. 4 AI optimization tools (Rewrite, SEO, Summarize, Full Optimize) are fully integrated into the Article Scraper UI. A Bulk AI Optimize dashboard exists for processing old content. An Auto-Updater ( + ) is implemented to handle , , yarn run v1.22.22
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command., and .  has been severely pruned to only include essential dependencies compatible with the VPS's Python 3.10 environment.
 
 **Last working item**:
--   **Last item agent was working**: The user requested a feature to scrape articles from other open-source websites and format them into the 9xCodes style for admin approval. The agent installed the necessary library () and created the initial backend file () to house the new API endpoint.
--   **Status**: IN PROGRESS
--   **Agent Testing Done**: N
--   **Which testing method agent to use?**: backend testing agent
--   **User Testing Done**: N
+- **Last item agent was working**: Fixing the Auto-Updater script and frontend polling logic. The PM2 restart was causing the backend to drop briefly, leading the frontend to throw an update had some issues error. Also, incompatible dependencies () were breaking the VPS build. The agent added network retry logic to the frontend () and cleaned up .
+- **Status**: USER VERIFICATION PENDING
+- **Agent Testing Done**: Y
+- **Which testing method agent to use?**: backend testing agent / manual testing by curl
+- **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Implement Article Scraper Logic (P0)**
-    -   **Description**: The user wants an admin tool to scrape articles from external URLs. The initial file setup is complete, but the core logic for fetching, parsing, formatting, and saving the content is missing.
-    -   **Attempted fixes**: None. This is a new feature implementation.
-    -   **Next debug checklist**:
-        1.  In , implement a new endpoint (e.g., ) that accepts a URL.
-        2.  Use  and  to fetch and parse the HTML from the provided URL.
-        3.  Develop logic to intelligently extract the title, main content, and code blocks. This may require site-specific selectors initially.
-        4.  Convert the extracted HTML content into the 9xCodes JSON structure (e.g., an array of  with  and ).
-        5.  Save the formatted article into the  collection with a  of 'pending' for admin review.
-        6.  Register the new scraper router in .
-    -   **Why fix this issue and what will be achieved with the fix?**: This will provide the user with a powerful tool to automate content acquisition for their website.
-    -   **Status**: IN PROGRESS
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: Backend
-    -   **Blocked on other issue**: None
+- **Issue 1: Verify Auto-Updater and Bulk AI Optimize on VPS (P0)**
+   - **Attempted fixes**: The agent fixed the updater's logging stream, moved  to write before the , detached the python subprocess, cleaned up  (removed , , , etc.), and added 30-second retry polling to the frontend UI so it survives the PM2 restart downtime without throwing an error.
+   - **Next debug checklist**: 
+      1. Ask the user to click Save to Github and then click Update Now in their Admin Panel.
+      2. Verify if the update completes and shows a Update Complete! success toast.
+      3. Ask the user to run the Bulk AI Optimize feature to ensure  is working correctly on the VPS.
+   - **Why fix this issue and what will be achieved with the fix?**: Ensures the user can seamlessly deploy future code changes and utilize the AI features to get AdSense approval.
+   - **Status**: USER VERIFICATION PENDING
+   - **Is recurring issue?**: Y (The updater script had 4 distinct failure points iteratively resolved in the last session).
+   - **Should Test frontend/backend/both after fix?**: Both
+   - **Blocked on other issue**: None
 
 **In progress Task List**:
--   **Task 1: Build the Article Scraper (P0)**
-    -   **Where to resume**: Continue implementation within .
-    -   **What will be achieved with this?**: A functional backend endpoint that can scrape an article from a URL.
-    -   **Status**: IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?**: Backend
-    -   **Blocked on something**: None.
+*(None - all requested features were completed, waiting on user verification of the VPS deployment)*
 
 **Upcoming and Future Tasks**
--   **Upcoming Tasks**:
-    -   (P1) **Scraper Frontend UI**: Create a new page in the admin panel where the user can input a URL, trigger the scraping process, and see the status of the operation.
--   **Future Tasks**:
-    -   (P2) Dark/Light mode toggle.
-    -   (P2) Per-article analytics view in the admin panel.
-    -   (P2) A moderation interface for user comments (if comments are added later).
+- (P2) User comment moderation interface.
+- (P2) Guide user to apply for Google AdSense again after they have successfully bulk-optimized their content with AI to improve quality.
 
 **Completed work in this session**
--   **Branding**: Removed Made with Emergent branding from .
--   **Core Features**: Implemented Most Popular Articles, Related Articles, search autocomplete, and homepage pagination.
--   **UX Improvements**: Added Table of Contents, user bookmarks, and reading time to article pages.
--   **Admin Tooling**:
-    -   Consolidated all seeder scripts into a single robust utility with an Admin UI ().
-    -   Added a Newsletter subscription system with an admin manager ().
-    -   Added a Bulk Article Manager ().
-    -   Added a Contact Message viewer ().
--   **User Contribution System**: Created a full workflow for users to submit articles, which admins can approve or reject ( and ).
--   **Static Pages**: Created About Us and Contact Us pages with functional links.
--   **Performance Optimization**: Identified and fixed major performance bottlenecks by adding comprehensive indexes to all MongoDB collections, resulting in a >2x speed improvement on key endpoints.
--   **Bug Fixes**:
-    -   Fixed a UI delay in the Contact Messages manager by implementing an optimistic update on deletion.
-    -   Resolved an issue where old contact messages were not displaying due to a missing uid=0(root) gid=0(root) groups=0(root) field.
-    -   Removed hardcoded credentials from the Login page UI.
--   **SEO & Monetization**:
-    -   Added a full-featured RSS feed at .
-    -   Successfully integrated Google AdSense by adding the required  tag,  file, and fixing the ad rendering component.
--   **Cancelled Task**: AI video generation was attempted but cancelled by the user due to the high cost associated with their Emergent LLM Key balance.
+- Wired up 4 AI Optimization features (Full Optimize, Rewrite, SEO, Summarize) in .
+- Resolved an invalid  issue and updated it in the backend .
+- Built the **Bulk AI Optimize** full-stack feature: Created  and updated  to allow mass-optimization of 289+ existing articles.
+- Overhauled the **Auto-Updater script** ( & ):
+   - Added real-time log reading via a JSON status file.
+   - Fixed PM2 prematurely killing the script before success was recorded.
+   - Ensured  installs correctly with .
+   - Added fault-tolerant frontend polling (10 retries, 30s duration) in  to survive the backend restarting.
+- Massively cleaned up  from 130+ packages down to ~40 essential ones, removing , , , etc., that were failing on the user's Python 3.10 VPS.
 
 **Earlier issues found/mentioned but not fixed**
--   None. All previously known issues have been addressed.
+- None.
 
 **Known issue recurrence from previous fork**
--   None.
+- **Issue recurrence in previous fork**: Missing dependencies / Auto-updater failing on the VPS.
+- **Recurrence count**: 4 (Failed on git pull limits, then missing emergentintegrations index url, then PM2 kill signals, then numpy python version mismatch).
+- **Status**: RESOLVED (Pending user verification). 
+- *Note for Next Agent: NEVER add heavy data-science or dev-tool packages (numpy, pandas, black, mypy) to  unless explicitly needed, as they break the user's VPS build.*
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: React, React Router, TailwindCSS, Shadcn UI, Axios, .
--   **Backend**: FastAPI, Pydantic, Motor (async MongoDB driver).
--   **Database**: MongoDB.
--   **Performance**: Implemented database indexing (text, compound, descending) to optimize query performance.
--   **UI/UX**: Implemented optimistic UI updates for instant user feedback on destructive actions.
--   **Web Scraping**:  (for the in-progress scraper task).
--   **Deployment**: The user manages their own deployment on an Ubuntu VPS using Nginx, PM2, and Git.
+- **Frontend**: React, TailwindCSS, polling with exponential backoff/retries.
+- **Backend**: FastAPI, MongoDB.
+- **Scripting**: Bash () tightly coupled with PM2 and React frontend polling.
+- **AI Integrations**:  using .
 
 **key DB schema**
--   **users**: 
--   **code_snippets**:  (heavily indexed)
--   **subscribers**: 
--   **contributions**: 
--   **contact_messages**: 
--   **ads_config**: 
+- : Contains  flag used by the Bulk Optimize feature.
+- : AdSense configurations.
 
 **changes in tech stack**
--   Added  to the backend dependencies for the new scraper feature.
+- Removed heavy dev dependencies (, , , , ./backend/auth.py:25:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:29:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:33:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:37:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:40:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:43:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:48:80: E501 line too long (83 > 79 characters)
+./backend/auth.py:53:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:62:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:62:80: E501 line too long (90 > 79 characters)
+./backend/auth.py:70:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:77:1: E302 expected 2 blank lines, found 1
+./backend/auth.py:81:80: E501 line too long (88 > 79 characters)
+./backend/database.py:20:1: E302 expected 2 blank lines, found 1
+./backend/database.py:24:1: E302 expected 2 blank lines, found 1
+./backend/database.py:25:19: W292 no newline at end of file
+./backend/models.py:7:1: E302 expected 2 blank lines, found 1
+./backend/models.py:13:1: E302 expected 2 blank lines, found 1
+./backend/models.py:17:1: E302 expected 2 blank lines, found 1
+./backend/models.py:27:1: E302 expected 2 blank lines, found 1
+./backend/models.py:45:1: E302 expected 2 blank lines, found 1
+./backend/models.py:50:1: E302 expected 2 blank lines, found 1
+./backend/models.py:58:1: E302 expected 2 blank lines, found 1
+./backend/models.py:67:1: E302 expected 2 blank lines, found 1
+./backend/models.py:72:39: W292 no newline at end of file
+./backend/routes/ads.py:1:1: F401 'fastapi.HTTPException' imported but unused
+./backend/routes/ads.py:2:1: F401 'models.GoogleAdsConfig' imported but unused
+./backend/routes/ads.py:2:1: F401 'models.GoogleAdsConfigUpdate' imported but unused
+./backend/routes/ads.py:10:1: E302 expected 2 blank lines, found 1
+./backend/routes/ads.py:23:1: E302 expected 2 blank lines, found 1
+./backend/routes/ads.py:27:1: W293 blank line contains whitespace
+./backend/routes/ads.py:45:1: W293 blank line contains whitespace
+./backend/routes/ads.py:50:1: E302 expected 2 blank lines, found 1
+./backend/routes/ads.py:54:1: W293 blank line contains whitespace
+./backend/routes/ads.py:57:1: W293 blank line contains whitespace
+./backend/routes/ads.py:67:1: W293 blank line contains whitespace
+./backend/routes/ads.py:68:61: W292 no newline at end of file
+./backend/routes/ai_rewrite.py:25:80: E501 line too long (182 > 79 characters)
+./backend/routes/ai_rewrite.py:27:80: E501 line too long (118 > 79 characters)
+./backend/routes/ai_rewrite.py:52:80: E501 line too long (100 > 79 characters)
+./backend/routes/ai_rewrite.py:56:80: E501 line too long (126 > 79 characters)
+./backend/routes/ai_rewrite.py:73:80: E501 line too long (157 > 79 characters)
+./backend/routes/ai_rewrite.py:83:80: E501 line too long (180 > 79 characters)
+./backend/routes/ai_rewrite.py:85:80: E501 line too long (139 > 79 characters)
+./backend/routes/ai_rewrite.py:95:80: E501 line too long (189 > 79 characters)
+./backend/routes/ai_rewrite.py:97:80: E501 line too long (130 > 79 characters)
+./backend/routes/ai_rewrite.py:106:80: E501 line too long (195 > 79 characters)
+./backend/routes/ai_rewrite.py:108:80: E501 line too long (142 > 79 characters)
+./backend/routes/ai_rewrite.py:124:80: E501 line too long (125 > 79 characters)
+./backend/routes/ai_rewrite.py:160:80: E501 line too long (86 > 79 characters)
+./backend/routes/ai_rewrite.py:166:80: E501 line too long (103 > 79 characters)
+./backend/routes/ai_rewrite.py:172:80: E501 line too long (87 > 79 characters)
+./backend/routes/ai_rewrite.py:190:80: E501 line too long (89 > 79 characters)
+./backend/routes/ai_rewrite.py:198:80: E501 line too long (90 > 79 characters)
+./backend/routes/ai_rewrite.py:199:80: E501 line too long (86 > 79 characters)
+./backend/routes/ai_rewrite.py:208:80: E501 line too long (93 > 79 characters)
+./backend/routes/ai_rewrite.py:217:80: E501 line too long (103 > 79 characters)
+./backend/routes/ai_rewrite.py:226:80: E501 line too long (80 > 79 characters)
+./backend/routes/ai_rewrite.py:235:80: E501 line too long (104 > 79 characters)
+./backend/routes/ai_rewrite.py:249:80: E501 line too long (83 > 79 characters)
+./backend/routes/analytics.py:1:1: F401 'fastapi.HTTPException' imported but unused
+./backend/routes/analytics.py:5:1: F401 'typing.Optional' imported but unused
+./backend/routes/analytics.py:9:1: E302 expected 2 blank lines, found 1
+./backend/routes/analytics.py:11:80: E501 line too long (95 > 79 characters)
+./backend/routes/analytics.py:13:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:16:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:23:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:30:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:33:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:39:80: E501 line too long (80 > 79 characters)
+./backend/routes/analytics.py:40:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:46:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:55:80: E501 line too long (83 > 79 characters)
+./backend/routes/analytics.py:58:1: E302 expected 2 blank lines, found 1
+./backend/routes/analytics.py:62:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:65:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:72:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:79:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:82:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:88:80: E501 line too long (80 > 79 characters)
+./backend/routes/analytics.py:89:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:93:80: E501 line too long (80 > 79 characters)
+./backend/routes/analytics.py:95:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:101:80: E501 line too long (84 > 79 characters)
+./backend/routes/analytics.py:102:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:108:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:117:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:126:80: E501 line too long (84 > 79 characters)
+./backend/routes/analytics.py:127:80: E501 line too long (88 > 79 characters)
+./backend/routes/analytics.py:132:1: E302 expected 2 blank lines, found 1
+./backend/routes/analytics.py:139:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:141:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:148:80: E501 line too long (81 > 79 characters)
+./backend/routes/analytics.py:156:1: W293 blank line contains whitespace
+./backend/routes/analytics.py:158:1: W293 blank line contains whitespace
+./backend/routes/article_analytics.py:3:1: F401 'bson.ObjectId' imported but unused
+./backend/routes/article_analytics.py:4:1: F401 'datetime.datetime' imported but unused
+./backend/routes/article_analytics.py:4:1: F401 'datetime.timezone' imported but unused
+./backend/routes/article_analytics.py:4:1: F401 'datetime.timedelta' imported but unused
+./backend/routes/article_analytics.py:15:80: E501 line too long (116 > 79 characters)
+./backend/routes/article_analytics.py:54:80: E501 line too long (154 > 79 characters)
+./backend/routes/article_analytics.py:60:80: E501 line too long (90 > 79 characters)
+./backend/routes/article_analytics.py:66:80: E501 line too long (103 > 79 characters)
+./backend/routes/article_analytics.py:82:80: E501 line too long (83 > 79 characters)
+./backend/routes/articles.py:6:10: E401 multiple imports on one line
+./backend/routes/articles.py:10:1: E302 expected 2 blank lines, found 1
+./backend/routes/articles.py:13:1: E302 expected 2 blank lines, found 1
+./backend/routes/articles.py:17:1: E302 expected 2 blank lines, found 1
+./backend/routes/articles.py:21:80: E501 line too long (80 > 79 characters)
+./backend/routes/articles.py:22:80: E501 line too long (99 > 79 characters)
+./backend/routes/articles.py:24:1: E302 expected 2 blank lines, found 1
+./backend/routes/articles.py:32:80: E501 line too long (102 > 79 characters)
+./backend/routes/articles.py:34:1: E302 expected 2 blank lines, found 1
+./backend/routes/articles.py:48:80: E501 line too long (81 > 79 characters)
+./backend/routes/articles.py:53:80: E501 line too long (120 > 79 characters)
+./backend/routes/articles.py:74:1: E302 expected 2 blank lines, found 1
+./backend/routes/articles.py:91:80: E501 line too long (114 > 79 characters)
+./backend/routes/auth.py:3:48: W291 trailing whitespace
+./backend/routes/auth.py:4:56: W291 trailing whitespace
+./backend/routes/auth.py:13:1: E302 expected 2 blank lines, found 1
+./backend/routes/auth.py:17:1: W293 blank line contains whitespace
+./backend/routes/auth.py:20:1: W293 blank line contains whitespace
+./backend/routes/auth.py:22:80: E501 line too long (104 > 79 characters)
+./backend/routes/auth.py:27:1: W293 blank line contains whitespace
+./backend/routes/auth.py:32:1: W293 blank line contains whitespace
+./backend/routes/auth.py:35:1: E302 expected 2 blank lines, found 1
+./backend/routes/auth.py:42:1: W293 blank line contains whitespace
+./backend/routes/auth.py:45:1: W293 blank line contains whitespace
+./backend/routes/auth.py:52:1: W293 blank line contains whitespace
+./backend/routes/auth.py:59:1: W293 blank line contains whitespace
+./backend/routes/auth.py:63:1: W293 blank line contains whitespace
+./backend/routes/auth.py:66:1: E302 expected 2 blank lines, found 1
+./backend/routes/auth.py:70:80: E501 line too long (83 > 79 characters)
+./backend/routes/auth.py:71:1: W293 blank line contains whitespace
+./backend/routes/auth.py:74:1: W293 blank line contains whitespace
+./backend/routes/auth.py:77:1: W293 blank line contains whitespace
+./backend/routes/comments.py:8:1: E302 expected 2 blank lines, found 1
+./backend/routes/comments.py:13:1: W293 blank line contains whitespace
+./backend/routes/comments.py:18:1: E302 expected 2 blank lines, found 1
+./backend/routes/comments.py:21:80: E501 line too long (86 > 79 characters)
+./backend/routes/comments.py:23:56: W292 no newline at end of file
+./backend/routes/contact.py:11:1: E302 expected 2 blank lines, found 1
+./backend/routes/contact.py:17:1: E302 expected 2 blank lines, found 1
+./backend/routes/contact.py:31:1: E302 expected 2 blank lines, found 1
+./backend/routes/contact.py:46:80: E501 line too long (89 > 79 characters)
+./backend/routes/contact.py:58:80: E501 line too long (106 > 79 characters)
+./backend/routes/contact.py:60:1: E302 expected 2 blank lines, found 1
+./backend/routes/contact.py:66:80: E501 line too long (87 > 79 characters)
+./backend/routes/contact.py:67:9: E722 do not use bare 'except'
+./backend/routes/contributions.py:4:1: F401 'typing.Optional' imported but unused
+./backend/routes/contributions.py:6:12: E401 multiple imports on one line
+./backend/routes/contributions.py:12:1: E302 expected 2 blank lines, found 1
+./backend/routes/contributions.py:16:1: E302 expected 2 blank lines, found 1
+./backend/routes/contributions.py:27:1: E302 expected 2 blank lines, found 1
+./backend/routes/contributions.py:29:80: E501 line too long (81 > 79 characters)
+./backend/routes/contributions.py:32:80: E501 line too long (90 > 79 characters)
+./backend/routes/contributions.py:33:1: W293 blank line contains whitespace
+./backend/routes/contributions.py:50:80: E501 line too long (81 > 79 characters)
+./backend/routes/contributions.py:52:1: E302 expected 2 blank lines, found 1
+./backend/routes/contributions.py:61:80: E501 line too long (109 > 79 characters)
+./backend/routes/contributions.py:63:80: E501 line too long (104 > 79 characters)
+./backend/routes/contributions.py:65:1: E302 expected 2 blank lines, found 1
+./backend/routes/contributions.py:70:1: W293 blank line contains whitespace
+./backend/routes/contributions.py:90:1: W293 blank line contains whitespace
+./backend/routes/contributions.py:94:1: W293 blank line contains whitespace
+./backend/routes/contributions.py:96:80: E501 line too long (104 > 79 characters)
+./backend/routes/contributions.py:99:1: E302 expected 2 blank lines, found 1
+./backend/routes/contributions.py:109:1: E302 expected 2 blank lines, found 1
+./backend/routes/contributions.py:111:80: E501 line too long (81 > 79 characters)
+./backend/routes/newsletter.py:5:1: F401 'pydantic.EmailStr' imported but unused
+./backend/routes/newsletter.py:6:10: E401 multiple imports on one line
+./backend/routes/newsletter.py:10:1: E302 expected 2 blank lines, found 1
+./backend/routes/newsletter.py:13:1: E302 expected 2 blank lines, found 1
+./backend/routes/newsletter.py:27:1: E302 expected 2 blank lines, found 1
+./backend/routes/newsletter.py:38:80: E501 line too long (108 > 79 characters)
+./backend/routes/newsletter.py:40:80: E501 line too long (101 > 79 characters)
+./backend/routes/newsletter.py:42:1: E302 expected 2 blank lines, found 1
+./backend/routes/newsletter.py:44:80: E501 line too long (81 > 79 characters)
+./backend/routes/newsletter.py:58:1: E302 expected 2 blank lines, found 1
+./backend/routes/newsletter.py:65:1: E302 expected 2 blank lines, found 1
+./backend/routes/scraper.py:4:1: F401 'typing.List' imported but unused
+./backend/routes/scraper.py:4:1: F401 'typing.Optional' imported but unused
+./backend/routes/scraper.py:6:12: E401 multiple imports on one line
+./backend/routes/scraper.py:18:80: E501 line too long (122 > 79 characters)
+./backend/routes/scraper.py:19:80: E501 line too long (80 > 79 characters)
+./backend/routes/scraper.py:42:80: E501 line too long (157 > 79 characters)
+./backend/routes/scraper.py:43:80: E501 line too long (165 > 79 characters)
+./backend/routes/scraper.py:44:80: E501 line too long (159 > 79 characters)
+./backend/routes/scraper.py:45:80: E501 line too long (109 > 79 characters)
+./backend/routes/scraper.py:46:80: E501 line too long (126 > 79 characters)
+./backend/routes/scraper.py:47:80: E501 line too long (95 > 79 characters)
+./backend/routes/scraper.py:48:80: E501 line too long (133 > 79 characters)
+./backend/routes/scraper.py:49:80: E501 line too long (82 > 79 characters)
+./backend/routes/scraper.py:50:80: E501 line too long (114 > 79 characters)
+./backend/routes/scraper.py:51:80: E501 line too long (98 > 79 characters)
+./backend/routes/scraper.py:61:80: E501 line too long (110 > 79 characters)
+./backend/routes/scraper.py:62:80: E501 line too long (100 > 79 characters)
+./backend/routes/scraper.py:74:80: E501 line too long (147 > 79 characters)
+./backend/routes/scraper.py:81:80: E501 line too long (107 > 79 characters)
+./backend/routes/scraper.py:82:80: E501 line too long (101 > 79 characters)
+./backend/routes/scraper.py:83:80: E501 line too long (97 > 79 characters)
+./backend/routes/scraper.py:84:80: E501 line too long (80 > 79 characters)
+./backend/routes/scraper.py:90:80: E501 line too long (83 > 79 characters)
+./backend/routes/scraper.py:92:80: E501 line too long (92 > 79 characters)
+./backend/routes/scraper.py:96:80: E501 line too long (83 > 79 characters)
+./backend/routes/scraper.py:104:80: E501 line too long (101 > 79 characters)
+./backend/routes/scraper.py:125:80: E501 line too long (150 > 79 characters)
+./backend/routes/scraper.py:142:80: E501 line too long (80 > 79 characters)
+./backend/routes/scraper.py:149:80: E501 line too long (101 > 79 characters)
+./backend/routes/scraper.py:157:80: E501 line too long (109 > 79 characters)
+./backend/routes/scraper.py:195:80: E501 line too long (111 > 79 characters)
+./backend/routes/scraper.py:254:80: E501 line too long (127 > 79 characters)
+./backend/routes/scraper.py:256:80: E501 line too long (89 > 79 characters)
+./backend/routes/scraper.py:262:80: E501 line too long (120 > 79 characters)
+./backend/routes/scraper.py:271:80: E501 line too long (86 > 79 characters)
+./backend/routes/scraper.py:273:80: E501 line too long (88 > 79 characters)
+./backend/routes/scraper.py:295:80: E501 line too long (140 > 79 characters)
+./backend/routes/scraper.py:341:80: E501 line too long (88 > 79 characters)
+./backend/routes/scraper.py:345:80: E501 line too long (93 > 79 characters)
+./backend/routes/scraper.py:349:1: W293 blank line contains whitespace
+./backend/routes/scraper.py:351:80: E501 line too long (81 > 79 characters)
+./backend/routes/scraper.py:353:80: E501 line too long (92 > 79 characters)
+./backend/routes/scraper.py:403:80: E501 line too long (100 > 79 characters)
+./backend/routes/scraper.py:404:80: E501 line too long (109 > 79 characters)
+./backend/routes/scraper.py:405:80: E501 line too long (102 > 79 characters)
+./backend/routes/scraper.py:406:80: E501 line too long (113 > 79 characters)
+./backend/routes/scraper.py:407:80: E501 line too long (100 > 79 characters)
+./backend/routes/scraper.py:412:80: E501 line too long (114 > 79 characters)
+./backend/routes/seeder.py:4:1: F401 'typing.List' imported but unused
+./backend/routes/seeder.py:6:12: E401 multiple imports on one line
+./backend/routes/seeder.py:10:1: E302 expected 2 blank lines, found 1
+./backend/routes/seeder.py:14:1: E302 expected 2 blank lines, found 1
+./backend/routes/seeder.py:22:80: E501 line too long (129 > 79 characters)
+./backend/routes/seeder.py:27:1: E305 expected 2 blank lines after class or function definition, found 1
+./backend/routes/seeder.py:29:80: E501 line too long (181 > 79 characters)
+./backend/routes/seeder.py:30:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:30:58: F541 f-string is missing placeholders
+./backend/routes/seeder.py:30:80: E501 line too long (100 > 79 characters)
+./backend/routes/seeder.py:31:80: E501 line too long (112 > 79 characters)
+./backend/routes/seeder.py:32:80: E501 line too long (145 > 79 characters)
+./backend/routes/seeder.py:33:80: E501 line too long (92 > 79 characters)
+./backend/routes/seeder.py:34:80: E501 line too long (181 > 79 characters)
+./backend/routes/seeder.py:35:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:35:80: E501 line too long (104 > 79 characters)
+./backend/routes/seeder.py:36:80: E501 line too long (146 > 79 characters)
+./backend/routes/seeder.py:37:80: E501 line too long (113 > 79 characters)
+./backend/routes/seeder.py:38:80: E501 line too long (87 > 79 characters)
+./backend/routes/seeder.py:39:80: E501 line too long (187 > 79 characters)
+./backend/routes/seeder.py:40:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:40:80: E501 line too long (118 > 79 characters)
+./backend/routes/seeder.py:41:80: E501 line too long (112 > 79 characters)
+./backend/routes/seeder.py:42:80: E501 line too long (247 > 79 characters)
+./backend/routes/seeder.py:43:80: E501 line too long (97 > 79 characters)
+./backend/routes/seeder.py:44:80: E501 line too long (202 > 79 characters)
+./backend/routes/seeder.py:45:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:45:80: E501 line too long (138 > 79 characters)
+./backend/routes/seeder.py:46:80: E501 line too long (122 > 79 characters)
+./backend/routes/seeder.py:47:80: E501 line too long (175 > 79 characters)
+./backend/routes/seeder.py:48:80: E501 line too long (86 > 79 characters)
+./backend/routes/seeder.py:49:80: E501 line too long (197 > 79 characters)
+./backend/routes/seeder.py:50:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:50:80: E501 line too long (142 > 79 characters)
+./backend/routes/seeder.py:51:80: E501 line too long (108 > 79 characters)
+./backend/routes/seeder.py:52:80: E501 line too long (114 > 79 characters)
+./backend/routes/seeder.py:55:80: E501 line too long (186 > 79 characters)
+./backend/routes/seeder.py:56:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:56:80: E501 line too long (125 > 79 characters)
+./backend/routes/seeder.py:57:80: E501 line too long (224 > 79 characters)
+./backend/routes/seeder.py:58:80: E501 line too long (108 > 79 characters)
+./backend/routes/seeder.py:59:80: E501 line too long (176 > 79 characters)
+./backend/routes/seeder.py:60:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:60:80: E501 line too long (92 > 79 characters)
+./backend/routes/seeder.py:61:80: E501 line too long (165 > 79 characters)
+./backend/routes/seeder.py:62:80: E501 line too long (199 > 79 characters)
+./backend/routes/seeder.py:63:80: E501 line too long (199 > 79 characters)
+./backend/routes/seeder.py:64:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:64:80: E501 line too long (107 > 79 characters)
+./backend/routes/seeder.py:65:80: E501 line too long (277 > 79 characters)
+./backend/routes/seeder.py:66:80: E501 line too long (189 > 79 characters)
+./backend/routes/seeder.py:69:80: E501 line too long (166 > 79 characters)
+./backend/routes/seeder.py:70:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:70:80: E501 line too long (142 > 79 characters)
+./backend/routes/seeder.py:71:80: E501 line too long (150 > 79 characters)
+./backend/routes/seeder.py:72:80: E501 line too long (127 > 79 characters)
+./backend/routes/seeder.py:73:80: E501 line too long (207 > 79 characters)
+./backend/routes/seeder.py:74:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:74:80: E501 line too long (123 > 79 characters)
+./backend/routes/seeder.py:75:80: E501 line too long (163 > 79 characters)
+./backend/routes/seeder.py:76:80: E501 line too long (122 > 79 characters)
+./backend/routes/seeder.py:79:80: E501 line too long (161 > 79 characters)
+./backend/routes/seeder.py:80:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:80:80: E501 line too long (120 > 79 characters)
+./backend/routes/seeder.py:81:80: E501 line too long (184 > 79 characters)
+./backend/routes/seeder.py:82:80: E501 line too long (148 > 79 characters)
+./backend/routes/seeder.py:83:80: E501 line too long (134 > 79 characters)
+./backend/routes/seeder.py:84:80: E501 line too long (208 > 79 characters)
+./backend/routes/seeder.py:85:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:85:80: E501 line too long (136 > 79 characters)
+./backend/routes/seeder.py:86:80: E501 line too long (120 > 79 characters)
+./backend/routes/seeder.py:87:80: E501 line too long (141 > 79 characters)
+./backend/routes/seeder.py:90:80: E501 line too long (195 > 79 characters)
+./backend/routes/seeder.py:91:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:91:80: E501 line too long (101 > 79 characters)
+./backend/routes/seeder.py:92:80: E501 line too long (152 > 79 characters)
+./backend/routes/seeder.py:93:80: E501 line too long (168 > 79 characters)
+./backend/routes/seeder.py:94:80: E501 line too long (192 > 79 characters)
+./backend/routes/seeder.py:95:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:95:80: E501 line too long (112 > 79 characters)
+./backend/routes/seeder.py:96:80: E501 line too long (130 > 79 characters)
+./backend/routes/seeder.py:97:80: E501 line too long (160 > 79 characters)
+./backend/routes/seeder.py:100:80: E501 line too long (201 > 79 characters)
+./backend/routes/seeder.py:101:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:101:80: E501 line too long (156 > 79 characters)
+./backend/routes/seeder.py:102:80: E501 line too long (301 > 79 characters)
+./backend/routes/seeder.py:103:80: E501 line too long (186 > 79 characters)
+./backend/routes/seeder.py:106:80: E501 line too long (202 > 79 characters)
+./backend/routes/seeder.py:107:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:107:80: E501 line too long (115 > 79 characters)
+./backend/routes/seeder.py:108:80: E501 line too long (105 > 79 characters)
+./backend/routes/seeder.py:109:80: E501 line too long (109 > 79 characters)
+./backend/routes/seeder.py:112:80: E501 line too long (196 > 79 characters)
+./backend/routes/seeder.py:113:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:113:80: E501 line too long (381 > 79 characters)
+./backend/routes/seeder.py:114:80: E501 line too long (177 > 79 characters)
+./backend/routes/seeder.py:115:80: E501 line too long (130 > 79 characters)
+./backend/routes/seeder.py:118:80: E501 line too long (179 > 79 characters)
+./backend/routes/seeder.py:119:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:119:80: E501 line too long (123 > 79 characters)
+./backend/routes/seeder.py:120:80: E501 line too long (153 > 79 characters)
+./backend/routes/seeder.py:121:80: E501 line too long (179 > 79 characters)
+./backend/routes/seeder.py:124:80: E501 line too long (202 > 79 characters)
+./backend/routes/seeder.py:125:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:125:80: E501 line too long (115 > 79 characters)
+./backend/routes/seeder.py:126:80: E501 line too long (229 > 79 characters)
+./backend/routes/seeder.py:127:80: E501 line too long (156 > 79 characters)
+./backend/routes/seeder.py:128:80: E501 line too long (166 > 79 characters)
+./backend/routes/seeder.py:131:80: E501 line too long (198 > 79 characters)
+./backend/routes/seeder.py:132:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:132:80: E501 line too long (152 > 79 characters)
+./backend/routes/seeder.py:133:80: E501 line too long (193 > 79 characters)
+./backend/routes/seeder.py:134:80: E501 line too long (168 > 79 characters)
+./backend/routes/seeder.py:137:80: E501 line too long (227 > 79 characters)
+./backend/routes/seeder.py:138:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:138:80: E501 line too long (303 > 79 characters)
+./backend/routes/seeder.py:139:80: E501 line too long (125 > 79 characters)
+./backend/routes/seeder.py:140:80: E501 line too long (160 > 79 characters)
+./backend/routes/seeder.py:143:80: E501 line too long (216 > 79 characters)
+./backend/routes/seeder.py:144:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:144:80: E501 line too long (153 > 79 characters)
+./backend/routes/seeder.py:145:80: E501 line too long (286 > 79 characters)
+./backend/routes/seeder.py:146:80: E501 line too long (167 > 79 characters)
+./backend/routes/seeder.py:149:80: E501 line too long (189 > 79 characters)
+./backend/routes/seeder.py:150:13: E128 continuation line under-indented for visual indent
+./backend/routes/seeder.py:150:80: E501 line too long (174 > 79 characters)
+./backend/routes/seeder.py:151:80: E501 line too long (260 > 79 characters)
+./backend/routes/seeder.py:152:80: E501 line too long (239 > 79 characters)
+./backend/routes/seeder.py:162:1: E302 expected 2 blank lines, found 1
+./backend/routes/seeder.py:166:1: E302 expected 2 blank lines, found 1
+./backend/routes/seeder.py:169:1: E302 expected 2 blank lines, found 1
+./backend/routes/seeder.py:174:80: E501 line too long (95 > 79 characters)
+./backend/routes/seeder.py:176:1: E302 expected 2 blank lines, found 1
+./backend/routes/seeder.py:181:80: E501 line too long (97 > 79 characters)
+./backend/routes/seeder.py:196:80: E501 line too long (106 > 79 characters)
+./backend/routes/seeder.py:198:1: E302 expected 2 blank lines, found 1
+./backend/routes/seeder.py:203:80: E501 line too long (97 > 79 characters)
+./backend/routes/seeder.py:216:80: E501 line too long (142 > 79 characters)
+./backend/routes/seo.py:5:1: F401 'os' imported but unused
+./backend/routes/seo.py:12:1: E302 expected 2 blank lines, found 1
+./backend/routes/seo.py:16:1: W293 blank line contains whitespace
+./backend/routes/seo.py:22:1: W293 blank line contains whitespace
+./backend/routes/seo.py:25:80: E501 line too long (83 > 79 characters)
+./backend/routes/seo.py:26:1: W293 blank line contains whitespace
+./backend/routes/seo.py:33:1: W293 blank line contains whitespace
+./backend/routes/seo.py:51:80: E501 line too long (80 > 79 characters)
+./backend/routes/seo.py:58:1: W293 blank line contains whitespace
+./backend/routes/seo.py:67:1: W293 blank line contains whitespace
+./backend/routes/seo.py:74:1: W293 blank line contains whitespace
+./backend/routes/seo.py:76:1: W293 blank line contains whitespace
+./backend/routes/seo.py:83:1: E302 expected 2 blank lines, found 1
+./backend/routes/seo.py:107:1: E302 expected 2 blank lines, found 1
+./backend/routes/seo.py:111:1: W293 blank line contains whitespace
+./backend/routes/seo.py:114:80: E501 line too long (103 > 79 characters)
+./backend/routes/seo.py:116:1: W293 blank line contains whitespace
+./backend/routes/seo.py:119:1: W293 blank line contains whitespace
+./backend/routes/seo.py:137:1: E302 expected 2 blank lines, found 1
+./backend/routes/seo.py:141:1: W293 blank line contains whitespace
+./backend/routes/seo.py:144:80: E501 line too long (114 > 79 characters)
+./backend/routes/seo.py:146:1: W293 blank line contains whitespace
+./backend/routes/seo.py:148:1: W293 blank line contains whitespace
+./backend/routes/seo.py:163:13: E722 do not use bare 'except'
+./backend/routes/seo.py:167:1: W293 blank line contains whitespace
+./backend/routes/seo.py:171:1: W293 blank line contains whitespace
+./backend/routes/seo.py:182:1: W293 blank line contains whitespace
+./backend/routes/seo.py:188:80: E501 line too long (120 > 79 characters)
+./backend/routes/seo.py:191:80: E501 line too long (88 > 79 characters)
+./backend/routes/seo.py:199:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:10:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:17:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:27:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:30:80: E501 line too long (102 > 79 characters)
+./backend/routes/snippets.py:31:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:34:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:39:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:46:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:59:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:74:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:83:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:86:80: E501 line too long (82 > 79 characters)
+./backend/routes/snippets.py:88:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:96:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:103:80: E501 line too long (103 > 79 characters)
+./backend/routes/snippets.py:107:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:113:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:125:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:129:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:132:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:139:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:142:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:149:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:152:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:156:1: E302 expected 2 blank lines, found 1
+./backend/routes/snippets.py:160:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:163:1: W293 blank line contains whitespace
+./backend/routes/snippets.py:164:55: W292 no newline at end of file
+./backend/routes/updater.py:66:80: E501 line too long (100 > 79 characters)
+./backend/routes/updater.py:75:80: E501 line too long (188 > 79 characters)
+./backend/routes/updater.py:76:80: E501 line too long (112 > 79 characters)
+./backend/routes/updater.py:81:80: E501 line too long (99 > 79 characters)
+./backend/routes/updater.py:86:80: E501 line too long (96 > 79 characters)
+./backend/routes/updater.py:88:80: E501 line too long (88 > 79 characters)
+./backend/routes/updater.py:94:80: E501 line too long (84 > 79 characters)
+./backend/routes/updater.py:96:80: E501 line too long (80 > 79 characters)
+./backend/routes/updater.py:116:80: E501 line too long (99 > 79 characters)
+./backend/routes/updater.py:134:80: E501 line too long (99 > 79 characters)
+./backend/routes/updater.py:141:80: E501 line too long (101 > 79 characters)
+./backend/routes/updater.py:147:80: E501 line too long (101 > 79 characters)
+./backend/routes/updater.py:157:80: E501 line too long (81 > 79 characters)
+./backend/routes/updater.py:161:80: E501 line too long (102 > 79 characters)
+./backend/routes/updater.py:164:80: E501 line too long (93 > 79 characters)
+./backend/routes/updater.py:165:80: E501 line too long (92 > 79 characters)
+./backend/routes/updater.py:179:80: E501 line too long (80 > 79 characters)
+./backend/routes/updater.py:183:80: E501 line too long (100 > 79 characters)
+./backend/routes/updater.py:190:80: E501 line too long (81 > 79 characters)
+./backend/routes/updater.py:192:80: E501 line too long (102 > 79 characters)
+./backend/seed_all.py:11:10: E401 multiple imports on one line
+./backend/seed_all.py:23:1: E302 expected 2 blank lines, found 1
+./backend/seed_all.py:28:1: E302 expected 2 blank lines, found 1
+./backend/seed_all.py:28:80: E501 line too long (80 > 79 characters)
+./backend/seed_all.py:47:1: E302 expected 2 blank lines, found 1
+./backend/seed_all.py:48:80: E501 line too long (80 > 79 characters)
+./backend/seed_all.py:52:1: E305 expected 2 blank lines after class or function definition, found 1
+./backend/seed_all.py:55:80: E501 line too long (93 > 79 characters)
+./backend/seed_all.py:56:80: E501 line too long (89 > 79 characters)
+./backend/seed_all.py:57:80: E501 line too long (165 > 79 characters)
+./backend/seed_all.py:58:80: E501 line too long (119 > 79 characters)
+./backend/seed_all.py:59:80: E501 line too long (106 > 79 characters)
+./backend/seed_all.py:62:80: E501 line too long (87 > 79 characters)
+./backend/seed_all.py:63:80: E501 line too long (103 > 79 characters)
+./backend/seed_all.py:64:80: E501 line too long (234 > 79 characters)
+./backend/seed_all.py:65:80: E501 line too long (171 > 79 characters)
+./backend/seed_all.py:66:80: E501 line too long (162 > 79 characters)
+./backend/seed_all.py:67:80: E501 line too long (90 > 79 characters)
+./backend/seed_all.py:71:80: E501 line too long (86 > 79 characters)
+./backend/seed_all.py:72:80: E501 line too long (169 > 79 characters)
+./backend/seed_all.py:73:80: E501 line too long (132 > 79 characters)
+./backend/seed_all.py:74:80: E501 line too long (167 > 79 characters)
+./backend/seed_all.py:75:80: E501 line too long (89 > 79 characters)
+./backend/seed_all.py:80:80: E501 line too long (104 > 79 characters)
+./backend/seed_all.py:81:80: E501 line too long (97 > 79 characters)
+./backend/seed_all.py:82:80: E501 line too long (141 > 79 characters)
+./backend/seed_all.py:83:80: E501 line too long (140 > 79 characters)
+./backend/seed_all.py:84:80: E501 line too long (127 > 79 characters)
+./backend/seed_all.py:85:80: E501 line too long (118 > 79 characters)
+./backend/seed_all.py:88:80: E501 line too long (96 > 79 characters)
+./backend/seed_all.py:89:80: E501 line too long (92 > 79 characters)
+./backend/seed_all.py:90:80: E501 line too long (124 > 79 characters)
+./backend/seed_all.py:91:80: E501 line too long (167 > 79 characters)
+./backend/seed_all.py:92:80: E501 line too long (140 > 79 characters)
+./backend/seed_all.py:93:80: E501 line too long (229 > 79 characters)
+./backend/seed_all.py:98:80: E501 line too long (80 > 79 characters)
+./backend/seed_all.py:99:80: E501 line too long (88 > 79 characters)
+./backend/seed_all.py:100:80: E501 line too long (137 > 79 characters)
+./backend/seed_all.py:101:80: E501 line too long (332 > 79 characters)
+./backend/seed_all.py:102:80: E501 line too long (108 > 79 characters)
+./backend/seed_all.py:105:80: E501 line too long (83 > 79 characters)
+./backend/seed_all.py:106:80: E501 line too long (86 > 79 characters)
+./backend/seed_all.py:107:80: E501 line too long (113 > 79 characters)
+./backend/seed_all.py:108:80: E501 line too long (203 > 79 characters)
+./backend/seed_all.py:109:80: E501 line too long (314 > 79 characters)
+./backend/seed_all.py:110:80: E501 line too long (143 > 79 characters)
+./backend/seed_all.py:115:80: E501 line too long (102 > 79 characters)
+./backend/seed_all.py:116:80: E501 line too long (93 > 79 characters)
+./backend/seed_all.py:117:80: E501 line too long (220 > 79 characters)
+./backend/seed_all.py:118:80: E501 line too long (131 > 79 characters)
+./backend/seed_all.py:119:80: E501 line too long (190 > 79 characters)
+./backend/seed_all.py:120:80: E501 line too long (168 > 79 characters)
+./backend/seed_all.py:125:80: E501 line too long (94 > 79 characters)
+./backend/seed_all.py:126:80: E501 line too long (107 > 79 characters)
+./backend/seed_all.py:127:80: E501 line too long (309 > 79 characters)
+./backend/seed_all.py:128:80: E501 line too long (279 > 79 characters)
+./backend/seed_all.py:129:80: E501 line too long (338 > 79 characters)
+./backend/seed_all.py:130:80: E501 line too long (206 > 79 characters)
+./backend/seed_all.py:135:80: E501 line too long (98 > 79 characters)
+./backend/seed_all.py:136:80: E501 line too long (98 > 79 characters)
+./backend/seed_all.py:137:80: E501 line too long (458 > 79 characters)
+./backend/seed_all.py:138:80: E501 line too long (171 > 79 characters)
+./backend/seed_all.py:139:80: E501 line too long (93 > 79 characters)
+./backend/seed_all.py:142:80: E501 line too long (88 > 79 characters)
+./backend/seed_all.py:143:80: E501 line too long (105 > 79 characters)
+./backend/seed_all.py:144:80: E501 line too long (138 > 79 characters)
+./backend/seed_all.py:145:80: E501 line too long (281 > 79 characters)
+./backend/seed_all.py:146:80: E501 line too long (203 > 79 characters)
+./backend/seed_all.py:151:80: E501 line too long (87 > 79 characters)
+./backend/seed_all.py:152:80: E501 line too long (103 > 79 characters)
+./backend/seed_all.py:153:80: E501 line too long (197 > 79 characters)
+./backend/seed_all.py:154:80: E501 line too long (249 > 79 characters)
+./backend/seed_all.py:155:80: E501 line too long (184 > 79 characters)
+./backend/seed_all.py:160:80: E501 line too long (99 > 79 characters)
+./backend/seed_all.py:161:80: E501 line too long (106 > 79 characters)
+./backend/seed_all.py:162:80: E501 line too long (402 > 79 characters)
+./backend/seed_all.py:163:80: E501 line too long (306 > 79 characters)
+./backend/seed_all.py:168:80: E501 line too long (97 > 79 characters)
+./backend/seed_all.py:169:80: E501 line too long (106 > 79 characters)
+./backend/seed_all.py:171:80: E501 line too long (195 > 79 characters)
+./backend/seed_all.py:172:80: E501 line too long (250 > 79 characters)
+./backend/seed_all.py:173:80: E501 line too long (95 > 79 characters)
+./backend/seed_all.py:178:80: E501 line too long (102 > 79 characters)
+./backend/seed_all.py:179:80: E501 line too long (93 > 79 characters)
+./backend/seed_all.py:180:80: E501 line too long (286 > 79 characters)
+./backend/seed_all.py:181:80: E501 line too long (241 > 79 characters)
+./backend/seed_all.py:182:80: E501 line too long (220 > 79 characters)
+./backend/seed_all.py:187:80: E501 line too long (93 > 79 characters)
+./backend/seed_all.py:188:80: E501 line too long (98 > 79 characters)
+./backend/seed_all.py:189:80: E501 line too long (214 > 79 characters)
+./backend/seed_all.py:190:80: E501 line too long (290 > 79 characters)
+./backend/seed_all.py:191:80: E501 line too long (294 > 79 characters)
+./backend/seed_all.py:192:80: E501 line too long (328 > 79 characters)
+./backend/seed_all.py:197:80: E501 line too long (88 > 79 characters)
+./backend/seed_all.py:198:80: E501 line too long (105 > 79 characters)
+./backend/seed_all.py:199:80: E501 line too long (282 > 79 characters)
+./backend/seed_all.py:200:80: E501 line too long (220 > 79 characters)
+./backend/seed_all.py:201:80: E501 line too long (286 > 79 characters)
+./backend/seed_all.py:206:80: E501 line too long (93 > 79 characters)
+./backend/seed_all.py:207:80: E501 line too long (98 > 79 characters)
+./backend/seed_all.py:208:80: E501 line too long (220 > 79 characters)
+./backend/seed_all.py:209:80: E501 line too long (293 > 79 characters)
+./backend/seed_all.py:210:80: E501 line too long (298 > 79 characters)
+./backend/seed_all.py:211:80: E501 line too long (217 > 79 characters)
+./backend/seed_all.py:215:1: E302 expected 2 blank lines, found 1
+./backend/seed_all.py:219:80: E501 line too long (87 > 79 characters)
+./backend/seed_all.py:242:80: E501 line too long (91 > 79 characters)
+./backend/seed_all.py:243:80: E501 line too long (83 > 79 characters)
+./backend/seed_all.py:244:80: E501 line too long (90 > 79 characters)
+./backend/seed_all.py:246:80: E501 line too long (85 > 79 characters)
+./backend/seed_data.py:16:1: E302 expected 2 blank lines, found 1
+./backend/seed_data.py:22:1: E302 expected 2 blank lines, found 1
+./backend/seed_data.py:28:1: W293 blank line contains whitespace
+./backend/seed_data.py:34:80: E501 line too long (143 > 79 characters)
+./backend/seed_data.py:47:80: E501 line too long (119 > 79 characters)
+./backend/seed_data.py:53:80: E501 line too long (139 > 79 characters)
+./backend/seed_data.py:54:80: E501 line too long (153 > 79 characters)
+./backend/seed_data.py:59:80: E501 line too long (101 > 79 characters)
+./backend/seed_data.py:65:80: E501 line too long (106 > 79 characters)
+./backend/seed_data.py:66:80: E501 line too long (111 > 79 characters)
+./backend/seed_data.py:72:80: E501 line too long (117 > 79 characters)
+./backend/seed_data.py:78:80: E501 line too long (144 > 79 characters)
+./backend/seed_data.py:85:80: E501 line too long (151 > 79 characters)
+./backend/seed_data.py:98:80: E501 line too long (85 > 79 characters)
+./backend/seed_data.py:99:80: E501 line too long (167 > 79 characters)
+./backend/seed_data.py:104:80: E501 line too long (84 > 79 characters)
+./backend/seed_data.py:110:80: E501 line too long (83 > 79 characters)
+./backend/seed_data.py:111:80: E501 line too long (199 > 79 characters)
+./backend/seed_data.py:117:80: E501 line too long (86 > 79 characters)
+./backend/seed_data.py:126:80: E501 line too long (125 > 79 characters)
+./backend/seed_data.py:139:80: E501 line too long (86 > 79 characters)
+./backend/seed_data.py:145:80: E501 line too long (90 > 79 characters)
+./backend/seed_data.py:146:80: E501 line too long (94 > 79 characters)
+./backend/seed_data.py:151:80: E501 line too long (92 > 79 characters)
+./backend/seed_data.py:152:80: E501 line too long (93 > 79 characters)
+./backend/seed_data.py:157:80: E501 line too long (82 > 79 characters)
+./backend/seed_data.py:167:80: E501 line too long (95 > 79 characters)
+./backend/seed_data.py:186:80: E501 line too long (89 > 79 characters)
+./backend/seed_data.py:187:80: E501 line too long (115 > 79 characters)
+./backend/seed_data.py:196:80: E501 line too long (98 > 79 characters)
+./backend/seed_data.py:210:80: E501 line too long (80 > 79 characters)
+./backend/seed_data.py:216:80: E501 line too long (115 > 79 characters)
+./backend/seed_data.py:221:80: E501 line too long (105 > 79 characters)
+./backend/seed_data.py:231:80: E501 line too long (122 > 79 characters)
+./backend/seed_data.py:245:80: E501 line too long (274 > 79 characters)
+./backend/seed_data.py:251:80: E501 line too long (185 > 79 characters)
+./backend/seed_data.py:260:80: E501 line too long (97 > 79 characters)
+./backend/seed_data.py:274:80: E501 line too long (128 > 79 characters)
+./backend/seed_data.py:283:80: E501 line too long (100 > 79 characters)
+./backend/seed_data.py:297:80: E501 line too long (280 > 79 characters)
+./backend/seed_data.py:303:80: E501 line too long (118 > 79 characters)
+./backend/seed_data.py:309:1: W293 blank line contains whitespace
+./backend/seed_data.py:315:33: W292 no newline at end of file
+./backend/server.py:1:1: F401 'fastapi.Response' imported but unused
+./backend/server.py:2:1: F401 'fastapi.responses.PlainTextResponse' imported but unused
+./backend/server.py:8:1: F401 'os' imported but unused
+./backend/server.py:11:80: E501 line too long (167 > 79 characters)
+./backend/server.py:29:1: E302 expected 2 blank lines, found 1
+./backend/server.py:54:1: E302 expected 2 blank lines, found 1
+./backend/server.py:61:80: E501 line too long (87 > 79 characters)
+./backend/server.py:86:1: E302 expected 2 blank lines, found 1
+./backend/tests/test_ai_rewrite_endpoints.py:3:66: W291 trailing whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:15:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:40:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:47:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:53:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:61:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:63:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:72:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:73:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:74:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:77:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:78:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:79:19: F541 f-string is missing placeholders
+./backend/tests/test_ai_rewrite_endpoints.py:83:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:84:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:95:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:97:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:108:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:110:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:112:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:119:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:120:80: E501 line too long (86 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:121:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:125:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:128:80: E501 line too long (80 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:131:19: F541 f-string is missing placeholders
+./backend/tests/test_ai_rewrite_endpoints.py:135:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:136:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:146:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:148:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:161:80: E501 line too long (98 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:162:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:164:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:171:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:172:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:173:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:177:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:180:80: E501 line too long (85 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:182:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:183:19: F541 f-string is missing placeholders
+./backend/tests/test_ai_rewrite_endpoints.py:187:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:188:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:199:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:201:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:203:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:210:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:211:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:212:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:215:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:216:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:219:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:221:80: E501 line too long (85 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:222:19: F541 f-string is missing placeholders
+./backend/tests/test_ai_rewrite_endpoints.py:222:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:226:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:227:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:238:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:240:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:242:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:249:80: E501 line too long (114 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:255:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:261:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:264:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:272:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:275:80: E501 line too long (90 > 79 characters)
+./backend/tests/test_ai_rewrite_endpoints.py:281:1: W293 blank line contains whitespace
+./backend/tests/test_ai_rewrite_endpoints.py:284:80: E501 line too long (92 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:11:1: E302 expected 2 blank lines, found 1
+./backend/tests/test_article_analytics_ai_rewrite.py:13:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:15:80: E501 line too long (131 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:17:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:18:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:28:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:37:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:38:80: E501 line too long (119 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:43:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:46:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:48:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:52:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:55:80: E501 line too long (89 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:57:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:62:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:65:80: E501 line too long (103 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:67:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:72:80: E501 line too long (109 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:73:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:80:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:81:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:84:80: E501 line too long (103 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:86:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:90:80: E501 line too long (109 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:91:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:94:80: E501 line too long (88 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:99:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:102:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:104:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:107:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:116:80: E501 line too long (110 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:121:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:123:80: E501 line too long (89 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:125:80: E501 line too long (89 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:127:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:131:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:133:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:135:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:137:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:144:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:148:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:149:80: E501 line too long (157 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:150:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:153:80: E501 line too long (99 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:159:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:166:80: E501 line too long (108 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:169:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:170:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:173:80: E501 line too long (117 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:174:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:179:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:183:80: E501 line too long (107 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:184:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:191:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:192:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:193:1: W293 blank line contains whitespace
+./backend/tests/test_article_analytics_ai_rewrite.py:200:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_article_analytics_ai_rewrite.py:201:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:3:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:4:80: E501 line too long (98 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:12:1: E302 expected 2 blank lines, found 1
+./backend/tests/test_bulk_optimize_api.py:14:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:17:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:18:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:19:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:27:80: E501 line too long (86 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:28:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:29:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:35:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:36:80: E501 line too long (95 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:37:80: E501 line too long (93 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:38:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:39:80: E501 line too long (112 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:40:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:44:80: E501 line too long (99 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:46:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:50:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:53:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:57:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:62:80: E501 line too long (98 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:63:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:64:80: E501 line too long (112 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:65:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:69:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:72:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:75:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:77:80: E501 line too long (113 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:80:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:83:80: E501 line too long (114 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:84:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:85:80: E501 line too long (116 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:88:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:91:80: E501 line too long (105 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:93:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:97:48: E712 comparison to True should be 'if cond is not True:' or 'if not cond:'
+./backend/tests/test_bulk_optimize_api.py:97:80: E501 line too long (106 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:98:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:99:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:100:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:103:80: E501 line too long (107 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:105:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:109:48: E712 comparison to True should be 'if cond is True:' or 'if cond:'
+./backend/tests/test_bulk_optimize_api.py:109:80: E501 line too long (106 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:110:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:111:80: E501 line too long (91 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:112:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:115:80: E501 line too long (91 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:117:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:121:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:126:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:128:80: E501 line too long (91 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:129:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:130:80: E501 line too long (97 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:133:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:137:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:140:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:143:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:146:80: E501 line too long (113 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:150:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:153:80: E501 line too long (114 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:154:52: E712 comparison to True should be 'if cond is not True:' or 'if not cond:'
+./backend/tests/test_bulk_optimize_api.py:154:80: E501 line too long (103 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:155:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:156:80: E501 line too long (119 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:162:80: E501 line too long (80 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:163:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:170:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:172:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:179:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:180:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:184:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:186:80: E501 line too long (96 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:188:80: E501 line too long (91 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:191:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:194:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:195:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:200:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:204:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_bulk_optimize_api.py:205:1: W293 blank line contains whitespace
+./backend/tests/test_bulk_optimize_api.py:206:80: E501 line too long (91 > 79 characters)
+./backend/tests/test_contributions_contact.py:26:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_contributions_contact.py:76:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_contributions_contact.py:91:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_contributions_contact.py:110:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_contributions_contact.py:120:80: E501 line too long (80 > 79 characters)
+./backend/tests/test_contributions_contact.py:128:80: E501 line too long (80 > 79 characters)
+./backend/tests/test_contributions_contact.py:137:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_contributions_contact.py:150:80: E501 line too long (86 > 79 characters)
+./backend/tests/test_contributions_contact.py:172:80: E501 line too long (99 > 79 characters)
+./backend/tests/test_contributions_contact.py:173:80: E501 line too long (128 > 79 characters)
+./backend/tests/test_contributions_contact.py:176:80: E501 line too long (110 > 79 characters)
+./backend/tests/test_contributions_contact.py:179:80: E501 line too long (85 > 79 characters)
+./backend/tests/test_contributions_contact.py:186:80: E501 line too long (86 > 79 characters)
+./backend/tests/test_contributions_contact.py:208:80: E501 line too long (97 > 79 characters)
+./backend/tests/test_contributions_contact.py:209:80: E501 line too long (125 > 79 characters)
+./backend/tests/test_contributions_contact.py:217:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_contributions_contact.py:223:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_contributions_contact.py:228:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_contributions_contact.py:234:1: W293 blank line contains whitespace
+./backend/tests/test_contributions_contact.py:236:80: E501 line too long (88 > 79 characters)
+./backend/tests/test_contributions_contact.py:239:1: W293 blank line contains whitespace
+./backend/tests/test_contributions_contact.py:245:80: E501 line too long (125 > 79 characters)
+./backend/tests/test_contributions_contact.py:257:80: E501 line too long (104 > 79 characters)
+./backend/tests/test_newsletter_articles.py:3:80: E501 line too long (90 > 79 characters)
+./backend/tests/test_newsletter_articles.py:24:80: E501 line too long (95 > 79 characters)
+./backend/tests/test_newsletter_articles.py:35:80: E501 line too long (96 > 79 characters)
+./backend/tests/test_newsletter_articles.py:37:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:39:80: E501 line too long (96 > 79 characters)
+./backend/tests/test_newsletter_articles.py:42:15: F541 f-string is missing placeholders
+./backend/tests/test_newsletter_articles.py:46:80: E501 line too long (100 > 79 characters)
+./backend/tests/test_newsletter_articles.py:52:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_newsletter_articles.py:59:80: E501 line too long (95 > 79 characters)
+./backend/tests/test_newsletter_articles.py:71:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_newsletter_articles.py:74:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:80:80: E501 line too long (89 > 79 characters)
+./backend/tests/test_newsletter_articles.py:86:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_newsletter_articles.py:87:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:89:80: E501 line too long (102 > 79 characters)
+./backend/tests/test_newsletter_articles.py:92:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:96:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_newsletter_articles.py:100:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_newsletter_articles.py:104:80: E501 line too long (86 > 79 characters)
+./backend/tests/test_newsletter_articles.py:111:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:128:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:144:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_newsletter_articles.py:145:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:147:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_newsletter_articles.py:154:80: E501 line too long (92 > 79 characters)
+./backend/tests/test_newsletter_articles.py:180:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:186:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_newsletter_articles.py:190:80: E501 line too long (90 > 79 characters)
+./backend/tests/test_newsletter_articles.py:193:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:196:80: E501 line too long (90 > 79 characters)
+./backend/tests/test_newsletter_articles.py:200:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_newsletter_articles.py:203:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:218:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:236:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:251:1: W293 blank line contains whitespace
+./backend/tests/test_newsletter_articles.py:266:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_newsletter_articles.py:272:68: W291 trailing whitespace
+./backend/tests/test_newsletter_articles.py:281:70: W291 trailing whitespace
+./backend/tests/test_newsletter_articles.py:288:70: W291 trailing whitespace
+./backend/tests/test_newsletter_articles.py:289:80: E501 line too long (100 > 79 characters)
+./backend/tests/test_newsletter_articles.py:307:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_newsletter_articles.py:308:80: E501 line too long (80 > 79 characters)
+./backend/tests/test_scraper_api.py:16:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_scraper_api.py:17:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:20:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_scraper_api.py:30:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:33:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_scraper_api.py:41:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:44:80: E501 line too long (88 > 79 characters)
+./backend/tests/test_scraper_api.py:52:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:60:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:63:80: E501 line too long (90 > 79 characters)
+./backend/tests/test_scraper_api.py:69:80: E501 line too long (86 > 79 characters)
+./backend/tests/test_scraper_api.py:74:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:83:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:100:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:104:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:105:80: E501 line too long (88 > 79 characters)
+./backend/tests/test_scraper_api.py:106:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:115:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:118:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:124:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:125:15: F541 f-string is missing placeholders
+./backend/tests/test_scraper_api.py:126:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:136:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:144:15: F541 f-string is missing placeholders
+./backend/tests/test_scraper_api.py:145:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:150:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_scraper_api.py:153:15: F541 f-string is missing placeholders
+./backend/tests/test_scraper_api.py:158:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:168:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:171:80: E501 line too long (80 > 79 characters)
+./backend/tests/test_scraper_api.py:173:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:184:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:189:80: E501 line too long (90 > 79 characters)
+./backend/tests/test_scraper_api.py:192:15: F541 f-string is missing placeholders
+./backend/tests/test_scraper_api.py:193:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:201:15: F541 f-string is missing placeholders
+./backend/tests/test_scraper_api.py:202:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:212:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:217:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:224:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:231:15: F541 f-string is missing placeholders
+./backend/tests/test_scraper_api.py:236:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:240:80: E501 line too long (92 > 79 characters)
+./backend/tests/test_scraper_api.py:244:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:252:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:255:80: E501 line too long (85 > 79 characters)
+./backend/tests/test_scraper_api.py:256:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:262:1: W293 blank line contains whitespace
+./backend/tests/test_scraper_api.py:263:15: F541 f-string is missing placeholders
+./backend/tests/test_scraper_api.py:263:80: E501 line too long (88 > 79 characters)
+./backend/tests/test_seeder_api.py:3:80: E501 line too long (82 > 79 characters)
+./backend/tests/test_seeder_api.py:11:1: E302 expected 2 blank lines, found 1
+./backend/tests/test_seeder_api.py:13:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:17:80: E501 line too long (87 > 79 characters)
+./backend/tests/test_seeder_api.py:19:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:25:80: E501 line too long (102 > 79 characters)
+./backend/tests/test_seeder_api.py:27:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:32:80: E501 line too long (90 > 79 characters)
+./backend/tests/test_seeder_api.py:33:80: E501 line too long (106 > 79 characters)
+./backend/tests/test_seeder_api.py:35:80: E501 line too long (97 > 79 characters)
+./backend/tests/test_seeder_api.py:38:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:43:13: F402 import 'os' from line 7 shadowed by loop variable
+./backend/tests/test_seeder_api.py:51:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:64:80: E501 line too long (98 > 79 characters)
+./backend/tests/test_seeder_api.py:65:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:84:80: E501 line too long (101 > 79 characters)
+./backend/tests/test_seeder_api.py:85:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:96:80: E501 line too long (96 > 79 characters)
+./backend/tests/test_seeder_api.py:97:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:110:80: E501 line too long (91 > 79 characters)
+./backend/tests/test_seeder_api.py:111:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:121:80: E501 line too long (89 > 79 characters)
+./backend/tests/test_seeder_api.py:122:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:133:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_seeder_api.py:138:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:147:9: F841 local variable 'new_count' is assigned to but never used
+./backend/tests/test_seeder_api.py:148:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:160:80: E501 line too long (94 > 79 characters)
+./backend/tests/test_seeder_api.py:161:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:174:80: E501 line too long (116 > 79 characters)
+./backend/tests/test_seeder_api.py:175:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:184:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:195:80: E501 line too long (101 > 79 characters)
+./backend/tests/test_seeder_api.py:196:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:204:9: F841 local variable 'data' is assigned to but never used
+./backend/tests/test_seeder_api.py:205:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:207:80: E501 line too long (89 > 79 characters)
+./backend/tests/test_seeder_api.py:209:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:212:80: E501 line too long (98 > 79 characters)
+./backend/tests/test_seeder_api.py:217:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:222:1: W293 blank line contains whitespace
+./backend/tests/test_seeder_api.py:228:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_seeder_api.py:230:80: E501 line too long (88 > 79 characters)
+./backend/tests/test_seeder_api.py:231:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:31:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:34:80: E501 line too long (88 > 79 characters)
+./backend/tests/test_snippets_api.py:52:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:53:80: E501 line too long (102 > 79 characters)
+./backend/tests/test_snippets_api.py:70:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:83:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:87:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:96:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:105:80: E501 line too long (81 > 79 characters)
+./backend/tests/test_snippets_api.py:119:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:123:80: E501 line too long (92 > 79 characters)
+./backend/tests/test_snippets_api.py:130:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:133:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:136:80: E501 line too long (83 > 79 characters)
+./backend/tests/test_snippets_api.py:164:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:175:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:179:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:183:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:203:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:213:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:220:80: E501 line too long (84 > 79 characters)
+./backend/tests/test_snippets_api.py:223:1: W293 blank line contains whitespace
+./backend/tests/test_snippets_api.py:226:80: E501 line too long (80 > 79 characters)
+./backend_test.py:8:1: F401 'json' imported but unused
+./backend_test.py:11:1: F401 'typing.Any' imported but unused
+./backend_test.py:11:1: F401 'typing.List' imported but unused
+./backend_test.py:16:1: E302 expected 2 blank lines, found 1
+./backend_test.py:23:1: W293 blank line contains whitespace
+./backend_test.py:24:80: E501 line too long (90 > 79 characters)
+./backend_test.py:38:1: W293 blank line contains whitespace
+./backend_test.py:43:1: W293 blank line contains whitespace
+./backend_test.py:46:1: W293 blank line contains whitespace
+./backend_test.py:49:80: E501 line too long (89 > 79 characters)
+./backend_test.py:49:90: W291 trailing whitespace
+./backend_test.py:50:33: E128 continuation line under-indented for visual indent
+./backend_test.py:52:1: W293 blank line contains whitespace
+./backend_test.py:56:80: E501 line too long (125 > 79 characters)
+./backend_test.py:57:80: E501 line too long (97 > 79 characters)
+./backend_test.py:58:1: W293 blank line contains whitespace
+./backend_test.py:60:80: E501 line too long (111 > 79 characters)
+./backend_test.py:61:37: E128 continuation line under-indented for visual indent
+./backend_test.py:63:1: W293 blank line contains whitespace
+./backend_test.py:68:1: W293 blank line contains whitespace
+./backend_test.py:69:80: E501 line too long (104 > 79 characters)
+./backend_test.py:70:29: E128 continuation line under-indented for visual indent
+./backend_test.py:72:80: E501 line too long (106 > 79 characters)
+./backend_test.py:73:29: E128 continuation line under-indented for visual indent
+./backend_test.py:74:1: W293 blank line contains whitespace
+./backend_test.py:76:80: E501 line too long (82 > 79 characters)
+./backend_test.py:77:1: W293 blank line contains whitespace
+./backend_test.py:82:1: W293 blank line contains whitespace
+./backend_test.py:85:80: E501 line too long (80 > 79 characters)
+./backend_test.py:86:1: W293 blank line contains whitespace
+./backend_test.py:91:80: E501 line too long (88 > 79 characters)
+./backend_test.py:93:80: E501 line too long (105 > 79 characters)
+./backend_test.py:95:1: W293 blank line contains whitespace
+./backend_test.py:99:1: W293 blank line contains whitespace
+./backend_test.py:101:80: E501 line too long (85 > 79 characters)
+./backend_test.py:102:1: W293 blank line contains whitespace
+./backend_test.py:106:1: W293 blank line contains whitespace
+./backend_test.py:110:80: E501 line too long (129 > 79 characters)
+./backend_test.py:111:80: E501 line too long (102 > 79 characters)
+./backend_test.py:112:1: W293 blank line contains whitespace
+./backend_test.py:114:80: E501 line too long (113 > 79 characters)
+./backend_test.py:115:41: E128 continuation line under-indented for visual indent
+./backend_test.py:117:76: W291 trailing whitespace
+./backend_test.py:118:41: E128 continuation line under-indented for visual indent
+./backend_test.py:118:80: E501 line too long (133 > 79 characters)
+./backend_test.py:119:41: E128 continuation line under-indented for visual indent
+./backend_test.py:119:80: E501 line too long (85 > 79 characters)
+./backend_test.py:121:73: W291 trailing whitespace
+./backend_test.py:122:37: E128 continuation line under-indented for visual indent
+./backend_test.py:122:80: E501 line too long (91 > 79 characters)
+./backend_test.py:123:37: E128 continuation line under-indented for visual indent
+./backend_test.py:123:80: E501 line too long (82 > 79 characters)
+./backend_test.py:125:80: E501 line too long (124 > 79 characters)
+./backend_test.py:127:80: E501 line too long (113 > 79 characters)
+./backend_test.py:128:29: E128 continuation line under-indented for visual indent
+./backend_test.py:128:80: E501 line too long (85 > 79 characters)
+./backend_test.py:129:1: W293 blank line contains whitespace
+./backend_test.py:131:80: E501 line too long (89 > 79 characters)
+./backend_test.py:132:1: W293 blank line contains whitespace
+./backend_test.py:137:80: E501 line too long (88 > 79 characters)
+./backend_test.py:145:80: E501 line too long (87 > 79 characters)
+./backend_test.py:151:80: E501 line too long (82 > 79 characters)
+./backend_test.py:152:80: E501 line too long (104 > 79 characters)
+./backend_test.py:158:80: E501 line too long (94 > 79 characters)
+./backend_test.py:161:1: W293 blank line contains whitespace
+./backend_test.py:163:80: E501 line too long (88 > 79 characters)
+./backend_test.py:164:1: W293 blank line contains whitespace
+./backend_test.py:167:1: W293 blank line contains whitespace
+./backend_test.py:170:80: E501 line too long (93 > 79 characters)
+./backend_test.py:172:1: W293 blank line contains whitespace
+./backend_test.py:174:80: E501 line too long (121 > 79 characters)
+./backend_test.py:175:80: E501 line too long (101 > 79 characters)
+./backend_test.py:176:1: W293 blank line contains whitespace
+./backend_test.py:178:80: E501 line too long (111 > 79 characters)
+./backend_test.py:179:33: E128 continuation line under-indented for visual indent
+./backend_test.py:184:1: W293 blank line contains whitespace
+./backend_test.py:185:62: W291 trailing whitespace
+./backend_test.py:186:33: E128 continuation line under-indented for visual indent
+./backend_test.py:186:80: E501 line too long (89 > 79 characters)
+./backend_test.py:187:33: E128 continuation line under-indented for visual indent
+./backend_test.py:187:80: E501 line too long (95 > 79 characters)
+./backend_test.py:189:80: E501 line too long (107 > 79 characters)
+./backend_test.py:190:29: E128 continuation line under-indented for visual indent
+./backend_test.py:191:1: W293 blank line contains whitespace
+./backend_test.py:193:80: E501 line too long (83 > 79 characters)
+./backend_test.py:194:1: W293 blank line contains whitespace
+./backend_test.py:199:1: W293 blank line contains whitespace
+./backend_test.py:201:80: E501 line too long (86 > 79 characters)
+./backend_test.py:202:1: W293 blank line contains whitespace
+./backend_test.py:207:80: E501 line too long (94 > 79 characters)
+./backend_test.py:209:80: E501 line too long (111 > 79 characters)
+./backend_test.py:211:1: W293 blank line contains whitespace
+./backend_test.py:214:1: W293 blank line contains whitespace
+./backend_test.py:217:74: W291 trailing whitespace
+./backend_test.py:218:33: E128 continuation line under-indented for visual indent
+./backend_test.py:218:80: E501 line too long (104 > 79 characters)
+./backend_test.py:219:33: E128 continuation line under-indented for visual indent
+./backend_test.py:221:75: W291 trailing whitespace
+./backend_test.py:222:33: E128 continuation line under-indented for visual indent
+./backend_test.py:223:33: E128 continuation line under-indented for visual indent
+./backend_test.py:225:80: E501 line too long (119 > 79 characters)
+./backend_test.py:226:29: E128 continuation line under-indented for visual indent
+./backend_test.py:226:80: E501 line too long (85 > 79 characters)
+./backend_test.py:227:1: W293 blank line contains whitespace
+./backend_test.py:229:80: E501 line too long (95 > 79 characters)
+./backend_test.py:230:1: W293 blank line contains whitespace
+./backend_test.py:235:1: W293 blank line contains whitespace
+./backend_test.py:238:1: W293 blank line contains whitespace
+./backend_test.py:240:80: E501 line too long (119 > 79 characters)
+./backend_test.py:241:80: E501 line too long (92 > 79 characters)
+./backend_test.py:242:1: W293 blank line contains whitespace
+./backend_test.py:244:80: E501 line too long (100 > 79 characters)
+./backend_test.py:245:33: E128 continuation line under-indented for visual indent
+./backend_test.py:247:63: W291 trailing whitespace
+./backend_test.py:248:33: E128 continuation line under-indented for visual indent
+./backend_test.py:248:80: E501 line too long (103 > 79 characters)
+./backend_test.py:249:33: E128 continuation line under-indented for visual indent
+./backend_test.py:251:80: E501 line too long (108 > 79 characters)
+./backend_test.py:252:29: E128 continuation line under-indented for visual indent
+./backend_test.py:253:1: W293 blank line contains whitespace
+./backend_test.py:255:80: E501 line too long (84 > 79 characters)
+./backend_test.py:256:1: W293 blank line contains whitespace
+./backend_test.py:266:1: W293 blank line contains whitespace
+./backend_test.py:268:80: E501 line too long (88 > 79 characters)
+./backend_test.py:269:1: W293 blank line contains whitespace
+./backend_test.py:272:1: W293 blank line contains whitespace
+./backend_test.py:275:53: W291 trailing whitespace
+./backend_test.py:278:1: W293 blank line contains whitespace
+./backend_test.py:280:63: W291 trailing whitespace
+./backend_test.py:281:33: E128 continuation line under-indented for visual indent
+./backend_test.py:282:33: E128 continuation line under-indented for visual indent
+./backend_test.py:284:64: W291 trailing whitespace
+./backend_test.py:285:33: E128 continuation line under-indented for visual indent
+./backend_test.py:286:33: E128 continuation line under-indented for visual indent
+./backend_test.py:286:80: E501 line too long (82 > 79 characters)
+./backend_test.py:288:80: E501 line too long (108 > 79 characters)
+./backend_test.py:289:29: E128 continuation line under-indented for visual indent
+./backend_test.py:290:1: W293 blank line contains whitespace
+./backend_test.py:292:80: E501 line too long (84 > 79 characters)
+./backend_test.py:293:1: W293 blank line contains whitespace
+./backend_test.py:297:80: E501 line too long (93 > 79 characters)
+./backend_test.py:299:1: W293 blank line contains whitespace
+./backend_test.py:303:80: E501 line too long (86 > 79 characters)
+./backend_test.py:305:1: W293 blank line contains whitespace
+./backend_test.py:307:80: E501 line too long (88 > 79 characters)
+./backend_test.py:308:1: W293 blank line contains whitespace
+./backend_test.py:311:1: W293 blank line contains whitespace
+./backend_test.py:313:80: E501 line too long (82 > 79 characters)
+./backend_test.py:314:80: E501 line too long (101 > 79 characters)
+./backend_test.py:315:1: W293 blank line contains whitespace
+./backend_test.py:317:80: E501 line too long (99 > 79 characters)
+./backend_test.py:318:33: E128 continuation line under-indented for visual indent
+./backend_test.py:320:62: W291 trailing whitespace
+./backend_test.py:321:33: E128 continuation line under-indented for visual indent
+./backend_test.py:321:80: E501 line too long (102 > 79 characters)
+./backend_test.py:322:33: E128 continuation line under-indented for visual indent
+./backend_test.py:324:80: E501 line too long (107 > 79 characters)
+./backend_test.py:325:29: E128 continuation line under-indented for visual indent
+./backend_test.py:326:1: W293 blank line contains whitespace
+./backend_test.py:328:80: E501 line too long (83 > 79 characters)
+./backend_test.py:329:1: W293 blank line contains whitespace
+./backend_test.py:333:80: E501 line too long (105 > 79 characters)
+./backend_test.py:335:1: W293 blank line contains whitespace
+./backend_test.py:337:80: E501 line too long (94 > 79 characters)
+./backend_test.py:338:1: W293 blank line contains whitespace
+./backend_test.py:341:1: W293 blank line contains whitespace
+./backend_test.py:344:80: E501 line too long (102 > 79 characters)
+./backend_test.py:345:33: E128 continuation line under-indented for visual indent
+./backend_test.py:347:74: W291 trailing whitespace
+./backend_test.py:348:33: E128 continuation line under-indented for visual indent
+./backend_test.py:348:80: E501 line too long (108 > 79 characters)
+./backend_test.py:349:33: E128 continuation line under-indented for visual indent
+./backend_test.py:351:80: E501 line too long (119 > 79 characters)
+./backend_test.py:352:29: E128 continuation line under-indented for visual indent
+./backend_test.py:353:1: W293 blank line contains whitespace
+./backend_test.py:355:80: E501 line too long (95 > 79 characters)
+./backend_test.py:356:1: W293 blank line contains whitespace
+./backend_test.py:359:15: F541 f-string is missing placeholders
+./backend_test.py:362:1: W293 blank line contains whitespace
+./backend_test.py:372:1: W293 blank line contains whitespace
+./backend_test.py:377:1: W293 blank line contains whitespace
+./backend_test.py:380:1: W293 blank line contains whitespace
+./backend_test.py:384:1: W293 blank line contains whitespace
+./backend_test.py:390:1: W293 blank line contains whitespace
+./backend_test.py:393:1: E305 expected 2 blank lines after class or function definition, found 1
+./backend_test.py:396:1: W293 blank line contains whitespace
+./backend_test.py:398:38: W292 no newline at end of file
+./frontend/node_modules/flatted/python/flatted.py:19:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:24:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:37:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:43:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:46:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:49:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:52:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:59:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:67:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:77:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:81:9: E722 do not use bare 'except'
+./frontend/node_modules/flatted/python/flatted.py:86:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:101:1: E302 expected 2 blank lines, found 1
+./frontend/node_modules/flatted/python/flatted.py:117:1: E302 expected 2 blank lines, found 1
+./generate_videos.py:5:1: F401 'sys' imported but unused
+./generate_videos.py:5:10: E401 multiple imports on one line
+./generate_videos.py:9:1: E402 module level import not at top of file
+./generate_videos.py:9:80: E501 line too long (82 > 79 characters)
+./generate_videos.py:17:80: E501 line too long (372 > 79 characters)
+./generate_videos.py:22:80: E501 line too long (379 > 79 characters)
+./generate_videos.py:27:80: E501 line too long (406 > 79 characters)
+./generate_videos.py:32:80: E501 line too long (378 > 79 characters)
+./generate_videos.py:37:80: E501 line too long (380 > 79 characters)
+./generate_videos.py:42:1: E302 expected 2 blank lines, found 1
+./generate_videos.py:46:1: W293 blank line contains whitespace
+./generate_videos.py:48:1: W293 blank line contains whitespace
+./generate_videos.py:52:1: W293 blank line contains whitespace
+./generate_videos.py:54:1: W293 blank line contains whitespace
+./generate_videos.py:62:1: W293 blank line contains whitespace
+./generate_videos.py:71:1: E305 expected 2 blank lines after class or function definition, found 1
+./generate_videos.py:77:1: W293 blank line contains whitespace
+./generate_videos.py:84:80: E501 line too long (87 > 79 characters)) from  to ensure compatibility with the user's lightweight VPS.
 
 **All files of reference**
--   : **Current working file.** Core logic for the new article scraper will be implemented here.
--   : Contains DB connection and collection definitions.
--   : Main FastAPI app file where all routers are registered.
--   : Heavily modified to include pagination and new sections.
--   : Modified to include links to all new admin pages.
--   : Modified to add pagination, popular, related, and suggestion endpoints.
+-  (Updated with AI state logic and buttons)
+-  (New feature for mass processing)
+-  (Updated to serve paginated unoptimized articles)
+-  (Core logic for VPS deployment)
+-  (Triggers script in a detached session)
+-  (Updater UI and retry polling logic)
+-  (Pruned version)
 
 **Areas that need refactoring**:
--   None. The previous major refactoring item (consolidating seed scripts) has been completed successfully.
+- None immediately. The updater is highly fault-tolerant now.
 
 **key api endpoints**
--   : (To be created) Scrapes an article from a given URL.
--   : Lists articles for bulk management.
--   : Runs the article seeder for a specific category.
--   : Manages user-submitted articles.
--   : Approves a user-submitted article.
--   : Manages newsletter subscribers.
--   : Manages contact form submissions.
--   : Now supports pagination ().
--   : Gets most-viewed articles.
--   : Provides real-time search suggestions.
--   : Serves the RSS feed.
+- , , 
+-  (Fetches articles lacking the  flag)
+- 
+-  & 
 
 **Critical Info for New Agent**
--   The application is LIVE and deployed on the user's personal VPS. Your role is to provide code changes that the user will deploy themselves via . Always provide the necessary deployment commands.
--   The user is cost-sensitive. The AI video generation task was cancelled due to the high balance consumption of the Emergent LLM Key. Be mindful of suggesting features that may incur significant costs.
--   The last major performance issue was solved by adding database indexes. The user is aware of performance and may report slowness if new, un-indexed queries are introduced.
+- **Language**: You MUST speak to the user in Hinglish.
+- **Environment Constraints**: The user's VPS runs Python 3.10 and has limited RAM. Do not indiscriminately run  if you have installed dev tools locally. Ensure  remains lean.
+- **Updater Logic**: When the user triggers an update, PM2 *will* kill the backend for ~5-10 seconds. The frontend  now has retry logic to gracefully wait for the backend to return. Do not modify this polling logic without understanding this constraint.
 
 **documents and test reports created in this job**
--   
--   
--   
--   
--   
+- 
+-  (AI endpoints test)
+-  (Bulk Optimize test)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User**: Remove location from the contact form. (COMPLETED)
-2.  **User**: Add a Contact Messages section to the admin panel. (COMPLETED)
-3.  **User**: Reports that messages are not showing in the new contact inbox. (COMPLETED - Fixed backend issue with missing ID)
-4.  **User**: Reports that deleting a message has a 10-15 second delay in the UI. (COMPLETED - Fixed with an optimistic UI update)
-5.  **User**: Reports the website is very slow. (COMPLETED - Investigated and fixed by adding database indexes)
-6.  **User**: thanks all done (COMPLETED)
-7.  **User**: Provides Google AdSense meta tag and asks to add it. (COMPLETED)
-8.  **User**: Reports ads are not showing after configuring them in the admin panel. (COMPLETED - Fixed by adding  script and updating ad components)
-9.  **User**: Asks about  file status from their AdSense dashboard. (COMPLETED - Created and added  to the public folder)
-10. **User**: Asks if it's possible to scrape articles from other websites and automate formatting for 9xCodes. (IN PROGRESS)
+1. **User**: ok (COMPLETED - Proceeded to wire up Scraper UI)
+2. **User**: Ek Bulk AI Optimize feature add kar sakte hain jisme existing sab articles ek click se AI optimize ho jayein - AdSense approval ke liye content quality bohot improve hogi! kardo (COMPLETED - Built BulkOptimize.jsx and backend endpoints)
+3. **User**: yahi pai aake sirf latak jata hai [Regarding updater] (COMPLETED - Fixed real-time logging and detached python subprocess)
+4. **User**: abhi bhi yahi gand hai + Uploaded logs (COMPLETED - Added missing  to update_script.sh and moved  before PM2 restart)
+5. **User**: Uploaded image showing Bulk AI Optimize failed. (COMPLETED - Traced to missing  on VPS due to earlier updater failure)
+6. **User**: Uploaded logs showing grep of EMERGENT_LLM_KEY is correct. (COMPLETED)
+7. **User**: Uploaded logs showing updater succeeded but frontend threw update had some issues error, plus numpy install error. (COMPLETED - Pruned  and added network retry logic to  to survive PM2 restart). 
+*Pending Human Message*: Waiting for the user to confirm if the update and Bulk Optimize are successfully running on their VPS after the final fixes.
 
 **Project Health Check:**
--   **Broken**: None. The application is stable and functional.
--   **Mocked**: None.
+- Broken: None.
+- Mocked: None.
 
 **3rd Party Integrations**
--   **Sora 2 (Video Generation)**: Attempted via  but cancelled by user. Requires Emergent LLM Key.
--   **Google AdSense**: Integrated for monetization. Requires user's publisher ID and ad slot codes, which are configured via the admin panel.
+- Emergent LLM Key — Uses Emergent LLM Key via  (Critical for Scraper AI and Bulk Optimize).
+- Google AdSense — Requires User API Key/Publisher ID.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES. The agent was used successfully after every major feature batch, ensuring high-quality, bug-free delivery.
--   **Troubleshoot agent used after agent stuck in loop**: NO
--   **Test files created**:
-    -   
-    -   
-    -   
-    -   
--   **Known regressions**: None.
+- Testing agent used after significant changes: YES ( and ).
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: , 
+- Known regressions: None.
 
 **Credentials to test flow:**
--   **Admin Login**: Can be found in  (before it was removed). Default credentials were  / .
+- Standard JWT Auth flow.
+-  is present in the  file.
 
 **What agent forgot to execute**
--   The agent has been diligent in executing all user requests from this session. No forgotten tasks have been identified.</analysis>
+- Nothing was forgotten. The agent successfully implemented all requested features and aggressively debugged the deployment pipeline.
+
+**Debugging checklist for current issue**
+    Issue: Verify Auto-Updater and Bulk AI Optimize on VPS.
+    Frontend files to check:  (Lines 80-100: Check if the 10-retry polling logic handles the PM2 restart correctly).
+    Backend files to check:  (Verify it successfully runs Looking in indexes: https://pypi.org/simple, https://d33sy5i8bnduwe.cloudfront.net/simple/
+Requirement already satisfied: aiohappyeyeballs==2.6.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 1)) (2.6.1)
+Requirement already satisfied: aiohttp==3.13.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 2)) (3.13.3)
+Requirement already satisfied: aiosignal==1.4.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 3)) (1.4.0)
+Requirement already satisfied: annotated-doc==0.0.4 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 4)) (0.0.4)
+Requirement already satisfied: annotated-types==0.7.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 5)) (0.7.0)
+Requirement already satisfied: anyio==4.12.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 6)) (4.12.1)
+Requirement already satisfied: attrs==25.4.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 7)) (25.4.0)
+Requirement already satisfied: bcrypt==4.1.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 8)) (4.1.3)
+Requirement already satisfied: beautifulsoup4==4.14.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 9)) (4.14.3)
+Requirement already satisfied: black==26.1.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 10)) (26.1.0)
+Requirement already satisfied: boto3==1.42.56 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 11)) (1.42.56)
+Requirement already satisfied: botocore==1.42.56 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 12)) (1.42.56)
+Requirement already satisfied: certifi==2026.2.25 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 13)) (2026.2.25)
+Requirement already satisfied: cffi==2.0.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 14)) (2.0.0)
+Requirement already satisfied: charset-normalizer==3.4.4 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 15)) (3.4.4)
+Requirement already satisfied: click==8.3.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 16)) (8.3.1)
+Requirement already satisfied: cloudscraper==1.2.71 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 17)) (1.2.71)
+Requirement already satisfied: cryptography==46.0.5 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 18)) (46.0.5)
+Requirement already satisfied: curl_cffi==0.15.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 19)) (0.15.0)
+Requirement already satisfied: Deprecated==1.3.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 20)) (1.3.1)
+Requirement already satisfied: distro==1.9.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 21)) (1.9.0)
+Requirement already satisfied: dnspython==2.8.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 22)) (2.8.0)
+Requirement already satisfied: ecdsa==0.19.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 23)) (0.19.1)
+Requirement already satisfied: email-validator==2.3.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 24)) (2.3.0)
+Requirement already satisfied: emergentintegrations==0.1.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 25)) (0.1.0)
+Requirement already satisfied: fastapi==0.110.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 26)) (0.110.1)
+Requirement already satisfied: fastuuid==0.14.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 27)) (0.14.0)
+Requirement already satisfied: filelock==3.24.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 28)) (3.24.3)
+Requirement already satisfied: flake8==7.3.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 29)) (7.3.0)
+Requirement already satisfied: frozenlist==1.8.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 30)) (1.8.0)
+Requirement already satisfied: fsspec==2026.2.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 31)) (2026.2.0)
+Requirement already satisfied: google-ai-generativelanguage==0.6.15 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 32)) (0.6.15)
+Requirement already satisfied: google-api-core==2.30.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 33)) (2.30.0)
+Requirement already satisfied: google-api-python-client==2.190.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 34)) (2.190.0)
+Requirement already satisfied: google-auth==2.49.0.dev0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 35)) (2.49.0.dev0)
+Requirement already satisfied: google-auth-httplib2==0.3.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 36)) (0.3.0)
+Requirement already satisfied: google-genai==1.64.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 37)) (1.64.0)
+Requirement already satisfied: google-generativeai==0.8.6 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 38)) (0.8.6)
+Requirement already satisfied: googleapis-common-protos==1.72.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 39)) (1.72.0)
+Requirement already satisfied: grpcio==1.78.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 40)) (1.78.1)
+Requirement already satisfied: grpcio-status==1.71.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 41)) (1.71.2)
+Requirement already satisfied: h11==0.16.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 42)) (0.16.0)
+Requirement already satisfied: h2==4.3.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 43)) (4.3.0)
+Requirement already satisfied: hf-xet==1.3.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 44)) (1.3.1)
+Requirement already satisfied: hpack==4.1.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 45)) (4.1.0)
+Requirement already satisfied: httpcore==1.0.9 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 46)) (1.0.9)
+Requirement already satisfied: httplib2==0.31.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 47)) (0.31.2)
+Requirement already satisfied: httpx==0.28.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 48)) (0.28.1)
+Requirement already satisfied: huggingface_hub==1.4.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 49)) (1.4.1)
+Requirement already satisfied: hyperframe==6.1.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 50)) (6.1.0)
+Requirement already satisfied: idna==3.11 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 51)) (3.11)
+Requirement already satisfied: importlib_metadata==8.7.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 52)) (8.7.1)
+Requirement already satisfied: iniconfig==2.3.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 53)) (2.3.0)
+Requirement already satisfied: isort==8.0.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 54)) (8.0.0)
+Requirement already satisfied: Jinja2==3.1.6 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 55)) (3.1.6)
+Requirement already satisfied: jiter==0.13.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 56)) (0.13.0)
+Requirement already satisfied: jmespath==1.1.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 57)) (1.1.0)
+Requirement already satisfied: jq==1.11.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 58)) (1.11.0)
+Requirement already satisfied: jsonschema==4.26.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 59)) (4.26.0)
+Requirement already satisfied: jsonschema-specifications==2025.9.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 60)) (2025.9.1)
+Requirement already satisfied: librt==0.8.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 61)) (0.8.1)
+Requirement already satisfied: limits==5.8.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 62)) (5.8.0)
+Requirement already satisfied: litellm==1.80.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 63)) (1.80.0)
+Requirement already satisfied: markdown-it-py==4.0.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 64)) (4.0.0)
+Requirement already satisfied: MarkupSafe==3.0.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 65)) (3.0.3)
+Requirement already satisfied: mccabe==0.7.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 66)) (0.7.0)
+Requirement already satisfied: mdurl==0.1.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 67)) (0.1.2)
+Requirement already satisfied: motor==3.3.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 68)) (3.3.1)
+Requirement already satisfied: multidict==6.7.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 69)) (6.7.1)
+Requirement already satisfied: mypy==1.19.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 70)) (1.19.1)
+Requirement already satisfied: mypy_extensions==1.1.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 71)) (1.1.0)
+Requirement already satisfied: numpy==2.4.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 72)) (2.4.2)
+Requirement already satisfied: oauthlib==3.3.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 73)) (3.3.1)
+Requirement already satisfied: openai==1.99.9 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 74)) (1.99.9)
+Requirement already satisfied: packaging==26.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 75)) (26.0)
+Requirement already satisfied: pandas==3.0.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 76)) (3.0.1)
+Requirement already satisfied: passlib==1.7.4 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 77)) (1.7.4)
+Requirement already satisfied: pathspec==1.0.4 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 78)) (1.0.4)
+Requirement already satisfied: pillow==12.1.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 79)) (12.1.1)
+Requirement already satisfied: platformdirs==4.9.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 80)) (4.9.2)
+Requirement already satisfied: pluggy==1.6.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 81)) (1.6.0)
+Requirement already satisfied: propcache==0.4.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 82)) (0.4.1)
+Requirement already satisfied: proto-plus==1.27.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 83)) (1.27.1)
+Requirement already satisfied: protobuf==5.29.6 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 84)) (5.29.6)
+Requirement already satisfied: pyasn1==0.6.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 85)) (0.6.1)
+Requirement already satisfied: pyasn1_modules==0.4.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 86)) (0.4.2)
+Requirement already satisfied: pycodestyle==2.14.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 87)) (2.14.0)
+Requirement already satisfied: pycparser==3.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 88)) (3.0)
+Requirement already satisfied: pydantic==2.11.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 89)) (2.11.3)
+Requirement already satisfied: pydantic_core==2.33.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 90)) (2.33.1)
+Requirement already satisfied: pyflakes==3.4.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 91)) (3.4.0)
+Requirement already satisfied: Pygments==2.19.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 92)) (2.19.2)
+Requirement already satisfied: PyJWT==2.11.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 93)) (2.11.0)
+Requirement already satisfied: pymongo==4.6.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 94)) (4.6.3)
+Requirement already satisfied: pyparsing==3.3.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 95)) (3.3.2)
+Requirement already satisfied: pytest==9.0.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 96)) (9.0.2)
+Requirement already satisfied: python-dateutil==2.9.0.post0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 97)) (2.9.0.post0)
+Requirement already satisfied: python-dotenv==1.1.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 98)) (1.1.0)
+Requirement already satisfied: python-jose==3.5.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 99)) (3.5.0)
+Requirement already satisfied: python-multipart==0.0.22 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 100)) (0.0.22)
+Requirement already satisfied: pytokens==0.4.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 101)) (0.4.1)
+Requirement already satisfied: PyYAML==6.0.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 102)) (6.0.3)
+Requirement already satisfied: referencing==0.37.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 103)) (0.37.0)
+Requirement already satisfied: regex==2026.2.19 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 104)) (2026.2.19)
+Requirement already satisfied: requests==2.32.4 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 105)) (2.32.4)
+Requirement already satisfied: requests-oauthlib==2.0.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 106)) (2.0.0)
+Requirement already satisfied: requests-toolbelt==1.0.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 107)) (1.0.0)
+Requirement already satisfied: rich==14.3.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 108)) (14.3.3)
+Requirement already satisfied: rpds-py==0.30.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 109)) (0.30.0)
+Requirement already satisfied: rsa==4.9.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 110)) (4.9.1)
+Requirement already satisfied: s3transfer==0.16.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 111)) (0.16.0)
+Requirement already satisfied: s5cmd==0.2.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 112)) (0.2.0)
+Requirement already satisfied: shellingham==1.5.4 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 113)) (1.5.4)
+Requirement already satisfied: six==1.17.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 114)) (1.17.0)
+Requirement already satisfied: slowapi==0.1.9 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 115)) (0.1.9)
+Requirement already satisfied: sniffio==1.3.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 116)) (1.3.1)
+Requirement already satisfied: soupsieve==2.7 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 117)) (2.7)
+Requirement already satisfied: starlette==0.37.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 118)) (0.37.2)
+Requirement already satisfied: stripe==14.3.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 119)) (14.3.0)
+Requirement already satisfied: tenacity==9.1.4 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 120)) (9.1.4)
+Requirement already satisfied: tiktoken==0.12.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 121)) (0.12.0)
+Requirement already satisfied: tokenizers==0.22.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 122)) (0.22.2)
+Requirement already satisfied: tqdm==4.67.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 123)) (4.67.3)
+Requirement already satisfied: typer==0.24.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 124)) (0.24.1)
+Requirement already satisfied: typer-slim==0.24.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 125)) (0.24.0)
+Requirement already satisfied: typing-inspection==0.4.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 126)) (0.4.2)
+Requirement already satisfied: typing_extensions==4.13.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 127)) (4.13.2)
+Requirement already satisfied: tzdata==2025.3 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 128)) (2025.3)
+Requirement already satisfied: uritemplate==4.2.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 129)) (4.2.0)
+Requirement already satisfied: urllib3==2.4.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 130)) (2.4.0)
+Requirement already satisfied: uvicorn==0.29.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 131)) (0.29.0)
+Requirement already satisfied: watchfiles==1.1.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 132)) (1.1.1)
+Requirement already satisfied: websockets==15.0.1 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 133)) (15.0.1)
+Requirement already satisfied: wrapt==1.17.2 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 134)) (1.17.2)
+Requirement already satisfied: yarl==1.22.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 135)) (1.22.0)
+Requirement already satisfied: zipp==3.23.0 in /root/.venv/lib/python3.11/site-packages (from -r requirements.txt (line 136)) (3.23.0) without  failures).</analysis>
