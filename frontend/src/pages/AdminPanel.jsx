@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, PenLine, MessageSquare, Download, TrendingUp, RefreshCw } from 'lucide-react';
+import { PlusCircle, Save, X, AlertCircle, BarChart3, Settings, Globe, DollarSign, Lock, FileText, FolderOpen, Eye, ThumbsUp, Users, Layers, PenLine, MessageSquare, Download, TrendingUp, RefreshCw, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -493,6 +493,20 @@ const AdminPanel = () => {
                 <div>
                   <p className="font-semibold text-slate-800">Article Stats</p>
                   <p className="text-xs text-slate-500">Per-article analytics</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/bulk-optimize">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-amber-200 hover:border-amber-400" data-testid="admin-bulk-optimize-link">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 bg-amber-100 rounded-lg">
+                  <Zap className="h-6 w-6 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-slate-800">Bulk Optimize</p>
+                  <p className="text-xs text-slate-500">AI optimize all</p>
                 </div>
               </CardContent>
             </Card>

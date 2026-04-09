@@ -21,6 +21,7 @@ import ContributionsManager from "./pages/ContributionsManager";
 import ContactMessages from "./pages/ContactMessages";
 import ArticleScraper from "./pages/ArticleScraper";
 import PerArticleAnalytics from "./pages/PerArticleAnalytics";
+import BulkOptimize from "./pages/BulkOptimize";
 import Login from "./pages/Login";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -203,6 +204,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <PerArticleAnalytics />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/bulk-optimize"
+                element={
+                  <ProtectedRoute>
+                    <BulkOptimize />
                   </ProtectedRoute>
                 }
               />

@@ -143,6 +143,45 @@ class SlugRequest(BaseModel):
     slug: str
 
 
+@router.get("/articles-for-optimize")
+async def list_articles_for_optimize(
+    page: int = 1,
+    limit: int = 50,
+    category: str = "",
+    filter_status: str = "",
+):
+    """List articles with their AI optimization status"""
+    query = {}
+    if category:
+        query["category"] = category
+    if filter_status == "optimized":
+        query["ai_optimized"] = True
+    elif filter_status == "pending":
+        query["$or"] = [{"ai_optimized": {"$exists": False}}, {"ai_optimized": False}]
+
+    total = await snippets_collection.count_documents(query)
+    skip = (page - 1) * limit
+    cursor = snippets_collection.find(
+        query,
+        {"_id": 0, "slug": 1, "title": 1, "category": 1, "ai_optimized": 1, "views": 1, "createdAt": 1}
+    ).sort("createdAt", -1).skip(skip).limit(limit)
+    articles = await cursor.to_list(length=limit)
+
+    # Get category list for filter
+    categories = await snippets_collection.distinct("category")
+    optimized_count = await snippets_collection.count_documents({"ai_optimized": True})
+
+    return {
+        "articles": articles,
+        "total": total,
+        "page": page,
+        "pages": (total + limit - 1) // limit,
+        "categories": sorted([c for c in categories if c]),
+        "optimized_count": optimized_count,
+        "total_articles": await snippets_collection.count_documents({}),
+    }
+
+
 @router.post("/rewrite")
 async def rewrite_article(req: RewriteRequest):
     """Rewrite article content to be unique"""
@@ -202,6 +241,7 @@ async def optimize_existing_article(req: SlugRequest):
         "tags": result.get("tags", article.get("tags", [])),
         "difficulty": result.get("difficulty", article.get("difficulty")),
         "updatedAt": datetime.now(timezone.utc),
+        "ai_optimized": True,
     }
     if result.get("steps"):
         update_data["steps"] = result["steps"]
