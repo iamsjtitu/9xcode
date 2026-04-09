@@ -308,8 +308,8 @@ async def scrape_from_url(req: ScrapeURLRequest):
         'author': 'Admin',
         'views': 0,
         'likes': 0,
-        'createdAt': datetime.now(timezone.utc).isoformat(),
-        'updatedAt': datetime.now(timezone.utc).isoformat(),
+        'createdAt': datetime.now(timezone.utc),
+        'updatedAt': datetime.now(timezone.utc),
         'postInstallation': None,
         'source_url': req.url,
     }
@@ -356,9 +356,16 @@ async def save_scraped_article(article: dict = Body(...)):
     article.setdefault('views', 0)
     article.setdefault('likes', 0)
     article.setdefault('author', 'Admin')
-    article.setdefault('createdAt', datetime.now(timezone.utc).isoformat())
-    article.setdefault('updatedAt', datetime.now(timezone.utc).isoformat())
     article.setdefault('postInstallation', None)
+
+    # Ensure createdAt is a proper datetime for correct sorting
+    now = datetime.now(timezone.utc)
+    if isinstance(article.get('createdAt'), str):
+        article['createdAt'] = now
+    article.setdefault('createdAt', now)
+    if isinstance(article.get('updatedAt'), str):
+        article['updatedAt'] = now
+    article.setdefault('updatedAt', now)
 
     await snippets_collection.insert_one(article)
     # Remove _id from response
