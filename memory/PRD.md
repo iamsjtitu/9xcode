@@ -14,7 +14,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 ### Core
 - Full-stack app live at 9xcodes.com
 - Admin panel with dashboard, password change
-- 278+ articles, Dark/Light mode toggle (GitHub-style professional design)
+- 289+ articles, Dark/Light mode toggle (GitHub-style professional design)
 - Social sharing, SEO (sitemap, robots.txt, JSON-LD, RSS feed)
 - Google AdSense integration
 
@@ -24,45 +24,40 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 
 ### Public Pages
 - Home (/), About (/about), Contact (/contact), Contribute (/contribute)
-- Privacy Policy (/privacy-policy) - AdSense compliant
-- Terms of Service (/terms-of-service) - AdSense compliant
-- Disclaimer (/disclaimer) - AdSense compliant
+- Privacy Policy (/privacy-policy), Terms of Service (/terms-of-service), Disclaimer (/disclaimer)
 
 ### Admin Features
 - Newsletter (/admin/subscribers), Bulk Articles (/admin/articles)
 - Contributions (/admin/contributions), Messages (/admin/messages)
 - Article Scraper (/admin/scraper) - curl_cffi for Cloudflare bypass
-- **AI Tools in Scraper** (COMPLETED - Apr 9, 2026):
-  - Full Optimize (rewrite + SEO + summary in one click)
-  - AI Rewrite (unique content rewriting)
-  - SEO Optimize (title, meta desc, keywords, tags generation)
-  - Summarize (summary, key takeaways, difficulty assessment)
+- AI Tools in Scraper: Full Optimize, Rewrite, SEO Optimize, Summarize
+- **Bulk AI Optimize** (/admin/bulk-optimize) - COMPLETED Apr 9, 2026:
+  - Select articles individually or all at once
+  - Category & status (Pending/Optimized) filters
+  - Real-time progress bar with start/stop control
+  - Per-article status tracking (processing/done/failed)
+  - Auto-stops on LLM balance errors
+  - Pagination (50 per page)
+  - Overall optimization progress stats
 - Per-Article Analytics (/admin/per-article-analytics)
 - One-Click VPS Update (update_script.sh)
 
 ### SEO
-- Dynamic sitemap.xml with all pages (static + articles)
-- robots.txt, RSS feed, meta tags via react-helmet
-- JSON-LD structured data, ads.txt
+- Dynamic sitemap.xml, robots.txt, RSS feed, meta tags, JSON-LD, ads.txt
 
 ## Credentials
 - Admin: admin / admin123
 
 ## VPS Info
 - Path: /var/www/9xcodes, Venv: backend/venv
-- New packages: curl_cffi, cloudscraper, emergentintegrations (pip install)
+- New packages: curl_cffi, cloudscraper, emergentintegrations
 
 ## Key API Endpoints
-- POST /api/ai-rewrite/rewrite - AI article rewrite
-- POST /api/ai-rewrite/seo-optimize - SEO metadata generation
-- POST /api/ai-rewrite/summarize - Summary + key takeaways
-- POST /api/ai-rewrite/full-optimize - All-in-one optimization
-- POST /api/ai-rewrite/optimize-existing - Optimize DB article by slug
-- POST /api/scraper/from-url - Scrape article from URL
-- POST /api/scraper/save - Save scraped article
-- POST /api/scraper/discover - Browse tutorial sites for URLs
+- GET /api/ai-rewrite/articles-for-optimize - List articles with AI opt status
+- POST /api/ai-rewrite/optimize-existing - Optimize single article by slug
+- POST /api/ai-rewrite/rewrite, /seo-optimize, /summarize, /full-optimize
+- POST /api/scraper/from-url, /save, /discover
 
 ## Future/Backlog (P2)
 - User comment moderation
-- More unique content for AdSense approval
-- Use Scraper + AI tools to replace low-quality seeded content
+- Use Bulk Optimize to process all 289 articles for AdSense approval
