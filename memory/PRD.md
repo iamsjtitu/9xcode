@@ -14,7 +14,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 ### Core
 - Full-stack app live at 9xcodes.com
 - Admin panel with dashboard, password change
-- 278+ articles, Dark/Light mode toggle
+- 278+ articles, Dark/Light mode toggle (GitHub-style professional design)
 - Social sharing, SEO (sitemap, robots.txt, JSON-LD, RSS feed)
 - Google AdSense integration
 
@@ -24,14 +24,19 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 
 ### Public Pages
 - Home (/), About (/about), Contact (/contact), Contribute (/contribute)
-- **Privacy Policy** (/privacy-policy) - AdSense compliant
-- **Terms of Service** (/terms-of-service) - AdSense compliant
-- **Disclaimer** (/disclaimer) - AdSense compliant
+- Privacy Policy (/privacy-policy) - AdSense compliant
+- Terms of Service (/terms-of-service) - AdSense compliant
+- Disclaimer (/disclaimer) - AdSense compliant
 
 ### Admin Features
 - Newsletter (/admin/subscribers), Bulk Articles (/admin/articles)
 - Contributions (/admin/contributions), Messages (/admin/messages)
-- Article Scraper (/admin/scraper) - curl_cffi for Cloudflare bypass + AI Rewrite
+- Article Scraper (/admin/scraper) - curl_cffi for Cloudflare bypass
+- **AI Tools in Scraper** (COMPLETED - Apr 9, 2026):
+  - Full Optimize (rewrite + SEO + summary in one click)
+  - AI Rewrite (unique content rewriting)
+  - SEO Optimize (title, meta desc, keywords, tags generation)
+  - Summarize (summary, key takeaways, difficulty assessment)
 - Per-Article Analytics (/admin/per-article-analytics)
 - One-Click VPS Update (update_script.sh)
 
@@ -45,8 +50,19 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 
 ## VPS Info
 - Path: /var/www/9xcodes, Venv: backend/venv
-- New packages: curl_cffi, cloudscraper (pip install)
+- New packages: curl_cffi, cloudscraper, emergentintegrations (pip install)
+
+## Key API Endpoints
+- POST /api/ai-rewrite/rewrite - AI article rewrite
+- POST /api/ai-rewrite/seo-optimize - SEO metadata generation
+- POST /api/ai-rewrite/summarize - Summary + key takeaways
+- POST /api/ai-rewrite/full-optimize - All-in-one optimization
+- POST /api/ai-rewrite/optimize-existing - Optimize DB article by slug
+- POST /api/scraper/from-url - Scrape article from URL
+- POST /api/scraper/save - Save scraped article
+- POST /api/scraper/discover - Browse tutorial sites for URLs
 
 ## Future/Backlog (P2)
 - User comment moderation
 - More unique content for AdSense approval
+- Use Scraper + AI tools to replace low-quality seeded content
