@@ -15,9 +15,9 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const SOURCES = [
-  { id: 'linuxize', name: 'Linuxize', desc: 'Linux tutorials' },
-  { id: 'digitalocean', name: 'DigitalOcean', desc: 'Community tutorials' },
   { id: 'tecmint', name: 'TecMint', desc: 'Linux articles' },
+  { id: 'phoenixnap', name: 'PhoenixNAP', desc: 'Server tutorials' },
+  { id: 'digitalocean', name: 'DigitalOcean', desc: 'Community tutorials' },
 ];
 
 const ArticleScraper = () => {
@@ -28,7 +28,7 @@ const ArticleScraper = () => {
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState(null);
   const [discoverUrls, setDiscoverUrls] = useState([]);
-  const [discoverSource, setDiscoverSource] = useState('linuxize');
+  const [discoverSource, setDiscoverSource] = useState('tecmint');
   const [discovering, setDiscovering] = useState(false);
   const [expandedStep, setExpandedStep] = useState(null);
   const [scrapeHistory, setScrapeHistory] = useState([]);

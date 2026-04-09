@@ -6,6 +6,12 @@ from datetime import datetime, timezone
 import uuid, re, requests
 from bs4 import BeautifulSoup
 
+try:
+    import cloudscraper
+    HAS_CLOUDSCRAPER = True
+except ImportError:
+    HAS_CLOUDSCRAPER = False
+
 router = APIRouter(prefix="/scraper", tags=["scraper"])
 
 HEADERS = {
@@ -18,7 +24,9 @@ HEADERS = {
 CONTENT_SELECTORS = [
     'article .post-content', 'article .entry-content', '.post-content',
     '.entry-content', '.article-content', '.article-body', '.content-body',
-    '.tutorial-content', '.markdown-body', 'article', '.content', 'main',
+    '.tutorial-content', '.markdown-body', '.single-post-content',
+    '.wp-block-post-content', '.kb-content', '.blog-content',
+    'article', '.content', 'main',
     '#content', '#main-content', '.post', '.blog-post',
 ]
 
@@ -224,15 +232,28 @@ class ScrapeURLRequest(BaseModel):
 @router.post("/from-url")
 async def scrape_from_url(req: ScrapeURLRequest):
     """Scrape a single URL and convert to 9xCodes format"""
-    try:
-        session = requests.Session()
-        session.headers.update(HEADERS)
-        resp = session.get(req.url, timeout=20, allow_redirects=True)
-        resp.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        raise HTTPException(status_code=400, detail=f"Site returned error: {e.response.status_code}. Try a different URL.")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to fetch URL: {str(e)}")
+    resp = None
+
+    # Try cloudscraper first (bypasses Cloudflare)
+    if HAS_CLOUDSCRAPER:
+        try:
+            scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'linux'})
+            resp = scraper.get(req.url, timeout=25)
+            resp.raise_for_status()
+        except Exception:
+            resp = None
+
+    # Fallback to regular requests
+    if resp is None:
+        try:
+            session = requests.Session()
+            session.headers.update(HEADERS)
+            resp = session.get(req.url, timeout=20, allow_redirects=True)
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise HTTPException(status_code=400, detail=f"Site returned error: {e.response.status_code}. Try a different URL.")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to fetch URL: {str(e)}")
 
     soup = BeautifulSoup(resp.text, 'html.parser')
 
@@ -346,20 +367,30 @@ async def save_scraped_article(article: dict = Body(...)):
 
 
 @router.post("/discover")
-async def discover_articles(source: str = "linuxize"):
+async def discover_articles(source: str = "tecmint"):
     """Discover article URLs from open source sites"""
     sites_to_scrape = {
-        "linuxize": [
-            "https://linuxize.com/post/how-to-install-nginx-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-install-docker-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-install-mysql-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-set-up-ssh-keys-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-install-node-js-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-install-and-use-docker-compose-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-configure-static-ip-address-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-install-postgresql-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-install-and-configure-redis-on-ubuntu-22-04/",
-            "https://linuxize.com/post/how-to-install-python-3-10-on-ubuntu-22-04/",
+        "tecmint": [
+            "https://www.tecmint.com/install-docker-on-ubuntu/",
+            "https://www.tecmint.com/install-nginx-on-ubuntu/",
+            "https://www.tecmint.com/install-mysql-on-ubuntu/",
+            "https://www.tecmint.com/install-php-on-ubuntu/",
+            "https://www.tecmint.com/install-nodejs-on-ubuntu/",
+            "https://www.tecmint.com/install-postgresql-on-ubuntu/",
+            "https://www.tecmint.com/install-redis-server-on-ubuntu/",
+            "https://www.tecmint.com/install-apache-on-ubuntu/",
+            "https://www.tecmint.com/install-mongodb-on-ubuntu/",
+            "https://www.tecmint.com/install-java-on-ubuntu/",
+        ],
+        "phoenixnap": [
+            "https://phoenixnap.com/kb/install-docker-ubuntu",
+            "https://phoenixnap.com/kb/install-nginx-ubuntu",
+            "https://phoenixnap.com/kb/how-to-install-mysql-on-ubuntu",
+            "https://phoenixnap.com/kb/install-node-js-ubuntu",
+            "https://phoenixnap.com/kb/install-redis-on-ubuntu-20-04",
+            "https://phoenixnap.com/kb/how-to-install-git-on-ubuntu",
+            "https://phoenixnap.com/kb/install-postgresql-ubuntu",
+            "https://phoenixnap.com/kb/install-pip-ubuntu",
         ],
         "digitalocean": [
             "https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-22-04",
@@ -368,14 +399,7 @@ async def discover_articles(source: str = "linuxize"):
             "https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-22-04",
             "https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-22-04",
         ],
-        "tecmint": [
-            "https://www.tecmint.com/install-docker-on-ubuntu/",
-            "https://www.tecmint.com/install-nginx-on-ubuntu/",
-            "https://www.tecmint.com/install-mysql-on-ubuntu/",
-            "https://www.tecmint.com/install-php-on-ubuntu/",
-            "https://www.tecmint.com/install-nodejs-on-ubuntu/",
-        ],
     }
 
-    urls = sites_to_scrape.get(source, sites_to_scrape["linuxize"])
+    urls = sites_to_scrape.get(source, sites_to_scrape["tecmint"])
     return {"source": source, "urls": urls, "count": len(urls), "available_sources": list(sites_to_scrape.keys())}
