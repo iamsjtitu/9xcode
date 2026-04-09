@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, Search, Download, Save, ExternalLink, ArrowLeft, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, Loader2, Copy, Trash2, Edit3, Sparkles } from 'lucide-react';
+import { Globe, Search, Download, Save, ExternalLink, ArrowLeft, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, Loader2, Copy, Trash2, Edit3, Sparkles, Wand2, Tag, FileText, Zap, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -33,6 +33,11 @@ const ArticleScraper = () => {
   const [expandedStep, setExpandedStep] = useState(null);
   const [scrapeHistory, setScrapeHistory] = useState([]);
   const [rewriting, setRewriting] = useState(false);
+  const [optimizing, setOptimizing] = useState(false);
+  const [seoLoading, setSeoLoading] = useState(false);
+  const [summarizing, setSummarizing] = useState(false);
+  const [seoResult, setSeoResult] = useState(null);
+  const [summaryResult, setSummaryResult] = useState(null);
 
   const handleScrape = async () => {
     if (!url.trim()) {
@@ -42,6 +47,8 @@ const ArticleScraper = () => {
     setScraping(true);
     setPreview(null);
     setEditMode(false);
+    setSeoResult(null);
+    setSummaryResult(null);
     try {
       const resp = await axios.post(`${API}/scraper/from-url`, { url: url.trim() });
       setPreview(resp.data);
@@ -131,6 +138,104 @@ const ArticleScraper = () => {
       setRewriting(false);
     }
   };
+
+  const handleFullOptimize = async () => {
+    const source = editData || preview?.full_article;
+    if (!source) return;
+    setOptimizing(true);
+    try {
+      const resp = await axios.post(`${API}/ai-rewrite/full-optimize`, {
+        title: source.title,
+        description: source.description,
+        steps: source.steps,
+      });
+      const opt = resp.data.optimized;
+      setEditData(prev => ({
+        ...prev,
+        title: opt.title || prev.title,
+        description: opt.description || prev.description,
+        steps: opt.steps || prev.steps,
+        tags: opt.tags || prev.tags,
+        difficulty: opt.difficulty || prev.difficulty,
+      }));
+      if (opt.summary) setSummaryResult({ summary: opt.summary, seo_keywords: opt.seo_keywords });
+      setEditMode(true);
+      toast({ title: 'Full Optimize Done!', description: 'Article rewritten, SEO optimized & summarized. Review and save.' });
+    } catch (err) {
+      const detail = err.response?.data?.detail || 'Full optimization failed';
+      toast({ title: 'Optimize Failed', description: detail, variant: 'destructive' });
+    } finally {
+      setOptimizing(false);
+    }
+  };
+
+  const handleSEOOptimize = async () => {
+    const source = editData || preview?.full_article;
+    if (!source) return;
+    setSeoLoading(true);
+    try {
+      const resp = await axios.post(`${API}/ai-rewrite/seo-optimize`, {
+        title: source.title,
+        description: source.description,
+        category: source.category || '',
+      });
+      const seo = resp.data.seo;
+      setSeoResult(seo);
+      toast({ title: 'SEO Metadata Generated!', description: 'Review the SEO suggestions below and apply them.' });
+    } catch (err) {
+      const detail = err.response?.data?.detail || 'SEO optimization failed';
+      toast({ title: 'SEO Failed', description: detail, variant: 'destructive' });
+    } finally {
+      setSeoLoading(false);
+    }
+  };
+
+  const handleSummarize = async () => {
+    const source = editData || preview?.full_article;
+    if (!source) return;
+    setSummarizing(true);
+    try {
+      const resp = await axios.post(`${API}/ai-rewrite/summarize`, {
+        title: source.title,
+        description: source.description,
+        steps: source.steps,
+      });
+      setSummaryResult(resp.data.summary);
+      toast({ title: 'Summary Generated!', description: 'Review the summary and key takeaways below.' });
+    } catch (err) {
+      const detail = err.response?.data?.detail || 'Summarize failed';
+      toast({ title: 'Summarize Failed', description: detail, variant: 'destructive' });
+    } finally {
+      setSummarizing(false);
+    }
+  };
+
+  const applySeoToArticle = () => {
+    if (!seoResult) return;
+    setEditData(prev => ({
+      ...prev,
+      title: seoResult.seo_title || prev.title,
+      description: seoResult.seo_description || prev.description,
+      tags: seoResult.tags || prev.tags,
+    }));
+    setEditMode(true);
+    setSeoResult(null);
+    toast({ title: 'SEO Applied!', description: 'Title, description & tags updated with SEO data.' });
+  };
+
+  const applySummaryToArticle = () => {
+    if (!summaryResult) return;
+    setEditData(prev => ({
+      ...prev,
+      description: summaryResult.description || prev.description,
+      difficulty: summaryResult.difficulty || prev.difficulty,
+    }));
+    setEditMode(true);
+    setSummaryResult(null);
+    toast({ title: 'Summary Applied!', description: 'Description & difficulty updated.' });
+  };
+
+  const isAnyAIRunning = rewriting || optimizing || seoLoading || summarizing;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50" data-testid="scraper-page">
@@ -290,26 +395,12 @@ const ArticleScraper = () => {
                 {/* Article Meta */}
                 <Card className="border-green-200" data-testid="preview-card">
                   <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="h-5 w-5 text-green-600" />
                         <CardTitle className="text-lg">Scraped Article Preview</CardTitle>
                       </div>
-                      <div className="flex gap-2">
-                        <Button
-                          data-testid="ai-rewrite-btn"
-                          size="sm"
-                          variant="outline"
-                          disabled={rewriting}
-                          onClick={handleAIRewrite}
-                          className="border-purple-300 text-purple-700 hover:bg-purple-50"
-                        >
-                          {rewriting ? (
-                            <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Rewriting...</>
-                          ) : (
-                            <><Sparkles className="h-3 w-3 mr-1" /> AI Rewrite</>
-                          )}
-                        </Button>
+                      <div className="flex gap-2 flex-wrap">
                         <Button
                           data-testid="toggle-edit-btn"
                           size="sm"
@@ -333,6 +424,68 @@ const ArticleScraper = () => {
                           )}
                         </Button>
                       </div>
+                    </div>
+                    {/* AI Tools Bar */}
+                    <div className="flex gap-2 flex-wrap mt-3 pt-3 border-t border-slate-200" data-testid="ai-tools-bar">
+                      <span className="text-xs font-semibold text-slate-500 flex items-center gap-1 mr-1">
+                        <Sparkles className="h-3 w-3" /> AI Tools:
+                      </span>
+                      <Button
+                        data-testid="ai-full-optimize-btn"
+                        size="sm"
+                        variant="outline"
+                        disabled={isAnyAIRunning}
+                        onClick={handleFullOptimize}
+                        className="border-amber-300 text-amber-700 hover:bg-amber-50 text-xs h-7"
+                      >
+                        {optimizing ? (
+                          <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Optimizing...</>
+                        ) : (
+                          <><Zap className="h-3 w-3 mr-1" /> Full Optimize</>
+                        )}
+                      </Button>
+                      <Button
+                        data-testid="ai-rewrite-btn"
+                        size="sm"
+                        variant="outline"
+                        disabled={isAnyAIRunning}
+                        onClick={handleAIRewrite}
+                        className="border-purple-300 text-purple-700 hover:bg-purple-50 text-xs h-7"
+                      >
+                        {rewriting ? (
+                          <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Rewriting...</>
+                        ) : (
+                          <><Wand2 className="h-3 w-3 mr-1" /> Rewrite</>
+                        )}
+                      </Button>
+                      <Button
+                        data-testid="ai-seo-btn"
+                        size="sm"
+                        variant="outline"
+                        disabled={isAnyAIRunning}
+                        onClick={handleSEOOptimize}
+                        className="border-teal-300 text-teal-700 hover:bg-teal-50 text-xs h-7"
+                      >
+                        {seoLoading ? (
+                          <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Generating...</>
+                        ) : (
+                          <><Tag className="h-3 w-3 mr-1" /> SEO Optimize</>
+                        )}
+                      </Button>
+                      <Button
+                        data-testid="ai-summarize-btn"
+                        size="sm"
+                        variant="outline"
+                        disabled={isAnyAIRunning}
+                        onClick={handleSummarize}
+                        className="border-blue-300 text-blue-700 hover:bg-blue-50 text-xs h-7"
+                      >
+                        {summarizing ? (
+                          <><Loader2 className="h-3 w-3 mr-1 animate-spin" /> Summarizing...</>
+                        ) : (
+                          <><FileText className="h-3 w-3 mr-1" /> Summarize</>
+                        )}
+                      </Button>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -420,6 +573,96 @@ const ArticleScraper = () => {
                     )}
                   </CardContent>
                 </Card>
+
+                {/* SEO Result Card */}
+                {seoResult && (
+                  <Card className="border-teal-200 bg-teal-50/30" data-testid="seo-result-card">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-sm flex items-center gap-2 text-teal-800">
+                          <Tag className="h-4 w-4" /> SEO Suggestions
+                        </CardTitle>
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={applySeoToArticle} className="bg-teal-600 hover:bg-teal-700 text-xs h-7" data-testid="apply-seo-btn">
+                            Apply to Article
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => setSeoResult(null)} className="h-7 w-7 p-0" data-testid="dismiss-seo-btn">
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2 text-sm">
+                      <div><span className="font-semibold text-teal-700">SEO Title:</span> <span className="text-slate-700">{seoResult.seo_title}</span></div>
+                      <div><span className="font-semibold text-teal-700">Meta Desc:</span> <span className="text-slate-600">{seoResult.seo_description}</span></div>
+                      {seoResult.focus_keyword && (
+                        <div><span className="font-semibold text-teal-700">Focus Keyword:</span> <Badge className="bg-teal-100 text-teal-800 ml-1">{seoResult.focus_keyword}</Badge></div>
+                      )}
+                      {seoResult.keywords?.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          <span className="font-semibold text-teal-700 mr-1">Keywords:</span>
+                          {seoResult.keywords.map((k, i) => <Badge key={i} variant="outline" className="text-xs">{k}</Badge>)}
+                        </div>
+                      )}
+                      {seoResult.tags?.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          <span className="font-semibold text-teal-700 mr-1">Tags:</span>
+                          {seoResult.tags.map((t, i) => <Badge key={i} variant="secondary" className="text-xs">{t}</Badge>)}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Summary Result Card */}
+                {summaryResult && (
+                  <Card className="border-blue-200 bg-blue-50/30" data-testid="summary-result-card">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-sm flex items-center gap-2 text-blue-800">
+                          <FileText className="h-4 w-4" /> Article Summary
+                        </CardTitle>
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={applySummaryToArticle} className="bg-blue-600 hover:bg-blue-700 text-xs h-7" data-testid="apply-summary-btn">
+                            Apply Description
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => setSummaryResult(null)} className="h-7 w-7 p-0" data-testid="dismiss-summary-btn">
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2 text-sm">
+                      {summaryResult.description && (
+                        <div><span className="font-semibold text-blue-700">Description:</span> <span className="text-slate-700">{summaryResult.description}</span></div>
+                      )}
+                      {summaryResult.summary && (
+                        <div><span className="font-semibold text-blue-700">Summary:</span> <span className="text-slate-600">{summaryResult.summary}</span></div>
+                      )}
+                      {summaryResult.key_takeaways?.length > 0 && (
+                        <div>
+                          <span className="font-semibold text-blue-700">Key Takeaways:</span>
+                          <ul className="list-disc list-inside mt-1 text-slate-600 space-y-0.5">
+                            {summaryResult.key_takeaways.map((t, i) => <li key={i}>{t}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {summaryResult.difficulty && (
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-blue-700">Difficulty:</span>
+                          <Badge className="bg-blue-100 text-blue-800">{summaryResult.difficulty}</Badge>
+                          {summaryResult.difficulty_reason && <span className="text-xs text-slate-500">— {summaryResult.difficulty_reason}</span>}
+                        </div>
+                      )}
+                      {summaryResult.seo_keywords?.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          <span className="font-semibold text-blue-700 mr-1">SEO Keywords:</span>
+                          {summaryResult.seo_keywords.map((k, i) => <Badge key={i} variant="outline" className="text-xs">{k}</Badge>)}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
 
                 {/* Steps */}
                 <Card className="border-slate-200" data-testid="steps-card">
