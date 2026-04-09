@@ -11,6 +11,7 @@ echo "[$(date)] Update started" > "$LOG_FILE"
 # Step 1: Git Pull
 echo "[INFO] >> Git Pull" >> "$LOG_FILE"
 cd "$PROJECT_PATH"
+git stash >> "$LOG_FILE" 2>&1
 git pull origin main >> "$LOG_FILE" 2>&1
 if [ $? -ne 0 ]; then
     echo "[ERROR] Git pull failed" >> "$LOG_FILE"

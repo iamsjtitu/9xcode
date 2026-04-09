@@ -26,24 +26,66 @@ async def run_update_script():
     update_status["logs"] = ["[INFO] Starting update..."]
     update_status["step"] = "Running update script..."
 
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "update_script.sh")
+
+    # If script doesn't exist, run commands directly
+    if not os.path.exists(script_path):
+        update_status["logs"].append("[INFO] Running commands directly...")
+        commands = [
+            ("git stash && git pull origin main", PROJECT_PATH, "Git Pull"),
+            (f"{PROJECT_PATH}/backend/venv/bin/pip install -r requirements.txt", f"{PROJECT_PATH}/backend", "Backend Deps"),
+            ("NODE_OPTIONS=--max_old_space_size=1024 yarn build", f"{PROJECT_PATH}/frontend", "Frontend Build"),
+            ("pm2 restart all", PROJECT_PATH, "PM2 Restart"),
+        ]
+        all_ok = True
+        for cmd, cwd, name in commands:
+            update_status["step"] = name
+            update_status["logs"].append(f"[INFO] >> {name}")
+            try:
+                proc = await asyncio.create_subprocess_shell(
+                    cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, cwd=cwd
+                )
+                stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=300)
+                if stdout:
+                    for line in stdout.decode().strip().split('\n')[:10]:
+                        update_status["logs"].append(f"[INFO] {line}")
+                if proc.returncode != 0:
+                    update_status["logs"].append(f"[ERROR] {name} failed (exit {proc.returncode})")
+                    if stderr:
+                        for line in stderr.decode().strip().split('\n')[:5]:
+                            update_status["logs"].append(f"[ERROR] {line}")
+                    if name in ("Git Pull", "Frontend Build"):
+                        all_ok = False
+                        break
+                else:
+                    update_status["logs"].append(f"[INFO] {name} done")
+            except asyncio.TimeoutError:
+                update_status["logs"].append(f"[ERROR] {name} timed out")
+                all_ok = False
+                break
+            except Exception as e:
+                update_status["logs"].append(f"[ERROR] {name}: {str(e)}")
+
+        update_status["is_running"] = False
+        update_status["last_run"] = datetime.now(timezone.utc).isoformat()
+        update_status["last_status"] = "success" if all_ok else "failed"
+        update_status["step"] = "Done"
+        return
+
     try:
         process = await asyncio.create_subprocess_exec(
-            "bash", SCRIPT_PATH,
+            "bash", script_path,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
         await asyncio.wait_for(process.communicate(), timeout=600)
 
-        # Read log file for detailed output
         if os.path.exists(LOG_FILE):
             with open(LOG_FILE, "r") as f:
                 lines = f.readlines()
             update_status["logs"] = [l.strip() for l in lines if l.strip()]
             last_line = lines[-1].strip() if lines else ""
-            if "RESULT:success" in last_line:
-                update_status["last_status"] = "success"
-            else:
-                update_status["last_status"] = "failed"
+            update_status["last_status"] = "success" if "RESULT:success" in last_line else "failed"
         else:
             update_status["last_status"] = "failed"
             update_status["logs"].append("[ERROR] Log file not found")
