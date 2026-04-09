@@ -26,6 +26,7 @@ echo "[INFO] Git Pull completed" >> "$LOG_FILE"
 # Step 2: Backend Dependencies
 echo "[INFO] >> Backend Dependencies" >> "$LOG_FILE"
 cd "$PROJECT_PATH/backend"
+$VENV_PIP install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/ >> "$LOG_FILE" 2>&1
 $VENV_PIP install -r requirements.txt $EXTRA_INDEX >> "$LOG_FILE" 2>&1
 echo "[INFO] Backend deps done" >> "$LOG_FILE"
 
