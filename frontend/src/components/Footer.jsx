@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Github, Twitter, Mail, Send, Rss } from 'lucide-react';
+import { Github, Twitter, Mail, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -80,28 +80,28 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Legal */}
           <div>
-            <h3 className="font-semibold text-white mb-4">Categories</h3>
+            <h3 className="font-semibold text-white mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm hover:text-blue-400 transition-colors">
-                  Installation
-                </a>
+                <Link to="/privacy-policy" className="text-sm hover:text-blue-400 transition-colors">
+                  Privacy Policy
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm hover:text-blue-400 transition-colors">
-                  Security
-                </a>
+                <Link to="/terms-of-service" className="text-sm hover:text-blue-400 transition-colors">
+                  Terms of Service
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm hover:text-blue-400 transition-colors">
-                  Configuration
-                </a>
+                <Link to="/disclaimer" className="text-sm hover:text-blue-400 transition-colors">
+                  Disclaimer
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm hover:text-blue-400 transition-colors">
-                  Networking
+                <a href="https://9xcodes.com/api/seo/rss.xml" target="_blank" rel="noopener noreferrer" className="text-sm hover:text-blue-400 transition-colors">
+                  RSS Feed
                 </a>
               </li>
             </ul>
@@ -134,16 +134,13 @@ const Footer = () => {
             {subStatus === 'exists' && <p className="text-xs text-amber-400 mt-2">Already subscribed!</p>}
             {subStatus === 'error' && <p className="text-xs text-red-400 mt-2">Something went wrong. Try again.</p>}
             <div className="flex space-x-4 mt-4">
-              <a href="https://9xcodes.com/api/seo/rss.xml" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-orange-400 transition-colors" title="RSS Feed" data-testid="rss-feed-link">
-                <Rss className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors">
                 <Github className="h-5 w-5" />
               </a>
-              <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-400 transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">
+              <a href="mailto:contact@9xcodes.com" className="text-slate-400 hover:text-blue-400 transition-colors">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
@@ -152,7 +149,14 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-800 mt-8 pt-8 text-center text-sm text-slate-400">
-          <p>&copy; 2025 9xCodes.com. All rights reserved. | Built for system administrators and developers.</p>
+          <p>&copy; 2026 9xCodes.com. All rights reserved.</p>
+          <div className="flex justify-center gap-4 mt-2">
+            <Link to="/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</Link>
+            <span>|</span>
+            <Link to="/terms-of-service" className="hover:text-blue-400 transition-colors">Terms</Link>
+            <span>|</span>
+            <Link to="/disclaimer" className="hover:text-blue-400 transition-colors">Disclaimer</Link>
+          </div>
         </div>
       </div>
     </footer>

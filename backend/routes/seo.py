@@ -31,6 +31,22 @@ async def get_sitemap():
     <priority>1.0</priority>
   </url>\n'''
     
+    # Static pages
+    static_pages = [
+        ("/about", "monthly", "0.7"),
+        ("/contact", "monthly", "0.7"),
+        ("/contribute", "monthly", "0.6"),
+        ("/privacy-policy", "yearly", "0.4"),
+        ("/terms-of-service", "yearly", "0.4"),
+        ("/disclaimer", "yearly", "0.4"),
+    ]
+    for path, freq, priority in static_pages:
+        xml_content += f'''  <url>
+    <loc>{SITE_URL}{path}</loc>
+    <changefreq>{freq}</changefreq>
+    <priority>{priority}</priority>
+  </url>\n'''
+
     # Categories
     categories = set([a.get("category") for a in articles if a.get("category")])
     for category in categories:
