@@ -83,6 +83,8 @@ const BulkOptimize = () => {
     setSelected(new Set(pendingSlugs));
   };
 
+  const [lastError, setLastError] = useState('');
+
   const startOptimize = async () => {
     const slugs = [...selected];
     if (slugs.length === 0) {
@@ -94,9 +96,11 @@ const BulkOptimize = () => {
     setDoneCount(0);
     setFailCount(0);
     setResults({});
+    setLastError('');
 
     let done = 0;
     let fail = 0;
+    let consecutiveFails = 0;
 
     for (const slug of slugs) {
       if (stopRef.current) break;
@@ -107,17 +111,31 @@ const BulkOptimize = () => {
         await axios.post(`${API}/ai-rewrite/optimize-existing`, { slug });
         setResults(prev => ({ ...prev, [slug]: 'done' }));
         done++;
+        consecutiveFails = 0;
       } catch (err) {
         const detail = err.response?.data?.detail || 'Failed';
+        const status = err.response?.status;
         setResults(prev => ({ ...prev, [slug]: `error:${detail}` }));
+        setLastError(detail);
         fail++;
-        if (err.response?.status === 402) {
-          toast({ title: 'Balance Low', description: 'LLM key balance low. Go to Profile > Universal Key > Add Balance.', variant: 'destructive' });
+        consecutiveFails++;
+
+        // Auto-stop on balance/budget errors (402) or after 3 consecutive failures
+        if (status === 402) {
+          toast({ title: 'Balance Low!', description: 'LLM key balance low. Profile > Universal Key > Add Balance karein.', variant: 'destructive' });
+          stopRef.current = true;
+        } else if (consecutiveFails >= 3) {
+          toast({ title: 'Auto-Stopped', description: `3 articles lagatar fail hue. Error: ${detail.slice(0, 100)}`, variant: 'destructive' });
           stopRef.current = true;
         }
       }
       setDoneCount(done);
       setFailCount(fail);
+
+      // Small delay between requests to avoid overwhelming the API
+      if (!stopRef.current && slugs.indexOf(slug) < slugs.length - 1) {
+        await new Promise(r => setTimeout(r, 500));
+      }
     }
 
     setRunning(false);
@@ -125,7 +143,7 @@ const BulkOptimize = () => {
     if (!stopRef.current) {
       toast({ title: 'Bulk Optimize Complete!', description: `${done} optimized, ${fail} failed out of ${slugs.length}` });
     } else {
-      toast({ title: 'Stopped', description: `Stopped after ${done + fail} articles. ${done} done, ${fail} failed.` });
+      toast({ title: 'Stopped', description: `${done + fail} processed. ${done} done, ${fail} failed.` });
     }
     fetchArticles();
   };
@@ -224,8 +242,34 @@ const BulkOptimize = () => {
               {failCount > 0 && (
                 <p className="text-xs text-red-500 mt-2 flex items-center gap-1">
                   <AlertTriangle className="h-3 w-3" /> {failCount} failed
+                  {lastError && <span className="ml-1 text-red-400 truncate max-w-md">— {lastError.slice(0, 120)}</span>}
                 </p>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Error Banner - shows when there's a persistent error */}
+        {!running && lastError && failCount > 0 && (
+          <Card className="mb-6 border-red-300 bg-red-50" data-testid="error-banner">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="font-semibold text-red-800 text-sm">Optimization Failed</p>
+                  <p className="text-xs text-red-600 mt-1">{lastError}</p>
+                  {(lastError.toLowerCase().includes('budget') || lastError.toLowerCase().includes('balance')) && (
+                    <p className="text-xs text-red-700 mt-2 font-medium">
+                      Fix: Profile &gt; Universal Key &gt; Add Balance karein, phir dobara try karein.
+                    </p>
+                  )}
+                  {lastError.toLowerCase().includes('not installed') && (
+                    <p className="text-xs text-red-700 mt-2 font-medium">
+                      Fix: VPS pe SSH karke run karein: cd /var/www/9xcodes/backend && source venv/bin/activate && pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/
+                    </p>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -335,7 +379,13 @@ const BulkOptimize = () => {
                         <td className="p-3">
                           {getStatusIcon(a.slug)}
                           {results[a.slug]?.startsWith('error:') && (
-                            <span className="text-xs text-red-500 block mt-0.5" title={results[a.slug].slice(6)}>Failed</span>
+                            <span className="text-xs text-red-500 block mt-0.5 max-w-[150px] truncate" title={results[a.slug].slice(6)}>
+                              {results[a.slug].slice(6).includes('Budget') || results[a.slug].slice(6).includes('balance') 
+                                ? 'Balance Low' 
+                                : results[a.slug].slice(6).includes('not installed')
+                                ? 'AI Not Installed'
+                                : 'Failed'}
+                            </span>
                           )}
                         </td>
                       </tr>

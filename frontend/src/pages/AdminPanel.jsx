@@ -24,6 +24,7 @@ const AdminPanel = () => {
   const [updateStatus, setUpdateStatus] = useState(null);
   const [updateLogs, setUpdateLogs] = useState([]);
   const [showUpdateLogs, setShowUpdateLogs] = useState(false);
+  const [showManualCmds, setShowManualCmds] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -69,13 +70,13 @@ const AdminPanel = () => {
     setShowUpdateLogs(true);
     setUpdateLogs(['Starting update...']);
     let errorRetries = 0;
-    const maxRetries = 10; // PM2 restart can take ~20 seconds
+    const maxRetries = 15; // PM2 restart can take ~30-45 seconds
     try {
       await axios.post(`${API}/updater/update`);
       // Poll for status
       const pollInterval = setInterval(async () => {
         try {
-          const resp = await axios.get(`${API}/updater/status`, { timeout: 5000 });
+          const resp = await axios.get(`${API}/updater/status`, { timeout: 8000 });
           errorRetries = 0; // Reset on successful response
           setUpdateLogs(resp.data.logs || []);
           setUpdateStatus(resp.data);
@@ -83,24 +84,37 @@ const AdminPanel = () => {
             clearInterval(pollInterval);
             setUpdateRunning(false);
             const st = resp.data.last_status;
-            toast({
-              title: st === 'success' ? 'Update Complete!' : st === 'skipped' ? 'Update Skipped' : 'Update Status',
-              description: st === 'success' ? 'Website updated and restarted successfully!' : st === 'skipped' ? 'Not on VPS - update skipped.' : 'Update had some issues. Check logs.',
-              variant: st === 'failed' ? 'destructive' : 'default',
-            });
+            if (st === 'success') {
+              toast({ title: 'Update Complete!', description: 'Website updated and restarted successfully!' });
+            } else if (st === 'skipped') {
+              toast({ title: 'Update Skipped', description: 'Not on VPS - update skipped.' });
+            } else {
+              toast({ title: 'Update Failed', description: 'Check logs below for details. Ya manual commands use karein.', variant: 'destructive' });
+              setShowManualCmds(true);
+            }
           }
         } catch {
           errorRetries++;
+          setUpdateLogs(prev => [...prev, `[INFO] Server restarting... retry ${errorRetries}/${maxRetries}`]);
           // During PM2 restart, backend is briefly down - keep retrying
           if (errorRetries >= maxRetries) {
             clearInterval(pollInterval);
             setUpdateRunning(false);
-            toast({
-              title: 'Update Likely Complete',
-              description: 'Server restarted. Refresh page to see latest status.',
-            });
+            // One final check after a delay
+            setTimeout(async () => {
+              try {
+                const finalResp = await axios.get(`${API}/updater/status`, { timeout: 10000 });
+                const st = finalResp.data.last_status;
+                if (st === 'success') {
+                  toast({ title: 'Update Complete!', description: 'Website updated successfully!' });
+                } else {
+                  toast({ title: 'Update Status Unknown', description: 'Server restarted. Page refresh karein.', variant: 'default' });
+                }
+              } catch {
+                toast({ title: 'Update Likely Complete', description: 'Server restarted. Page refresh karein.' });
+              }
+            }, 5000);
           }
-          // Otherwise keep polling - backend will come back after PM2 restart
         }
       }, 3000);
     } catch (err) {
@@ -260,7 +274,7 @@ const AdminPanel = () => {
             {showUpdateLogs && updateLogs.length > 0 && (
               <div className="mt-3 bg-slate-900 rounded-lg p-3 max-h-48 overflow-y-auto" data-testid="update-logs">
                 {updateLogs.map((log, i) => (
-                  <p key={i} className={`text-xs font-mono ${log.startsWith('[ERROR]') ? 'text-red-400' : 'text-green-400'}`}>
+                  <p key={i} className={`text-xs font-mono ${log.startsWith('[ERROR]') ? 'text-red-400' : log.includes('retry') ? 'text-yellow-400' : 'text-green-400'}`}>
                     {log}
                   </p>
                 ))}
@@ -270,6 +284,33 @@ const AdminPanel = () => {
                   </p>
                 )}
               </div>
+            )}
+            {/* Manual Update Commands Fallback */}
+            {showManualCmds && (
+              <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3" data-testid="manual-update-cmds">
+                <p className="text-sm font-semibold text-amber-800 mb-2">Manual Update (SSH se VPS pe run karein):</p>
+                <div className="bg-slate-900 rounded p-2 text-xs font-mono text-green-400 space-y-1">
+                  <p>cd /var/www/9xcodes</p>
+                  <p>git stash && git pull origin main</p>
+                  <p>cd backend && source venv/bin/activate</p>
+                  <p>pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/</p>
+                  <p>pip install -r requirements.txt --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/</p>
+                  <p>cd ../frontend && NODE_OPTIONS=--max_old_space_size=1024 yarn build</p>
+                  <p>pm2 restart all</p>
+                </div>
+                <Button variant="ghost" size="sm" className="mt-2 text-xs text-amber-700" onClick={() => setShowManualCmds(false)}>
+                  Hide
+                </Button>
+              </div>
+            )}
+            {!showManualCmds && !updateRunning && (
+              <button 
+                className="mt-2 text-xs text-slate-400 hover:text-slate-600 underline"
+                onClick={() => setShowManualCmds(true)}
+                data-testid="show-manual-cmds-btn"
+              >
+                Auto-update nahi chal raha? Manual commands dekhein
+              </button>
             )}
           </CardContent>
         </Card>

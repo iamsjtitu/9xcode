@@ -52,7 +52,7 @@ async def call_ai(system_msg, user_msg_text, session_prefix="ai"):
         raise HTTPException(status_code=500, detail="AI returned invalid format. Please try again.")
     except Exception as e:
         error_msg = str(e)
-        if "balance" in error_msg.lower() or "credit" in error_msg.lower():
+        if any(kw in error_msg.lower() for kw in ["balance", "credit", "budget", "exceeded", "quota"]):
             raise HTTPException(status_code=402, detail="LLM key balance low. Go to Profile -> Universal Key -> Add Balance.")
         raise HTTPException(status_code=500, detail=f"AI failed: {error_msg}")
 

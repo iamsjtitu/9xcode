@@ -70,14 +70,15 @@ async def run_update_script():
         with open(LOG_FILE, "w") as f:
             f.write("[INFO] Running commands directly...\n")
 
-        commands = [
+        # Run non-destructive commands first (git pull, deps, build)
+        pre_commands = [
             ("git stash && git pull origin main", PROJECT_PATH, "Git Pull"),
+            (f"{PROJECT_PATH}/backend/venv/bin/pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/", f"{PROJECT_PATH}/backend", "Install emergentintegrations"),
             (f"{PROJECT_PATH}/backend/venv/bin/pip install -r requirements.txt --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/", f"{PROJECT_PATH}/backend", "Backend Deps"),
             ("NODE_OPTIONS=--max_old_space_size=1024 yarn build", f"{PROJECT_PATH}/frontend", "Frontend Build"),
-            ("pm2 restart all", PROJECT_PATH, "PM2 Restart"),
         ]
         all_ok = True
-        for cmd, cwd, name in commands:
+        for cmd, cwd, name in pre_commands:
             write_status({"is_running": True, "last_run": None, "last_status": None, "step": name})
             with open(LOG_FILE, "a") as f:
                 f.write(f"[INFO] >> {name}\n")
@@ -109,15 +110,29 @@ async def run_update_script():
                 with open(LOG_FILE, "a") as f:
                     f.write(f"[ERROR] {name}: {str(e)}\n")
 
+        # Write result BEFORE PM2 restart (PM2 kills this process!)
         now = datetime.now(timezone.utc).isoformat()
-        status = "success" if all_ok else "failed"
+        result_status = "success" if all_ok else "failed"
         with open(LOG_FILE, "a") as f:
-            f.write(f"RESULT:{status}\n")
-        write_status({"is_running": False, "last_run": now, "last_status": status, "step": "Done"})
+            f.write(f"RESULT:{result_status}\n")
+        write_status({"is_running": False, "last_run": now, "last_status": result_status, "step": "Done"})
+
+        # Now restart PM2 (this kills the backend, status already written)
+        if all_ok:
+            with open(LOG_FILE, "a") as f:
+                f.write("[INFO] >> PM2 Restart\n")
+            try:
+                proc = await asyncio.create_subprocess_shell(
+                    "pm2 restart all", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, cwd=PROJECT_PATH
+                )
+                await asyncio.wait_for(proc.communicate(), timeout=30)
+            except Exception:
+                pass  # PM2 restart kills this process, expected
+
         _running_in_process = False
         return
 
-    # Shell script exists — run it
+    # Shell script exists — run it in detached mode
     try:
         process = await asyncio.create_subprocess_exec(
             "bash", script_path,
@@ -127,11 +142,18 @@ async def run_update_script():
         )
         await asyncio.wait_for(process.communicate(), timeout=600)
 
+        # Check ALL log lines for RESULT (not just last line, since PM2 restart adds lines after)
         logs = read_logs()
-        last_line = logs[-1] if logs else ""
-        status = "success" if "RESULT:success" in last_line else "failed"
+        found_result = "failed"
+        for line in logs:
+            if "RESULT:success" in line:
+                found_result = "success"
+                break
+            elif "RESULT:failed" in line:
+                found_result = "failed"
+                break
         now = datetime.now(timezone.utc).isoformat()
-        write_status({"is_running": False, "last_run": now, "last_status": status, "step": "Done"})
+        write_status({"is_running": False, "last_run": now, "last_status": found_result, "step": "Done"})
 
     except asyncio.TimeoutError:
         now = datetime.now(timezone.utc).isoformat()
@@ -139,12 +161,23 @@ async def run_update_script():
             f.write("[ERROR] Update timed out after 10 minutes\n")
             f.write("RESULT:failed\n")
         write_status({"is_running": False, "last_run": now, "last_status": "failed", "step": "Done"})
-    except Exception as e:
-        now = datetime.now(timezone.utc).isoformat()
-        with open(LOG_FILE, "a") as f:
-            f.write(f"[ERROR] {str(e)}\n")
-            f.write("RESULT:failed\n")
-        write_status({"is_running": False, "last_run": now, "last_status": "failed", "step": "Done"})
+    except Exception:
+        # PM2 restart might kill this process — check if shell script already wrote success
+        existing = read_status()
+        if existing.get("last_status") == "success":
+            pass  # Shell script already reported success, don't overwrite
+        else:
+            now = datetime.now(timezone.utc).isoformat()
+            # Check logs for RESULT before marking as failed
+            logs = read_logs()
+            found_success = any("RESULT:success" in line for line in logs)
+            if found_success:
+                write_status({"is_running": False, "last_run": now, "last_status": "success", "step": "Done"})
+            else:
+                with open(LOG_FILE, "a") as f:
+                    f.write("[ERROR] Update process interrupted\n")
+                    f.write("RESULT:failed\n")
+                write_status({"is_running": False, "last_run": now, "last_status": "failed", "step": "Done"})
     finally:
         _running_in_process = False
 
@@ -183,13 +216,19 @@ async def get_update_status():
     # Auto-detect if script finished but status wasn't updated (e.g. PM2 restart killed the process)
     if status.get("is_running") and not _running_in_process:
         # Process that started the update is gone (PM2 restarted)
-        # Check if log file has a RESULT line
+        # Check ALL log lines for RESULT (not just last line)
         if logs:
-            last_line = logs[-1]
-            if "RESULT:" in last_line:
-                result = "success" if "RESULT:success" in last_line else "failed"
+            found_result = None
+            for line in logs:
+                if "RESULT:success" in line:
+                    found_result = "success"
+                    break
+                elif "RESULT:failed" in line:
+                    found_result = "failed"
+                    break
+            if found_result:
                 now = datetime.now(timezone.utc).isoformat()
-                status = {"is_running": False, "last_run": now, "last_status": result, "step": "Done"}
+                status = {"is_running": False, "last_run": now, "last_status": found_result, "step": "Done"}
                 write_status(status)
 
     return {
