@@ -7,10 +7,10 @@ import uuid, re, requests
 from bs4 import BeautifulSoup
 
 try:
-    import cloudscraper
-    HAS_CLOUDSCRAPER = True
+    from curl_cffi import requests as cf_requests
+    HAS_CURL_CFFI = True
 except ImportError:
-    HAS_CLOUDSCRAPER = False
+    HAS_CURL_CFFI = False
 
 router = APIRouter(prefix="/scraper", tags=["scraper"])
 
@@ -234,12 +234,12 @@ async def scrape_from_url(req: ScrapeURLRequest):
     """Scrape a single URL and convert to 9xCodes format"""
     resp = None
 
-    # Try cloudscraper first (bypasses Cloudflare)
-    if HAS_CLOUDSCRAPER:
+    # Try curl_cffi first (bypasses Cloudflare with real TLS fingerprint)
+    if HAS_CURL_CFFI:
         try:
-            scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'linux'})
-            resp = scraper.get(req.url, timeout=25)
-            resp.raise_for_status()
+            resp = cf_requests.get(req.url, impersonate='chrome', timeout=25)
+            if resp.status_code != 200:
+                resp = None
         except Exception:
             resp = None
 
