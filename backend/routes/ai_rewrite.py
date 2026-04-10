@@ -9,22 +9,32 @@ import json
 
 try:
     from emergentintegrations.llm.chat import LlmChat, UserMessage
-    HAS_LLM = True
+    HAS_EMERGENT = True
 except ImportError:
-    HAS_LLM = False
+    HAS_EMERGENT = False
+
+try:
+    import litellm
+    HAS_LITELLM = True
+except ImportError:
+    HAS_LITELLM = False
 
 load_dotenv()
 
 router = APIRouter(prefix="/ai-rewrite", tags=["ai-rewrite"])
 
 EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY")
+OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
 
 
 def check_ai():
-    if not HAS_LLM:
-        raise HTTPException(status_code=501, detail="AI library not installed. Run: pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/")
-    if not EMERGENT_KEY:
-        raise HTTPException(status_code=500, detail="AI service not configured. Add EMERGENT_LLM_KEY to backend/.env")
+    if OPENAI_KEY and HAS_LITELLM:
+        return  # Direct OpenAI mode
+    if HAS_EMERGENT and EMERGENT_KEY:
+        return  # Emergent mode
+    if not HAS_EMERGENT and not HAS_LITELLM:
+        raise HTTPException(status_code=501, detail="AI library not installed.")
+    raise HTTPException(status_code=500, detail="AI not configured. Add OPENAI_API_KEY or EMERGENT_LLM_KEY to backend/.env")
 
 
 def clean_json(text):
@@ -40,20 +50,35 @@ def clean_json(text):
 
 async def call_ai(system_msg, user_msg_text, session_prefix="ai"):
     try:
-        chat = LlmChat(
-            api_key=EMERGENT_KEY,
-            session_id=f"{session_prefix}-{hash(user_msg_text[:30])}",
-            system_message=system_msg,
-        )
-        chat.with_model("openai", "gpt-4o-mini")
-        response = await chat.send_message(UserMessage(text=user_msg_text))
-        return json.loads(clean_json(response))
+        # Prefer direct OpenAI key (works on VPS without Emergent platform)
+        if OPENAI_KEY and HAS_LITELLM:
+            response = await litellm.acompletion(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": user_msg_text},
+                ],
+                api_key=OPENAI_KEY,
+            )
+            raw = response.choices[0].message.content
+            return json.loads(clean_json(raw))
+        else:
+            chat = LlmChat(
+                api_key=EMERGENT_KEY,
+                session_id=f"{session_prefix}-{hash(user_msg_text[:30])}",
+                system_message=system_msg,
+            )
+            chat.with_model("openai", "gpt-4o-mini")
+            response = await chat.send_message(UserMessage(text=user_msg_text))
+            return json.loads(clean_json(response))
     except json.JSONDecodeError:
         raise HTTPException(status_code=500, detail="AI returned invalid format. Please try again.")
     except Exception as e:
         error_msg = str(e)
-        if any(kw in error_msg.lower() for kw in ["balance", "credit", "budget", "exceeded", "quota"]):
-            raise HTTPException(status_code=402, detail="LLM key balance low. Go to Profile -> Universal Key -> Add Balance.")
+        if any(kw in error_msg.lower() for kw in ["balance", "credit", "budget", "exceeded", "quota", "insufficient_quota"]):
+            raise HTTPException(status_code=402, detail="API key balance low. Check your OpenAI/Emergent billing.")
+        if "access_denied" in error_msg.lower() or "FREE_USER" in error_msg:
+            raise HTTPException(status_code=403, detail="Emergent key external access denied. Add OPENAI_API_KEY to .env for VPS usage.")
         raise HTTPException(status_code=500, detail=f"AI failed: {error_msg}")
 
 
