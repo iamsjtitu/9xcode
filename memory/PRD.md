@@ -5,7 +5,7 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
 
 ## Tech Stack
 - **Frontend**: React, React Router, TailwindCSS, Shadcn UI, Axios, react-helmet
-- **Backend**: FastAPI, Pydantic, Motor, Passlib, BeautifulSoup4, curl_cffi, emergentintegrations
+- **Backend**: FastAPI, Pydantic, Motor, Passlib, BeautifulSoup4, curl_cffi, emergentintegrations, litellm
 - **Database**: MongoDB
 - **Deployment**: Nginx, PM2, Certbot (SSL), Ubuntu VPS at /var/www/9xcodes
 
@@ -39,38 +39,41 @@ Build a website named `www.9xcodes.com`, a platform for posting code snippets an
   - Auto-stops on LLM balance errors (402) or after 3 consecutive failures
   - Shows descriptive error banner with fix instructions
   - Pagination (50 per page)
-  - Overall optimization progress stats
 - Per-Article Analytics (/admin/per-article-analytics)
 - One-Click VPS Update (update_script.sh) with manual fallback commands
+
+### AI Integration (Dual-mode)
+- **On Emergent platform**: Uses EMERGENT_LLM_KEY via emergentintegrations
+- **On VPS**: Uses direct OPENAI_API_KEY via litellm (GPT-4o-mini)
+- Automatic fallback: prefers OPENAI_API_KEY if set, otherwise uses EMERGENT_LLM_KEY
 
 ### SEO
 - Dynamic sitemap.xml, robots.txt, RSS feed, meta tags, JSON-LD, ads.txt
 
 ## Credentials
 - Admin: admin / admin123
+- OPENAI_API_KEY in backend/.env (for VPS AI features)
 
 ## VPS Info
 - Path: /var/www/9xcodes, Venv: backend/venv
-- New packages: curl_cffi, cloudscraper, emergentintegrations
 
 ## Key API Endpoints
-- GET /api/ai-rewrite/articles-for-optimize - List articles with AI opt status
-- POST /api/ai-rewrite/optimize-existing - Optimize single article by slug (returns 402 on budget errors)
+- GET /api/ai-rewrite/articles-for-optimize
+- POST /api/ai-rewrite/optimize-existing (returns 402 on budget errors, 403 on access denied)
 - POST /api/ai-rewrite/rewrite, /seo-optimize, /summarize, /full-optimize
 - POST /api/scraper/from-url, /save, /discover
-- POST /api/updater/update - Trigger VPS update
-- GET /api/updater/status - Get update status with logs
+- POST /api/updater/update & GET /api/updater/status
 
 ## Bug Fixes (Apr 9, 2026)
-- Fixed budget/balance error detection in call_ai() - now catches "budget", "exceeded", "quota" keywords
-- Fixed updater log parsing - searches ALL lines for RESULT, not just last line
+- Fixed Emergent key "FREE_USER_EXTERNAL_ACCESS_DENIED" on VPS → added direct OpenAI API key support
+- Fixed budget/balance error detection (catches "budget", "exceeded", "quota", "insufficient_quota")
+- Fixed updater log parsing - searches ALL lines for RESULT
 - Fixed inline updater race condition - writes RESULT before PM2 restart
 - Added auto-stop in BulkOptimize after 3 consecutive failures
-- Added error banner in BulkOptimize with fix instructions
-- Added manual update commands fallback in AdminPanel
-- Increased updater retry count from 10 to 15 for PM2 restart
+- Added error banner + manual update commands fallback in AdminPanel
+- Increased updater retry count from 10 to 15
 
 ## Future/Backlog (P2)
 - User comment moderation
-- Use Bulk Optimize to process all 289 articles for AdSense approval
-- Guide user to reapply for Google AdSense after content optimization
+- Bulk Optimize all 294 articles for AdSense approval
+- Guide user to reapply for Google AdSense
