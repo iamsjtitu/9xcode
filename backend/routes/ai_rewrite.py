@@ -39,12 +39,29 @@ def check_ai():
 
 def clean_json(text):
     text = text.strip()
+    # Remove markdown code fences
     if text.startswith("```json"):
         text = text[7:]
     elif text.startswith("```"):
         text = text.split("\n", 1)[1] if "\n" in text else text[3:]
     if text.endswith("```"):
         text = text[:-3]
+    text = text.strip()
+
+    # If still not valid JSON, try extracting the JSON object
+    if not text.startswith("{"):
+        start = text.find("{")
+        if start != -1:
+            # Find matching closing brace
+            depth = 0
+            for i in range(start, len(text)):
+                if text[i] == "{":
+                    depth += 1
+                elif text[i] == "}":
+                    depth -= 1
+                    if depth == 0:
+                        text = text[start:i+1]
+                        break
     return text.strip()
 
 
@@ -58,6 +75,7 @@ async def _do_ai_call(system_msg, user_msg_text, session_prefix):
                 {"role": "user", "content": user_msg_text},
             ],
             api_key=OPENAI_KEY,
+            response_format={"type": "json_object"},
         )
         return response.choices[0].message.content
     else:
