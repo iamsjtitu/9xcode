@@ -48,38 +48,47 @@ def clean_json(text):
     return text.strip()
 
 
+async def _do_ai_call(system_msg, user_msg_text, session_prefix):
+    """Single AI call — returns raw text response"""
+    if OPENAI_KEY and HAS_LITELLM:
+        response = await litellm.acompletion(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg_text},
+            ],
+            api_key=OPENAI_KEY,
+        )
+        return response.choices[0].message.content
+    else:
+        chat = LlmChat(
+            api_key=EMERGENT_KEY,
+            session_id=f"{session_prefix}-{hash(user_msg_text[:30])}",
+            system_message=system_msg,
+        )
+        chat.with_model("openai", "gpt-4o-mini")
+        return await chat.send_message(UserMessage(text=user_msg_text))
+
+
 async def call_ai(system_msg, user_msg_text, session_prefix="ai"):
-    try:
-        # Prefer direct OpenAI key (works on VPS without Emergent platform)
-        if OPENAI_KEY and HAS_LITELLM:
-            response = await litellm.acompletion(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_msg},
-                    {"role": "user", "content": user_msg_text},
-                ],
-                api_key=OPENAI_KEY,
-            )
-            raw = response.choices[0].message.content
+    max_retries = 2
+    for attempt in range(max_retries + 1):
+        try:
+            raw = await _do_ai_call(system_msg, user_msg_text, session_prefix)
             return json.loads(clean_json(raw))
-        else:
-            chat = LlmChat(
-                api_key=EMERGENT_KEY,
-                session_id=f"{session_prefix}-{hash(user_msg_text[:30])}",
-                system_message=system_msg,
-            )
-            chat.with_model("openai", "gpt-4o-mini")
-            response = await chat.send_message(UserMessage(text=user_msg_text))
-            return json.loads(clean_json(response))
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="AI returned invalid format. Please try again.")
-    except Exception as e:
-        error_msg = str(e)
-        if any(kw in error_msg.lower() for kw in ["balance", "credit", "budget", "exceeded", "quota", "insufficient_quota"]):
-            raise HTTPException(status_code=402, detail="API key balance low. Check your OpenAI/Emergent billing.")
-        if "access_denied" in error_msg.lower() or "FREE_USER" in error_msg:
-            raise HTTPException(status_code=403, detail="Emergent key external access denied. Add OPENAI_API_KEY to .env for VPS usage.")
-        raise HTTPException(status_code=500, detail=f"AI failed: {error_msg}")
+        except json.JSONDecodeError:
+            if attempt < max_retries:
+                import asyncio
+                await asyncio.sleep(1)
+                continue
+            raise HTTPException(status_code=500, detail="AI returned invalid format after retries. Please try again.")
+        except Exception as e:
+            error_msg = str(e)
+            if any(kw in error_msg.lower() for kw in ["balance", "credit", "budget", "exceeded", "quota", "insufficient_quota"]):
+                raise HTTPException(status_code=402, detail="API key balance low. Check your OpenAI/Emergent billing.")
+            if "access_denied" in error_msg.lower() or "FREE_USER" in error_msg:
+                raise HTTPException(status_code=403, detail="Emergent key external access denied. Add OPENAI_API_KEY to .env for VPS usage.")
+            raise HTTPException(status_code=500, detail=f"AI failed: {error_msg}")
 
 
 def article_to_text(title, description, steps):
