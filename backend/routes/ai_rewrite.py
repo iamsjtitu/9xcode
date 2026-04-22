@@ -157,24 +157,39 @@ Rules:
 Return ONLY valid JSON:
 {"description": "150-200 char description", "summary": "2-3 sentence summary", "key_takeaways": ["point1", "point2", "point3"], "difficulty": "beginner", "difficulty_reason": "why this level"}"""
 
-FULL_OPTIMIZE_PROMPT = """You are a content and SEO expert for 9xCodes.com. Fully optimize the given article for quality, uniqueness, and SEO.
+FULL_OPTIMIZE_PROMPT = """You are a senior content strategist and SEO expert for 9xCodes.com, a technical tutorial website for developers and system administrators. Your goal is to transform thin/short articles into comprehensive, high-value, long-form tutorials that satisfy Google's quality guidelines.
 
 Rules:
-- Rewrite title to be SEO-friendly (50-60 chars) and unique
-- Write a compelling meta description (150-160 chars)
-- Rewrite each step with unique descriptions (don't copy original)
-- Keep all commands/code 100% accurate - NEVER modify working code
-- Generate relevant tags and keywords
-- Make content beginner-friendly
+- Write an SEO-optimized title (50-60 chars), compelling and unique
+- Write a meta description (150-160 chars) with keywords and call to action
+- Write a detailed INTRODUCTION paragraph (150-250 words) that:
+  * Explains WHAT the technology is and WHY it matters
+  * Mentions common use cases and benefits
+  * Tells the reader what they will learn
+  * Uses a friendly, professional tone
+- Write a PREREQUISITES section listing 2-5 things the reader needs before starting
+- Rewrite each step with DETAILED descriptions (minimum 2-3 sentences each):
+  * Explain what the command does and why it's needed
+  * Mention any important flags or options
+  * Add tips or warnings where relevant
+- Keep all commands/code 100% accurate - NEVER modify working commands
+- Write 3-5 FAQ items (common questions about the topic with helpful answers)
+- Write a CONCLUSION paragraph (80-150 words) summarizing what was accomplished and suggesting next steps
+- Generate relevant tags and long-tail SEO keywords
+- Content should be original, unique, and valuable — NOT just a rewrite
 
 Return ONLY valid JSON:
 {
   "title": "SEO optimized unique title",
   "description": "meta description 150-160 chars",
+  "introduction": "Detailed intro paragraph 150-250 words about the technology, its importance, and what this guide covers",
+  "prerequisites": ["Python 3.8+ installed", "Ubuntu 20.04 or higher", "Root/sudo access"],
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
   "difficulty": "beginner or intermediate or advanced",
-  "steps": [{"title": "step title", "description": "unique explanation", "code": "exact original code", "language": "bash"}],
-  "seo_keywords": ["keyword1", "keyword2"],
+  "steps": [{"title": "step title", "description": "Detailed 2-3 sentence explanation of this step", "code": "exact original code", "language": "bash"}],
+  "faqs": [{"question": "Common question about this topic?", "answer": "Detailed helpful answer 2-3 sentences"}],
+  "conclusion": "Summary of what was accomplished and recommended next steps 80-150 words",
+  "seo_keywords": ["long-tail keyword1", "long-tail keyword2"],
   "summary": "2-3 sentence article summary"
 }"""
 
@@ -292,6 +307,12 @@ async def optimize_existing_article(req: SlugRequest):
         "description": result.get("description", article.get("description")),
         "tags": result.get("tags", article.get("tags", [])),
         "difficulty": result.get("difficulty", article.get("difficulty")),
+        "introduction": result.get("introduction", ""),
+        "prerequisites": result.get("prerequisites", []),
+        "faqs": result.get("faqs", []),
+        "conclusion": result.get("conclusion", ""),
+        "seo_keywords": result.get("seo_keywords", []),
+        "summary": result.get("summary", ""),
         "updatedAt": datetime.now(timezone.utc),
         "ai_optimized": True,
     }

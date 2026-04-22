@@ -15,6 +15,11 @@ import {
   BookmarkCheck,
   List,
   Clock,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  Shield,
+  FileText,
 } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -35,6 +40,26 @@ const API = `${BACKEND_URL}/api`;
 const getBookmarks = () => {
   try { return JSON.parse(localStorage.getItem('9xcodes_bookmarks') || '[]'); }
   catch { return []; }
+};
+
+const FaqItem = ({ question, answer }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-slate-200 rounded-lg overflow-hidden">
+      <button
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
+        onClick={() => setOpen(!open)}
+      >
+        <span className="font-medium text-slate-800 pr-4">{question}</span>
+        {open ? <ChevronUp className="h-4 w-4 text-slate-400 flex-shrink-0" /> : <ChevronDown className="h-4 w-4 text-slate-400 flex-shrink-0" />}
+      </button>
+      {open && (
+        <div className="px-4 pb-4 text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
 };
 
 const SnippetDetail = ({ adsConfig }) => {
@@ -160,14 +185,51 @@ const SnippetDetail = ({ adsConfig }) => {
 
   const readingTime = useMemo(() => {
     if (!snippet) return 0;
-    const totalCode = snippet.steps.reduce((acc, step) => acc + step.code.length + step.description.length + step.title.length, 0);
-    return Math.max(1, Math.ceil(totalCode / 800));
+    const stepsText = snippet.steps.reduce((acc, step) => acc + step.code.length + step.description.length + step.title.length, 0);
+    const introLen = (snippet.introduction || '').length;
+    const conclusionLen = (snippet.conclusion || '').length;
+    const faqLen = (snippet.faqs || []).reduce((acc, f) => acc + (f.question || '').length + (f.answer || '').length, 0);
+    const total = stepsText + introLen + conclusionLen + faqLen;
+    return Math.max(2, Math.ceil(total / 800));
   }, [snippet]);
 
   const scrollToStep = (idx) => {
     const el = document.querySelector(`[data-step-index="${idx}"]`);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  // FAQ Schema JSON-LD for Google
+  const faqSchema = useMemo(() => {
+    if (!snippet?.faqs?.length) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": snippet.faqs.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer,
+        }
+      }))
+    };
+  }, [snippet]);
+
+  // Article Schema JSON-LD
+  const articleSchema = useMemo(() => {
+    if (!snippet) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": snippet.title,
+      "description": snippet.description,
+      "author": { "@type": "Organization", "name": "9xCodes" },
+      "publisher": { "@type": "Organization", "name": "9xCodes", "url": "https://9xcodes.com" },
+      "datePublished": snippet.createdAt,
+      "dateModified": snippet.updatedAt || snippet.createdAt,
+      "keywords": (snippet.seo_keywords || snippet.tags || []).join(", "),
+    };
+  }, [snippet]);
 
   if (loading) {
     return (
@@ -216,6 +278,14 @@ const SnippetDetail = ({ adsConfig }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+      {/* JSON-LD Structured Data for SEO */}
+      {articleSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      )}
+      {faqSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      )}
+
       {/* Breadcrumb */}
       <div className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 py-4">
@@ -314,6 +384,12 @@ const SnippetDetail = ({ adsConfig }) => {
                     <Calendar className="h-4 w-4" />
                     <span>{new Date(snippet.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                   </div>
+                  {snippet.updatedAt && snippet.updatedAt !== snippet.createdAt && (
+                    <div className="flex items-center space-x-2 text-green-600">
+                      <Calendar className="h-4 w-4" />
+                      <span>Updated: {new Date(snippet.updatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    </div>
+                  )}
                   <div className="flex items-center space-x-2">
                     <Eye className="h-4 w-4" />
                     <span>{snippet.views.toLocaleString()} views</span>
@@ -359,6 +435,39 @@ const SnippetDetail = ({ adsConfig }) => {
                 </div>
               </CardHeader>
             </Card>
+
+            {/* Introduction - NEW for content quality */}
+            {snippet.introduction && (
+              <Card className="mb-8 border-slate-200" data-testid="article-introduction">
+                <CardContent className="p-6 md:p-8">
+                  <p className="text-slate-700 leading-relaxed text-base md:text-lg whitespace-pre-line">
+                    {snippet.introduction}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Prerequisites - NEW */}
+            {snippet.prerequisites && snippet.prerequisites.length > 0 && (
+              <Card className="mb-8 border-blue-200 bg-blue-50/50" data-testid="article-prerequisites">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-5 w-5 text-blue-600" />
+                    <CardTitle className="text-lg text-blue-900">Prerequisites</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {snippet.prerequisites.map((prereq, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-slate-700">
+                        <CheckCircle2 className="h-4 w-4 text-blue-500 mt-1 flex-shrink-0" />
+                        <span>{prereq}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Tags - Clickable */}
             <Card className="mb-8 border-slate-200">
@@ -451,6 +560,55 @@ const SnippetDetail = ({ adsConfig }) => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-green-800">{snippet.postInstallation.content}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Conclusion - NEW */}
+            {snippet.conclusion && (
+              <Card className="mb-8 border-green-200 bg-green-50/50" data-testid="article-conclusion">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <CardTitle className="text-lg text-green-900">Conclusion</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 leading-relaxed">{snippet.conclusion}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* FAQ Section - NEW for content quality */}
+            {snippet.faqs && snippet.faqs.length > 0 && (
+              <Card className="mb-8 border-slate-200" data-testid="article-faqs">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-amber-600" />
+                    <CardTitle className="text-xl">Frequently Asked Questions</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {snippet.faqs.map((faq, idx) => (
+                      <FaqItem key={idx} question={faq.question} answer={faq.answer} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Summary - NEW */}
+            {snippet.summary && (
+              <Card className="mb-8 border-slate-200 bg-slate-50" data-testid="article-summary">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-3">
+                    <FileText className="h-5 w-5 text-slate-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700 mb-1">TL;DR</p>
+                      <p className="text-slate-600 text-sm leading-relaxed">{snippet.summary}</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}

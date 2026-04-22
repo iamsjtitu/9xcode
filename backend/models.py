@@ -24,6 +24,10 @@ class CodeSnippetCreate(BaseModel):
     steps: List[StepSchema]
     postInstallation: Optional[PostInstallationSchema] = None
 
+class FaqSchema(BaseModel):
+    question: str
+    answer: str
+
 class CodeSnippet(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
@@ -35,6 +39,12 @@ class CodeSnippet(BaseModel):
     tags: List[str]
     steps: List[StepSchema]
     postInstallation: Optional[PostInstallationSchema] = None
+    introduction: Optional[str] = None
+    prerequisites: Optional[List[str]] = None
+    faqs: Optional[List[FaqSchema]] = None
+    conclusion: Optional[str] = None
+    summary: Optional[str] = None
+    seo_keywords: Optional[List[str]] = None
     views: int = 0
     likes: int = 0
     author: str = "Admin"
