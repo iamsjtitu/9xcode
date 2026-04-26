@@ -29,6 +29,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Input } from '../components/ui/input';
 import CodeBlock from '../components/CodeBlock';
 import GoogleAd from '../components/GoogleAd';
+import AdsterraAd from '../components/AdsterraAd';
 import SocialShare from '../components/SocialShare';
 import { categories, difficultyLevels, operatingSystems } from '../data/mockData';
 import { toast } from '../hooks/use-toast';
@@ -469,6 +470,11 @@ const SnippetDetail = ({ adsConfig }) => {
               </Card>
             )}
 
+            {/* Ad after introduction - Adsterra 728x90 */}
+            <div className="mb-8 hidden md:block">
+              <AdsterraAd variant="banner728" />
+            </div>
+
             {/* Tags - Clickable */}
             <Card className="mb-8 border-slate-200">
               <CardHeader>
@@ -613,12 +619,10 @@ const SnippetDetail = ({ adsConfig }) => {
               </Card>
             )}
 
-            {/* Ad between content and related */}
-            {adsConfig?.enabled && adsConfig?.betweenSnippetsAdCode && (
-              <div className="mb-8">
-                <GoogleAd adCode={adsConfig.betweenSnippetsAdCode} className="flex justify-center" />
-              </div>
-            )}
+            {/* Ad between content and related - Adsterra */}
+            <div className="mb-8">
+              <AdsterraAd variant="native" />
+            </div>
 
             {/* Related Articles */}
             {relatedSnippets.length > 0 && (

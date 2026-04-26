@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import FilterSidebar from '../components/FilterSidebar';
 import GoogleAd from '../components/GoogleAd';
+import AdsterraAd from '../components/AdsterraAd';
 import UniversalSubcategories from '../components/UniversalSubcategories';
 import { categories, operatingSystems, difficultyLevels } from '../data/mockData';
 import axios from 'axios';
@@ -247,12 +248,10 @@ const Home = ({ searchQuery, adsConfig }) => {
           {/* Sidebar */}
           <div className="lg:w-64 flex-shrink-0">
             <FilterSidebar filters={filters} setFilters={setFilters} />
-            {/* Sidebar Ad */}
-            {adsConfig?.enabled && adsConfig?.sidebarAdCode && (
-              <div className="mt-4">
-                <GoogleAd adCode={adsConfig.sidebarAdCode} />
-              </div>
-            )}
+            {/* Sidebar Ad - Adsterra 300x250 */}
+            <div className="mt-4">
+              <AdsterraAd variant="banner300" />
+            </div>
             {/* Bookmarks Toggle */}
             <button
               onClick={() => setShowBookmarks(!showBookmarks)}
@@ -448,10 +447,10 @@ const Home = ({ searchQuery, adsConfig }) => {
                       </CardContent>
                     </Card>
                     
-                    {/* Display Ad after every 3rd snippet */}
-                    {adsConfig?.enabled && adsConfig?.betweenSnippetsAdCode && (index + 1) % 3 === 0 && (
+                    {/* Display Adsterra native ad after every 4th snippet */}
+                    {(index + 1) % 4 === 0 && (
                       <div className="my-6">
-                        <GoogleAd adCode={adsConfig.betweenSnippetsAdCode} className="flex justify-center" />
+                        <AdsterraAd variant="native" />
                       </div>
                     )}
                   </React.Fragment>
@@ -513,12 +512,11 @@ const Home = ({ searchQuery, adsConfig }) => {
           </div>
         </div>
       </div>
-      {/* Footer Ad */}
-      {adsConfig?.enabled && adsConfig?.footerAdCode && (
-        <div className="container mx-auto px-4 pb-4">
-          <GoogleAd adCode={adsConfig.footerAdCode} className="flex justify-center" />
-        </div>
-      )}
+      {/* Footer Ad - Adsterra 728x90 */}
+      <div className="container mx-auto px-4 pb-4">
+        <AdsterraAd variant="banner728" className="hidden md:flex" />
+        <AdsterraAd variant="banner300" className="md:hidden" />
+      </div>
     </div>
   );
 };
