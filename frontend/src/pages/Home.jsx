@@ -246,7 +246,7 @@ const Home = ({ searchQuery, adsConfig }) => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <div className="lg:w-64 flex-shrink-0">
+          <div className="lg:w-64 flex-shrink-0 relative" style={{ zIndex: 10 }}>
             <FilterSidebar filters={filters} setFilters={setFilters} />
             {/* Sidebar Ad - Adsterra 300x250 */}
             <div className="mt-4">

@@ -74,8 +74,9 @@ const AdsterraAd = ({ variant = 'native', className = '' }) => {
   return (
     <div
       ref={containerRef}
-      className={`adsterra-ad flex justify-center items-center ${className}`}
+      className={`adsterra-ad flex justify-center items-center overflow-hidden ${className}`}
       data-testid={`adsterra-${variant}`}
+      style={{ position: 'relative', zIndex: 1 }}
     />
   );
 };
